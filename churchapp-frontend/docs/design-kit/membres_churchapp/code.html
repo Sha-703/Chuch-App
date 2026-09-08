@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Membres - ChurchApp</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&amp;family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&amp;family=Work+Sans:ital,wght@0,100..900;1,100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                            "on-primary-fixed": "#101c2f",
+                            "surface-variant": "#d8e2ff",
+                            "primary-fixed": "#d7e3fd",
+                            "on-tertiary-container": "#4f3d00",
+                            "outline-variant": "#c5c6cd",
+                            "surface-container-highest": "#d8e2ff",
+                            "on-background": "#031b3e",
+                            "on-surface-variant": "#45474c",
+                            "on-secondary": "#ffffff",
+                            "tertiary": "#755b00",
+                            "on-tertiary": "#ffffff",
+                            "error": "#ba1a1a",
+                            "on-primary-container": "#78849c",
+                            "surface-dim": "#cbdaff",
+                            "secondary-container": "#e1e0da",
+                            "tertiary-container": "#cea72c",
+                            "on-secondary-fixed": "#1b1c19",
+                            "primary": "#000000",
+                            "on-primary": "#ffffff",
+                            "surface-container-low": "#f1f3ff",
+                            "primary-container": "#101c2f",
+                            "tertiary-fixed-dim": "#ecc246",
+                            "inverse-surface": "#1c3054",
+                            "tertiary-fixed": "#ffe08e",
+                            "on-tertiary-fixed-variant": "#584400",
+                            "surface-tint": "#535f75",
+                            "outline": "#75777d",
+                            "on-surface": "#031b3e",
+                            "on-tertiary-fixed": "#241a00",
+                            "on-secondary-container": "#63635e",
+                            "surface-bright": "#f9f9ff",
+                            "background": "#f9f9ff",
+                            "inverse-on-surface": "#edf0ff",
+                            "secondary-fixed-dim": "#c8c6c1",
+                            "surface": "#f9f9ff",
+                            "on-primary-fixed-variant": "#3c475c",
+                            "on-secondary-fixed-variant": "#474743",
+                            "secondary": "#5f5f5a",
+                            "error-container": "#ffdad6",
+                            "surface-container-lowest": "#ffffff",
+                            "surface-container-high": "#e0e8ff",
+                            "secondary-fixed": "#e4e2dd",
+                            "on-error-container": "#93000a",
+                            "on-error": "#ffffff",
+                            "inverse-primary": "#bbc7e0",
+                            "surface-container": "#e9edff",
+                            "primary-fixed-dim": "#bbc7e0"
+                    },
+                    "borderRadius": {
+                            "DEFAULT": "0.25rem",
+                            "lg": "0.5rem",
+                            "xl": "0.75rem",
+                            "full": "9999px"
+                    },
+                    "spacing": {
+                            "margin-desktop": "2.5rem",
+                            "sidebar-width": "16rem",
+                            "margin-mobile": "1rem",
+                            "gutter": "1.5rem",
+                            "stack-lg": "2rem",
+                            "stack-sm": "0.5rem",
+                            "stack-md": "1rem"
+                    },
+                    "fontFamily": {
+                            "numeric-md": [
+                                    "IBM Plex Mono"
+                            ],
+                            "title-md": [
+                                    "Fraunces"
+                            ],
+                            "headline-lg-mobile": [
+                                    "Fraunces"
+                            ],
+                            "label-sm": [
+                                    "IBM Plex Mono"
+                            ],
+                            "body-lg": [
+                                    "Work Sans"
+                            ],
+                            "headline-lg": [
+                                    "Fraunces"
+                            ],
+                            "display-lg": [
+                                    "Fraunces"
+                            ],
+                            "body-md": [
+                                    "Work Sans"
+                            ]
+                    },
+                    "fontSize": {
+                            "numeric-md": [
+                                    "16px",
+                                    {
+                                            "lineHeight": "24px",
+                                            "fontWeight": "400"
+                                    }
+                            ],
+                            "title-md": [
+                                    "24px",
+                                    {
+                                            "lineHeight": "32px",
+                                            "fontWeight": "500"
+                                    }
+                            ],
+                            "headline-lg-mobile": [
+                                    "28px",
+                                    {
+                                            "lineHeight": "36px",
+                                            "fontWeight": "600"
+                                    }
+                            ],
+                            "label-sm": [
+                                    "12px",
+                                    {
+                                            "lineHeight": "16px",
+                                            "letterSpacing": "0.05em",
+                                            "fontWeight": "500"
+                                    }
+                            ],
+                            "body-lg": [
+                                    "18px",
+                                    {
+                                            "lineHeight": "28px",
+                                            "fontWeight": "400"
+                                    }
+                            ],
+                            "headline-lg": [
+                                    "32px",
+                                    {
+                                            "lineHeight": "40px",
+                                            "fontWeight": "600"
+                                    }
+                            ],
+                            "display-lg": [
+                                    "48px",
+                                    {
+                                            "lineHeight": "56px",
+                                            "letterSpacing": "-0.02em",
+                                            "fontWeight": "700"
+                                    }
+                            ],
+                            "body-md": [
+                                    "16px",
+                                    {
+                                            "lineHeight": "24px",
+                                            "fontWeight": "400"
+                                    }
+                            ]
+                    }
+            },
+                },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+          font-variation-settings:
+          'FILL' 0,
+          'wght' 400,
+          'GRAD' 0,
+          'opsz' 24
+        }
+        
+        .woven-divider {
+            height: 1px;
+            background-color: theme('colors.tertiary-container');
+            width: 100%;
+        }
+
+        /* Responsive Sidebar */
+        @media (min-width: 1024px) {
+            .main-content {
+                margin-left: theme('spacing.sidebar-width');
+            }
+        }
+        
+        /* Modal Transition */
+        .modal-enter {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+        .modal-enter-active {
+            opacity: 1;
+            transform: scale(1);
+            transition: opacity 300ms ease-out, transform 300ms ease-out;
+        }
+        .modal-exit {
+            opacity: 1;
+            transform: scale(1);
+        }
+        .modal-exit-active {
+            opacity: 0;
+            transform: scale(0.95);
+            transition: opacity 200ms ease-in, transform 200ms ease-in;
+        }
+    </style>
+</head>
+<body class="bg-surface dark:bg-primary-container text-on-surface dark:text-on-primary font-body-md text-body-md antialiased transition-colors duration-300 min-h-screen flex flex-col">
+<!-- Top Navigation Bar -->
+<header class="bg-surface/80 dark:bg-primary-container/80 backdrop-blur-md text-primary dark:text-primary-fixed docked full-width top-0 sticky border-b border-outline-variant dark:border-outline shadow-sm flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop h-16 z-50">
+<div class="flex items-center gap-4">
+<h1 class="font-display-lg text-display-lg hidden md:block">ChurchApp</h1>
+</div>
+<div class="flex-1 max-w-md mx-4 hidden md:block">
+<!-- Search -->
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-surface-container-low dark:bg-surface-tint/20 border border-outline-variant dark:border-outline rounded-full py-2 pl-10 pr-4 focus:ring-2 focus:ring-tertiary-container focus:outline-none transition-all placeholder:text-on-surface-variant/70 font-body-md text-body-md text-on-surface dark:text-on-primary" placeholder="Rechercher des membres, groupes..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<button class="p-2 rounded-full hover:bg-surface-variant dark:hover:bg-surface-tint/20 transition-colors text-on-surface-variant dark:text-surface-variant" id="theme-toggle">
+<span class="material-symbols-outlined" id="theme-icon">dark_mode</span>
+</button>
+<button class="p-2 rounded-full hover:bg-surface-variant dark:hover:bg-surface-tint/20 transition-colors text-on-surface-variant dark:text-surface-variant">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-tertiary-container flex items-center justify-center text-on-tertiary font-bold overflow-hidden cursor-pointer">
+<img alt="User profile" class="w-full h-full object-cover" data-alt="A portrait of a smiling woman in her 30s, well-lit, professional photography, soft background blur, warm lighting. Minimalist style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJNfofSqn5o_WhYjxnGNV1e884Hk1j05V2PsF0T4sHnNE4fz1Np1-gIo19gnW4eLDQSLBvBGAI3KCTgEDN-Ipco8AznGCbAxMw8yltLl_alMn_LHySZjgX9j0m6SGBPpCt3aTKpubQlVZLZ6zG-wPClbbPxOLWV8-mB1IRVYdiQNWbGL0UULFIg5nO8bjiybRRzs9Yy1i2Cs47naVugxv4Li_mHAY1kKzJyj22djas-fYy-cbu1pV0eA"/>
+</div>
+</div>
+</header>
+<!-- Side Navigation Bar -->
+<nav class="bg-primary-container dark:bg-primary-container text-on-primary dark:text-on-primary fixed left-0 top-0 h-full w-sidebar-width border-r border-outline-variant/10 shadow-lg hidden lg:flex flex-col z-40 pt-24 pb-8">
+<div class="px-6 mb-8">
+<h2 class="font-headline-lg text-headline-lg mb-1">ChurchApp</h2>
+<p class="font-label-sm text-label-sm text-surface-variant/70 uppercase tracking-widest">Grace &amp; Peace</p>
+</div>
+<div class="flex-1 flex flex-col gap-2">
+<a class="text-surface-variant/70 hover:text-surface-variant px-4 py-3 flex items-center gap-3 hover:bg-on-primary-fixed-variant/10 transition-all font-label-sm text-label-sm" href="#">
+<span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">church</span>
+<span>Sanctuary</span>
+</a>
+<a class="bg-tertiary-container/20 text-tertiary-fixed border-l-4 border-tertiary-container px-4 py-3 flex items-center gap-3 opacity-80 duration-150 font-label-sm text-label-sm" href="#">
+<span class="material-symbols-outlined">groups</span>
+<span>Community</span>
+</a>
+<a class="text-surface-variant/70 hover:text-surface-variant px-4 py-3 flex items-center gap-3 hover:bg-on-primary-fixed-variant/10 transition-all font-label-sm text-label-sm" href="#">
+<span class="material-symbols-outlined">auto_stories</span>
+<span>Sacraments</span>
+</a>
+<a class="text-surface-variant/70 hover:text-surface-variant px-4 py-3 flex items-center gap-3 hover:bg-on-primary-fixed-variant/10 transition-all font-label-sm text-label-sm" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span>Giving</span>
+</a>
+</div>
+<div class="px-4 mt-auto">
+<a class="text-surface-variant/70 hover:text-surface-variant px-4 py-3 flex items-center gap-3 hover:bg-on-primary-fixed-variant/10 transition-all font-label-sm text-label-sm mb-4" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span>Settings</span>
+</a>
+<button class="w-full bg-tertiary-container text-on-tertiary-container py-3 rounded-lg font-label-sm text-label-sm uppercase hover:bg-tertiary transition-colors shadow-sm flex justify-center items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">favorite</span>
+                Give Now
+            </button>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="main-content flex-1 p-margin-mobile md:p-margin-desktop pb-24 lg:pb-margin-desktop max-w-7xl mx-auto w-full">
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-stack-lg gap-4">
+<div>
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg mb-2">Membres de la Communauté</h1>
+<div class="woven-divider mb-4 hidden md:block"></div>
+<p class="text-on-surface-variant dark:text-surface-variant font-body-lg text-body-lg">Gérez le registre paroissial et les contacts communautaires.</p>
+</div>
+<button class="bg-primary dark:bg-on-primary text-on-primary dark:text-primary px-6 py-3 rounded-lg font-label-sm text-label-sm uppercase tracking-wider hover:opacity-90 transition-opacity shadow-sm flex items-center gap-2 whitespace-nowrap" onclick="openModal()">
+<span class="material-symbols-outlined">person_add</span>
+                Ajouter Membre
+            </button>
+</div>
+<!-- Mobile Search (Visible only on mobile) -->
+<div class="md:hidden mb-stack-lg">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-surface-container-low dark:bg-surface-tint/20 border border-outline-variant dark:border-outline rounded-full py-3 pl-10 pr-4 focus:ring-2 focus:ring-tertiary-container focus:outline-none transition-all placeholder:text-on-surface-variant/70 font-body-md text-body-md text-on-surface dark:text-on-primary" placeholder="Rechercher..." type="text"/>
+</div>
+</div>
+<!-- Content Area: Data Table (Desktop) / Cards (Mobile) -->
+<!-- Desktop Table View -->
+<div class="hidden md:block bg-surface-container-lowest dark:bg-surface-tint/10 rounded-2xl border border-outline-variant/30 dark:border-outline/20 shadow-sm overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low dark:bg-surface-tint/20 border-b border-outline-variant/30 dark:border-outline/20">
+<th class="py-4 px-6 font-label-sm text-label-sm text-on-surface-variant dark:text-surface-variant uppercase tracking-wider">Membre</th>
+<th class="py-4 px-6 font-label-sm text-label-sm text-on-surface-variant dark:text-surface-variant uppercase tracking-wider">Rôle</th>
+<th class="py-4 px-6 font-label-sm text-label-sm text-on-surface-variant dark:text-surface-variant uppercase tracking-wider">Membre Depuis</th>
+<th class="py-4 px-6 font-label-sm text-label-sm text-on-surface-variant dark:text-surface-variant uppercase tracking-wider">Contact</th>
+<th class="py-4 px-6 font-label-sm text-label-sm text-on-surface-variant dark:text-surface-variant uppercase tracking-wider text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/20 dark:divide-outline/10">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-low/50 dark:hover:bg-surface-tint/5 transition-colors group">
+<td class="py-4 px-6">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-variant overflow-hidden shrink-0">
+<img alt="Jean Dupont" class="w-full h-full object-cover" data-alt="Portrait of an older gentleman in his 60s, warm smile, wearing a subtle tweed jacket, soft natural lighting, minimalist composition." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCxPFrovp5ZZxcSsXL3aKoDXKXTjOV1V0ALQm9B0mCic6BdItoM9hml64dbUJqPSOkpYrpXby_pUuKqZwimFYHqjMqKJNLy-5dqqKZaKv5MQcbj9rBQq-jEmY9PTtzuR76SYTev0zblB-5gDqVH-Yk7s5gDlVnOYMdjshemSozWRLBpuro4pbdMh-gpoT1D-ArqMBoR9FwaOpPQk7M_iqAIskBhRBovURbxursItXdmQaHZZeEN44QNOA"/>
+</div>
+<div>
+<p class="font-title-md text-title-md text-[18px] leading-tight">Jean Dupont</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant/70 dark:text-surface-variant/70">Famille Dupont</p>
+</div>
+</div>
+</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-tertiary-container/20 text-tertiary-fixed border border-tertiary-container/30">
+                                Ancien
+                            </span>
+</td>
+<td class="py-4 px-6">
+<p class="font-numeric-md text-numeric-md text-on-surface-variant dark:text-surface-variant">12 Oct 2015</p>
+</td>
+<td class="py-4 px-6">
+<div class="flex flex-col gap-1">
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-surface-variant hover:text-tertiary-container transition-colors flex items-center gap-2" href="mailto:jean@example.com">
+<span class="material-symbols-outlined text-[16px]">mail</span> jean@example.com
+                                </a>
+<span class="font-numeric-md text-numeric-md text-on-surface-variant/70 dark:text-surface-variant/70 text-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">call</span> +33 6 12 34 56 78
+                                </span>
+</div>
+</td>
+<td class="py-4 px-6 text-right">
+<button class="p-2 text-on-surface-variant/50 hover:text-primary dark:hover:text-primary-fixed transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-low/50 dark:hover:bg-surface-tint/5 transition-colors group">
+<td class="py-4 px-6">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-variant overflow-hidden shrink-0">
+<img alt="Marie Curie" class="w-full h-full object-cover" data-alt="Portrait of a young woman in her 20s, casual attire, bright natural lighting, modern aesthetic, soft neutral background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDgWEQhz2TSfyMOsdlJL1uvu81Adx5x7K4JJ4mAh_Oshmocmfomt1MCScRWPwRFuAj1C5sywAmw09xlEzt6jFMufBAiWYhhzyReWjdW1S5KnREzn4s11xxPVG9X97HZoLrQKJBfjweeUMnZyw-xsm-TQyXcwrJ_sKsgne8fA7VUMP1SG5meHN4zEPG5lWsAIRVmelyZj4ryF9Ow_o2v6jhHN7EBNKJYBbi-2v9P-OmNXXRDtj5kfA2WFA"/>
+</div>
+<div>
+<p class="font-title-md text-title-md text-[18px] leading-tight">Marie Curie</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant/70 dark:text-surface-variant/70">Solo</p>
+</div>
+</div>
+</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-surface-variant dark:bg-surface-tint/30 text-on-surface-variant dark:text-surface-variant border border-outline-variant/30">
+                                Membre
+                            </span>
+</td>
+<td class="py-4 px-6">
+<p class="font-numeric-md text-numeric-md text-on-surface-variant dark:text-surface-variant">05 Mar 2021</p>
+</td>
+<td class="py-4 px-6">
+<div class="flex flex-col gap-1">
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-surface-variant hover:text-tertiary-container transition-colors flex items-center gap-2" href="mailto:marie@example.com">
+<span class="material-symbols-outlined text-[16px]">mail</span> marie@example.com
+                                </a>
+<span class="font-numeric-md text-numeric-md text-on-surface-variant/70 dark:text-surface-variant/70 text-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">call</span> +33 6 87 65 43 21
+                                </span>
+</div>
+</td>
+<td class="py-4 px-6 text-right">
+<button class="p-2 text-on-surface-variant/50 hover:text-primary dark:hover:text-primary-fixed transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Mobile Cards View -->
+<div class="md:hidden flex flex-col gap-4">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest dark:bg-surface-tint/10 rounded-2xl border border-outline-variant/30 dark:border-outline/20 p-4 shadow-sm relative">
+<button class="absolute top-4 right-4 text-on-surface-variant/50">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+<div class="flex items-center gap-4 mb-4">
+<div class="w-12 h-12 rounded-full bg-surface-variant overflow-hidden shrink-0">
+<img alt="Jean Dupont" class="w-full h-full object-cover" data-alt="Portrait of an older gentleman in his 60s, warm smile, wearing a subtle tweed jacket, soft natural lighting, minimalist composition." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA3eau_3ZjRTh-SBRGm3ChIEDeU_UDzb_bDGwd767JdNM0yWXZIRcQN9oIgyTVWXGzHloGZIsmH5Ln1x1aP0OG4PYbw37sEKMW2RfZDWGtDVI1SErig99RdphxdCAgSJ4HAZ6sBQGtFWlGuzP1lrSV9ktEuxb_BbqFjRzyDXR22FS3y9_Gpx4ZnP77ja3t-IrbyieJv1fq9a2gxRqkaNpJga20JY2Wabk3TDTB9J1OKFQVi2sWDOQdxOQ"/>
+</div>
+<div>
+<h3 class="font-title-md text-title-md text-[18px] leading-tight">Jean Dupont</h3>
+<span class="inline-flex items-center px-2 py-0.5 mt-1 rounded-full text-[10px] font-medium bg-tertiary-container/20 text-tertiary-fixed border border-tertiary-container/30">
+                            Ancien
+                        </span>
+</div>
+</div>
+<div class="woven-divider mb-3 opacity-50"></div>
+<div class="flex flex-col gap-2 font-body-md text-body-md text-sm text-on-surface-variant dark:text-surface-variant">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] opacity-70">calendar_today</span>
+<span>Depuis le 12 Oct 2015</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] opacity-70">mail</span>
+<a class="hover:text-tertiary-container" href="mailto:jean@example.com">jean@example.com</a>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] opacity-70">call</span>
+<span class="font-numeric-md">+33 6 12 34 56 78</span>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest dark:bg-surface-tint/10 rounded-2xl border border-outline-variant/30 dark:border-outline/20 p-4 shadow-sm relative">
+<button class="absolute top-4 right-4 text-on-surface-variant/50">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+<div class="flex items-center gap-4 mb-4">
+<div class="w-12 h-12 rounded-full bg-surface-variant overflow-hidden shrink-0">
+<img alt="Marie Curie" class="w-full h-full object-cover" data-alt="Portrait of a young woman in her 20s, casual attire, bright natural lighting, modern aesthetic, soft neutral background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0VkazQBu7nCIO5xkW2r1dY0_k4-LCXdSJtQAolFUwtIG2MJ411ibf6dDqWeKuIUNoR8nleD_Q3NG2e9GR0H7MuNcLRHyNphOblNgH8xMp6LNlfLJA5_mZjWjosnSai1G7cj2X62BZsBEsNzQ3FHp6liIXYc7VMLfQSwxmaxEjH8HEttOIwz2PruRiC_ubxGkoSZ3ceq3O_00fWCnM2tjHOVpsD2YGSyzOmKiAKi1dRg8CDB3XdbKI5A"/>
+</div>
+<div>
+<h3 class="font-title-md text-title-md text-[18px] leading-tight">Marie Curie</h3>
+<span class="inline-flex items-center px-2 py-0.5 mt-1 rounded-full text-[10px] font-medium bg-surface-variant dark:bg-surface-tint/30 text-on-surface-variant dark:text-surface-variant border border-outline-variant/30">
+                            Membre
+                        </span>
+</div>
+</div>
+<div class="woven-divider mb-3 opacity-50"></div>
+<div class="flex flex-col gap-2 font-body-md text-body-md text-sm text-on-surface-variant dark:text-surface-variant">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] opacity-70">calendar_today</span>
+<span>Depuis le 05 Mar 2021</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] opacity-70">mail</span>
+<a class="hover:text-tertiary-container" href="mailto:marie@example.com">marie@example.com</a>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] opacity-70">call</span>
+<span class="font-numeric-md">+33 6 87 65 43 21</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Bar (Mobile) -->
+<nav class="bg-surface-container-lowest/90 dark:bg-primary-container/90 backdrop-blur-xl text-primary dark:text-primary-fixed fixed bottom-0 w-full rounded-t-xl border-t border-tertiary-container/30 shadow-[0_-4px_10px_rgba(0,0,0,0.05)] lg:hidden h-16 flex justify-around items-center z-50 px-4">
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 active:bg-surface-container-high transition-colors p-2 rounded-lg" href="#">
+<span class="material-symbols-outlined mb-1">home</span>
+<span class="font-label-sm text-label-sm-mobile">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-tertiary font-bold after:content-[''] after:w-1 after:h-1 after:bg-tertiary after:rounded-full after:mt-1 opacity-80 duration-150 p-2 rounded-lg scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined mb-1" data-weight="fill" style="font-variation-settings: 'FILL' 1;">groups</span>
+<span class="font-label-sm text-label-sm-mobile">Community</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 active:bg-surface-container-high transition-colors p-2 rounded-lg" href="#">
+<span class="material-symbols-outlined mb-1">volunteer_activism</span>
+<span class="font-label-sm text-label-sm-mobile">Giving</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 active:bg-surface-container-high transition-colors p-2 rounded-lg" href="#">
+<span class="material-symbols-outlined mb-1">account_circle</span>
+<span class="font-label-sm text-label-sm-mobile">Profile</span>
+</a>
+</nav>
+<!-- Add Member Modal -->
+<div class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4" id="addMemberModal">
+<!-- Backdrop -->
+<div class="absolute inset-0 bg-primary/40 dark:bg-primary/60 backdrop-blur-sm" onclick="closeModal()"></div>
+<!-- Modal Content -->
+<div class="relative bg-surface-container-lowest dark:bg-surface-tint/10 rounded-2xl w-full max-w-lg shadow-[0_10px_15px_-3px_rgba(15,27,46,0.1)] border border-outline-variant/30 dark:border-outline/20 overflow-hidden flex flex-col max-h-[921px]">
+<div class="flex justify-between items-center p-6 border-b border-outline-variant/20 dark:border-outline/10 bg-surface dark:bg-primary-container">
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-[24px] leading-tight">Nouveau Membre</h2>
+<button class="text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors p-1 rounded-full hover:bg-surface-container-low dark:hover:bg-surface-tint/20" onclick="closeModal()">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="p-6 overflow-y-auto">
+<form class="flex flex-col gap-stack-md">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="flex flex-col gap-1">
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase">Prénom</label>
+<input class="bg-surface-container-low dark:bg-surface-tint/20 border border-outline-variant/50 dark:border-outline/30 rounded-lg p-2 focus:ring-2 focus:ring-tertiary-container/50 focus:border-tertiary-container outline-none transition-all font-body-md text-on-surface dark:text-on-primary" type="text"/>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase">Nom</label>
+<input class="bg-surface-container-low dark:bg-surface-tint/20 border border-outline-variant/50 dark:border-outline/30 rounded-lg p-2 focus:ring-2 focus:ring-tertiary-container/50 focus:border-tertiary-container outline-none transition-all font-body-md text-on-surface dark:text-on-primary" type="text"/>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase">Email</label>
+<input class="bg-surface-container-low dark:bg-surface-tint/20 border border-outline-variant/50 dark:border-outline/30 rounded-lg p-2 focus:ring-2 focus:ring-tertiary-container/50 focus:border-tertiary-container outline-none transition-all font-body-md text-on-surface dark:text-on-primary" type="email"/>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase">Téléphone</label>
+<input class="bg-surface-container-low dark:bg-surface-tint/20 border border-outline-variant/50 dark:border-outline/30 rounded-lg p-2 focus:ring-2 focus:ring-tertiary-container/50 focus:border-tertiary-container outline-none transition-all font-numeric-md text-on-surface dark:text-on-primary" type="tel"/>
+</div>
+<div class="woven-divider my-2 opacity-50"></div>
+<div class="flex flex-col gap-1">
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase">Rôle</label>
+<select class="bg-surface-container-low dark:bg-surface-tint/20 border border-outline-variant/50 dark:border-outline/30 rounded-lg p-2 focus:ring-2 focus:ring-tertiary-container/50 focus:border-tertiary-container outline-none transition-all font-body-md text-on-surface dark:text-on-primary appearance-none">
+<option>Membre Régulier</option>
+<option>Bénévole</option>
+<option>Ancien</option>
+</select>
+</div>
+</form>
+</div>
+<div class="p-6 border-t border-outline-variant/20 dark:border-outline/10 bg-surface-container-lowest dark:bg-primary-container flex justify-end gap-3">
+<button class="px-5 py-2.5 border border-outline-variant dark:border-outline text-on-surface dark:text-on-primary rounded-lg font-label-sm text-label-sm uppercase tracking-wide hover:bg-surface-variant dark:hover:bg-surface-tint/20 transition-colors" onclick="closeModal()">
+                    Annuler
+                </button>
+<button class="px-5 py-2.5 bg-tertiary-container text-on-tertiary-container rounded-lg font-label-sm text-label-sm uppercase tracking-wide hover:bg-tertiary transition-colors shadow-sm">
+                    Enregistrer
+                </button>
+</div>
+</div>
+</div>
+<script>
+        // Theme Toggle Logic
+        const html = document.documentElement;
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+
+        themeToggle.addEventListener('click', () => {
+            if (html.classList.contains('light')) {
+                html.classList.remove('light');
+                html.classList.add('dark');
+                themeIcon.textContent = 'light_mode';
+            } else {
+                html.classList.remove('dark');
+                html.classList.add('light');
+                themeIcon.textContent = 'dark_mode';
+            }
+        });
+
+        // Modal Logic
+        const modal = document.getElementById('addMemberModal');
+        const modalContent = modal.querySelector('.relative');
+
+        function openModal() {
+            modal.classList.remove('hidden');
+            // Small delay to allow display:block to apply before animation
+            requestAnimationFrame(() => {
+                modalContent.classList.add('modal-enter-active');
+            });
+        }
+
+        function closeModal() {
+            modalContent.classList.remove('modal-enter-active');
+            modalContent.classList.add('modal-exit-active');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modalContent.classList.remove('modal-exit-active');
+            }, 200); // match transition duration
+        }
+    </script>
+</body></html>

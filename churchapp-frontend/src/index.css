@@ -1,0 +1,116 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body {
+  @apply bg-parchment-100 text-ink-950 font-body antialiased;
+}
+
+html.dark, html.dark body {
+  background-color: theme('colors.ink.950');
+  color: theme('colors.parchment.100');
+}
+html:not(.dark) { color-scheme: light; }
+html.dark { color-scheme: dark; }
+
+::selection {
+  @apply bg-gold-500/30;
+}
+
+/* --- Mode sombre : surcharge des classes utilitaires les plus courantes ---
+   Approche pragmatique : plutôt que d'ajouter dark: à chaque className dans
+   chaque page, on recible directement les classes Tailwind générées sous le
+   sélecteur .dark. Comme les espaces Super Admin, Communauté et Mon Espace
+   réutilisent les mêmes noms de classes (bg-white, text-ink-950, etc.), cette
+   surcouche s'applique automatiquement partout, sans dupliquer le travail.
+   Si une nouvelle page introduit une classe non listée ici, l'ajouter ici. */
+html.dark .bg-white { background-color: theme('colors.ink.900'); }
+html.dark .bg-parchment-100 { background-color: theme('colors.ink.950'); }
+html.dark .bg-parchment-100\/80 { background-color: rgb(15 27 46 / 0.8); }
+html.dark .bg-parchment-50 { background-color: theme('colors.ink.900'); }
+html.dark .bg-parchment-200\/60 { background-color: rgb(255 255 255 / 0.08); }
+html.dark .text-ink-950 { color: theme('colors.parchment.50'); }
+html.dark .text-ink-800 { color: theme('colors.parchment.100'); }
+html.dark .text-ink-700 { color: rgb(245 241 230 / 0.6); }
+html.dark .text-ink-700\/70 { color: rgb(245 241 230 / 0.65); }
+html.dark .text-ink-700\/60 { color: rgb(245 241 230 / 0.55); }
+html.dark .text-ink-700\/50 { color: rgb(245 241 230 / 0.45); }
+html.dark .text-ink-700\/40 { color: rgb(245 241 230 / 0.35); }
+html.dark .text-ink-700\/20 { color: rgb(245 241 230 / 0.18); }
+html.dark .text-ink-600 { color: rgb(245 241 230 / 0.5); }
+html.dark .border-ink-950\/30 { border-color: rgb(255 255 255 / 0.2); }
+html.dark .border-ink-950\/15 { border-color: rgb(255 255 255 / 0.12); }
+html.dark .border-ink-950\/10 { border-color: rgb(255 255 255 / 0.1); }
+html.dark .border-ink-950\/5 { border-color: rgb(255 255 255 / 0.08); }
+html.dark .hover\:bg-parchment-50:hover { background-color: theme('colors.ink.800'); }
+html.dark .shadow-card { box-shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px -8px rgb(0 0 0 / 0.4); }
+/* La sidebar et certains blocs restent intentionnellement en ink-950 dans les deux modes */
+html.dark .bg-ink-950 { background-color: theme('colors.ink.950'); }
+
+/* Correctif critique : les champs de saisie (input/textarea/select) ne
+   suivent pas toujours l'héritage de couleur du corps de page selon les
+   navigateurs — sans cette règle, le texte tapé reste noir sur fond sombre
+   et devient invisible. On force explicitement fond + texte + placeholder. */
+html.dark input,
+html.dark textarea,
+html.dark select {
+  background-color: theme('colors.ink.900');
+  color: theme('colors.parchment.50');
+  border-color: rgb(255 255 255 / 0.15);
+}
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+  color: rgb(245 241 230 / 0.35);
+}
+html.dark option {
+  background-color: theme('colors.ink.900');
+  color: theme('colors.parchment.50');
+}
+html.dark input[type="checkbox"] {
+  background-color: theme('colors.ink.800');
+}
+
+.font-tabular {
+  font-variant-numeric: tabular-nums;
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+/* Bordure "tissage" signature : un galon tissé qui souligne les en-têtes de section */
+.woven-rule {
+  height: 6px;
+  background-image:
+    repeating-linear-gradient(45deg, theme('colors.gold.500') 0, theme('colors.gold.500') 4px, transparent 4px, transparent 8px),
+    repeating-linear-gradient(-45deg, theme('colors.ink.800') 0, theme('colors.ink.800') 4px, transparent 4px, transparent 8px);
+  background-size: 100% 3px;
+  background-position: top, bottom;
+  background-repeat: repeat-x;
+  border-radius: 2px;
+  opacity: 0.9;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: theme('colors.ink.700');
+  border-radius: 999px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.line-clamp-4 {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

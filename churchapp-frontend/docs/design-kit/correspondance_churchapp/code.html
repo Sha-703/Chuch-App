@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ChurchApp - Correspondance</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&amp;family=IBM+Plex+Mono:wght@400;500&amp;family=Work+Sans:wght@400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-primary-fixed": "#101c2f",
+                    "surface-variant": "#d8e2ff",
+                    "primary-fixed": "#d7e3fd",
+                    "on-tertiary-container": "#4f3d00",
+                    "outline-variant": "#c5c6cd",
+                    "surface-container-highest": "#d8e2ff",
+                    "on-background": "#031b3e",
+                    "on-surface-variant": "#45474c",
+                    "on-secondary": "#ffffff",
+                    "tertiary": "#755b00",
+                    "on-tertiary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "on-primary-container": "#78849c",
+                    "surface-dim": "#cbdaff",
+                    "secondary-container": "#e1e0da",
+                    "tertiary-container": "#cea72c",
+                    "on-secondary-fixed": "#1b1c19",
+                    "primary": "#000000",
+                    "on-primary": "#ffffff",
+                    "surface-container-low": "#f1f3ff",
+                    "primary-container": "#101c2f",
+                    "tertiary-fixed-dim": "#ecc246",
+                    "inverse-surface": "#1c3054",
+                    "tertiary-fixed": "#ffe08e",
+                    "on-tertiary-fixed-variant": "#584400",
+                    "surface-tint": "#535f75",
+                    "outline": "#75777d",
+                    "on-surface": "#031b3e",
+                    "on-tertiary-fixed": "#241a00",
+                    "on-secondary-container": "#63635e",
+                    "surface-bright": "#f9f9ff",
+                    "background": "#f9f9ff",
+                    "inverse-on-surface": "#edf0ff",
+                    "secondary-fixed-dim": "#c8c6c1",
+                    "surface": "#f9f9ff",
+                    "on-primary-fixed-variant": "#3c475c",
+                    "on-secondary-fixed-variant": "#474743",
+                    "secondary": "#5f5f5a",
+                    "error-container": "#ffdad6",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-high": "#e0e8ff",
+                    "secondary-fixed": "#e4e2dd",
+                    "on-error-container": "#93000a",
+                    "on-error": "#ffffff",
+                    "inverse-primary": "#bbc7e0",
+                    "surface-container": "#e9edff",
+                    "primary-fixed-dim": "#bbc7e0"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-desktop": "2.5rem",
+                    "sidebar-width": "16rem",
+                    "margin-mobile": "1rem",
+                    "gutter": "1.5rem",
+                    "stack-lg": "2rem",
+                    "stack-sm": "0.5rem",
+                    "stack-md": "1rem"
+            },
+            "fontFamily": {
+                    "numeric-md": [
+                            "IBM Plex Mono"
+                    ],
+                    "title-md": [
+                            "Fraunces"
+                    ],
+                    "headline-lg-mobile": [
+                            "Fraunces"
+                    ],
+                    "label-sm": [
+                            "IBM Plex Mono"
+                    ],
+                    "body-lg": [
+                            "Work Sans"
+                    ],
+                    "headline-lg": [
+                            "Fraunces"
+                    ],
+                    "display-lg": [
+                            "Fraunces"
+                    ],
+                    "body-md": [
+                            "Work Sans"
+                    ]
+            },
+            "fontSize": {
+                    "numeric-md": [
+                            "16px",
+                            {
+                                    "lineHeight": "24px",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "title-md": [
+                            "24px",
+                            {
+                                    "lineHeight": "32px",
+                                    "fontWeight": "500"
+                            }
+                    ],
+                    "headline-lg-mobile": [
+                            "28px",
+                            {
+                                    "lineHeight": "36px",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "label-sm": [
+                            "12px",
+                            {
+                                    "lineHeight": "16px",
+                                    "letterSpacing": "0.05em",
+                                    "fontWeight": "500"
+                            }
+                    ],
+                    "body-lg": [
+                            "18px",
+                            {
+                                    "lineHeight": "28px",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "headline-lg": [
+                            "32px",
+                            {
+                                    "lineHeight": "40px",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "display-lg": [
+                            "48px",
+                            {
+                                    "lineHeight": "56px",
+                                    "letterSpacing": "-0.02em",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "body-md": [
+                            "16px",
+                            {
+                                    "lineHeight": "24px",
+                                    "fontWeight": "400"
+                            }
+                    ]
+            }
+    },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        /* Custom scrollbar for table container */
+        .table-container::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        .table-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .table-container::-webkit-scrollbar-thumb {
+            background-color: theme('colors.outline-variant');
+            border-radius: 4px;
+        }
+        
+        .dark .table-container::-webkit-scrollbar-thumb {
+            background-color: theme('colors.outline');
+        }
+
+        .theme-transition {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-background dark:bg-primary-container text-on-surface dark:text-on-primary theme-transition min-h-screen flex flex-col font-body-md text-body-md">
+<!-- Top Navigation Bar (Web) -->
+<header class="hidden md:flex justify-between items-center w-full px-margin-desktop h-16 bg-surface/80 dark:bg-primary-container/80 backdrop-blur-md border-b border-outline-variant dark:border-outline shadow-sm docked full-width top-0 sticky z-50">
+<div class="flex items-center gap-4">
+<span class="font-display-lg text-display-lg text-primary dark:text-primary-fixed">ChurchApp</span>
+<!-- Search Bar (on_left) -->
+<div class="relative ml-8 w-64 hidden lg:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant dark:text-surface-variant text-sm">search</span>
+<input class="w-full bg-parchment-100 dark:bg-ink-800 border border-ink-950/10 dark:border-white/10 rounded-full py-2 pl-10 pr-4 focus:ring-2 focus:ring-tertiary-container focus:outline-none font-body-md text-body-md text-on-surface dark:text-on-primary placeholder:text-on-surface-variant/70" placeholder="Rechercher..." type="text"/>
+</div>
+</div>
+<nav class="flex items-center gap-6">
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors font-label-sm text-label-sm uppercase tracking-wider" href="#">Tableau de bord</a>
+<a class="text-primary dark:text-primary-fixed font-bold border-b-2 border-tertiary-container font-label-sm text-label-sm uppercase tracking-wider pb-1 opacity-80 duration-150" href="#">Correspondance</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors font-label-sm text-label-sm uppercase tracking-wider" href="#">Documents</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors" id="themeToggleBtn">
+<span class="material-symbols-outlined" data-icon="contrast">contrast</span>
+</button>
+<img alt="User profile" class="w-8 h-8 rounded-full object-cover border border-outline-variant dark:border-outline" data-alt="A small, circular profile picture of an individual in professional yet approachable attire, warm lighting, soft background focus, evoking a sense of community leadership within a modern liturgical setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBy7PwxICO9BCvgp9MrCoz5qh9LvYvGZaKQXF8N-B-4QbNBLAffNa6C5aPp2Jc6Sz3YgBo0SOO4XyLrDbxSfhQRMt-nsPXGHxG_LHp3eahyBG12fDGr_YDJP_CuamWCpWaNdBbmY21Ga76IHu1Q3YEp6dVoiMG9M9wUzWqBhiHETry3YvCyM2oE1Al9NzWjf5CWo5aMI_xmgl8lKwpl20QgIGxKqQLlokLUgAHgssMABPLtzLSjMmGX6w"/>
+</div>
+</header>
+<div class="flex flex-1 relative">
+<!-- Side Navigation Bar (Desktop) -->
+<aside class="hidden lg:flex flex-col z-40 fixed left-0 top-0 h-full w-sidebar-width bg-primary-container dark:bg-primary-container shadow-lg border-r border-outline-variant/10">
+<div class="p-6 flex items-center gap-4 border-b border-outline-variant/10">
+<div class="w-10 h-10 rounded bg-tertiary-container flex items-center justify-center text-on-tertiary-container font-bold text-xl">
+                    C
+                </div>
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-primary">ChurchApp</h2>
+<p class="font-label-sm text-label-sm text-on-primary/70">Grace &amp; Peace</p>
+</div>
+</div>
+<nav class="flex-1 py-4 flex flex-col gap-1">
+<a class="text-surface-variant/70 hover:text-surface-variant px-4 py-3 flex items-center gap-3 hover:bg-on-primary-fixed-variant/10 transition-all font-label-sm text-label-sm" href="#">
+<span class="material-symbols-outlined" data-icon="church">church</span>
+                    Sanctuary
+                </a>
+<a class="bg-tertiary-container/20 text-tertiary-fixed border-l-4 border-tertiary-container px-4 py-3 flex items-center gap-3 scale-95 duration-200 font-label-sm text-label-sm font-bold" href="#">
+<span class="material-symbols-outlined" data-icon="groups">groups</span>
+                    Community
+                </a>
+<a class="text-surface-variant/70 hover:text-surface-variant px-4 py-3 flex items-center gap-3 hover:bg-on-primary-fixed-variant/10 transition-all font-label-sm text-label-sm" href="#">
+<span class="material-symbols-outlined" data-icon="auto_stories">auto_stories</span>
+                    Sacraments
+                </a>
+<a class="text-surface-variant/70 hover:text-surface-variant px-4 py-3 flex items-center gap-3 hover:bg-on-primary-fixed-variant/10 transition-all font-label-sm text-label-sm" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+                    Giving
+                </a>
+<a class="text-surface-variant/70 hover:text-surface-variant px-4 py-3 flex items-center gap-3 hover:bg-on-primary-fixed-variant/10 transition-all font-label-sm text-label-sm" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+                    Settings
+                </a>
+</nav>
+<div class="p-6 mt-auto border-t border-outline-variant/10">
+<button class="w-full bg-tertiary-container text-on-tertiary-container py-3 rounded-lg font-bold font-label-sm text-label-sm hover:opacity-90 transition-opacity">
+                    Give Now
+                </button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 lg:ml-sidebar-width p-margin-mobile md:p-margin-desktop w-full overflow-x-hidden flex flex-col gap-stack-lg pb-24 md:pb-8">
+<!-- Page Header -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div>
+<h1 class="font-title-md text-title-md text-primary dark:text-primary-fixed">Gestion de la Correspondance</h1>
+<!-- Woven-Rule Divider -->
+<div class="h-[1px] w-16 bg-tertiary-container mt-2 mb-2"></div>
+<p class="text-on-surface-variant dark:text-surface-variant">Suivi et traitement du courrier physique et numérique.</p>
+</div>
+<div class="flex items-center gap-3">
+<button class="bg-surface dark:bg-primary-container border border-outline-variant dark:border-outline text-on-surface dark:text-on-primary px-4 py-2 rounded-lg font-label-sm text-label-sm hover:bg-surface-variant dark:hover:bg-on-primary-fixed/20 transition-colors flex items-center gap-2 shadow-sm" onclick="document.getElementById('modalPhysique').classList.remove('hidden')">
+<span class="material-symbols-outlined text-[18px]">document_scanner</span>
+                        Courrier Physique
+                    </button>
+<button class="bg-primary dark:bg-primary-fixed text-on-primary dark:text-on-primary-fixed px-4 py-2 rounded-lg font-label-sm text-label-sm hover:bg-primary/90 dark:hover:bg-primary-fixed/90 transition-colors flex items-center gap-2 shadow-sm shadow-primary/20" onclick="document.getElementById('modalNumerique').classList.remove('hidden')">
+<span class="material-symbols-outlined text-[18px]">mail</span>
+                        Courrier Numérique
+                    </button>
+</div>
+</div>
+<!-- Overdue Alert -->
+<div class="bg-error-container/20 border-l-4 border-error p-4 rounded-r-lg flex items-start gap-3">
+<span class="material-symbols-outlined text-error mt-0.5">warning</span>
+<div>
+<h3 class="text-error font-bold font-label-sm text-label-sm uppercase tracking-wide">Action Requise</h3>
+<p class="text-on-surface dark:text-on-primary text-sm mt-1">3 dossiers ont un délai de traitement de plus de 8 jours dépassé.</p>
+</div>
+</div>
+<!-- Tabs -->
+<div class="border-b border-outline-variant/30 dark:border-outline/30 flex overflow-x-auto hide-scrollbar">
+<button class="px-6 py-3 border-b-2 border-tertiary-container text-primary dark:text-primary-fixed font-bold font-label-sm text-label-sm whitespace-nowrap">Toutes</button>
+<button class="px-6 py-3 border-b-2 border-transparent text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors font-label-sm text-label-sm whitespace-nowrap">Entrantes</button>
+<button class="px-6 py-3 border-b-2 border-transparent text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors font-label-sm text-label-sm whitespace-nowrap flex items-center gap-2">En traitement <span class="bg-surface-container-high dark:bg-on-primary-fixed-variant/50 text-xs px-2 py-0.5 rounded-full">12</span></button>
+<button class="px-6 py-3 border-b-2 border-transparent text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors font-label-sm text-label-sm whitespace-nowrap">Sortie</button>
+<button class="px-6 py-3 border-b-2 border-transparent text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors font-label-sm text-label-sm whitespace-nowrap">Archivées</button>
+</div>
+<!-- Table Container (Card) -->
+<div class="bg-white dark:bg-ink-900 rounded-2xl shadow-[0_1px_2px_rgba(15,27,46,0.06)] border border-ink-950/15 dark:border-white/10 overflow-hidden flex flex-col">
+<!-- Table Controls -->
+<div class="p-4 border-b border-ink-950/10 dark:border-white/10 flex justify-between items-center bg-surface-bright dark:bg-primary-container">
+<div class="relative w-64">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant dark:text-surface-variant text-sm">search</span>
+<input class="w-full bg-transparent border-none py-1 pl-10 pr-4 focus:ring-0 text-sm placeholder:text-on-surface-variant/50" placeholder="Filtrer la liste..." type="text"/>
+</div>
+<button class="text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed">
+<span class="material-symbols-outlined">filter_list</span>
+</button>
+</div>
+<div class="overflow-x-auto table-container">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface/50 dark:bg-on-primary-fixed/5 border-b border-ink-950/10 dark:border-white/10">
+<th class="p-4 font-label-sm text-label-sm text-on-surface-variant dark:text-surface-variant font-medium uppercase tracking-wider">Objet</th>
+<th class="p-4 font-label-sm text-label-sm text-on-surface-variant dark:text-surface-variant font-medium uppercase tracking-wider">Correspondant</th>
+<th class="p-4 font-label-sm text-label-sm text-on-surface-variant dark:text-surface-variant font-medium uppercase tracking-wider">Sens</th>
+<th class="p-4 font-label-sm text-label-sm text-on-surface-variant dark:text-surface-variant font-medium uppercase tracking-wider">État</th>
+<th class="p-4 font-label-sm text-label-sm text-on-surface-variant dark:text-surface-variant font-medium uppercase tracking-wider">Reçu le</th>
+<th class="p-4 font-label-sm text-label-sm text-on-surface-variant dark:text-surface-variant font-medium uppercase tracking-wider text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="font-body-md text-sm divide-y divide-ink-950/5 dark:divide-white/5">
+<!-- Row 1: Overdue -->
+<tr class="hover:bg-surface-container-lowest/50 dark:hover:bg-on-primary-fixed/10 transition-colors group">
+<td class="p-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-error-container/30 text-error flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[18px]">priority_high</span>
+</div>
+<div>
+<p class="font-medium text-primary dark:text-primary-fixed line-clamp-1">Demande de certificat de baptême</p>
+<p class="text-xs text-error font-medium mt-0.5">Délai 8 jours dépassé</p>
+</div>
+</div>
+</td>
+<td class="p-4 text-on-surface-variant dark:text-surface-variant">Marie Dubois</td>
+<td class="p-4">
+<span class="inline-flex items-center gap-1 text-xs font-medium text-on-surface-variant dark:text-surface-variant bg-surface-container-high dark:bg-on-primary-fixed-variant/50 px-2 py-1 rounded-md">
+<span class="material-symbols-outlined text-[14px]">arrow_downward</span> Entrant
+                                    </span>
+</td>
+<td class="p-4">
+<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-error-container/20 text-error border border-error/20">
+                                        En attente
+                                    </span>
+</td>
+<td class="p-4 text-on-surface-variant dark:text-surface-variant font-numeric-md">12 Oct 2026</td>
+<td class="p-4 text-right">
+<div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 text-on-surface-variant hover:text-tertiary-container hover:bg-tertiary-container/10 rounded-md transition-colors" title="Envoyer accusé"><span class="material-symbols-outlined text-[18px]">done_all</span></button>
+<button class="p-1.5 text-on-surface-variant hover:text-tertiary-container hover:bg-tertiary-container/10 rounded-md transition-colors" title="Mettre en traitement"><span class="material-symbols-outlined text-[18px]">pending_actions</span></button>
+<button class="p-1.5 text-on-surface-variant hover:text-tertiary-container hover:bg-tertiary-container/10 rounded-md transition-colors" title="Archiver"><span class="material-symbols-outlined text-[18px]">archive</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 2: In Progress -->
+<tr class="hover:bg-surface-container-lowest/50 dark:hover:bg-on-primary-fixed/10 transition-colors group">
+<td class="p-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container-highest dark:bg-on-primary-fixed-variant/30 text-primary dark:text-primary-fixed flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[18px]">description</span>
+</div>
+<div>
+<p class="font-medium text-primary dark:text-primary-fixed line-clamp-1">Devis rénovation toiture</p>
+<p class="text-xs text-on-surface-variant dark:text-surface-variant mt-0.5">Réf: DEV-2026-042</p>
+</div>
+</div>
+</td>
+<td class="p-4 text-on-surface-variant dark:text-surface-variant">Entreprise Martin BTP</td>
+<td class="p-4">
+<span class="inline-flex items-center gap-1 text-xs font-medium text-on-surface-variant dark:text-surface-variant bg-surface-container-high dark:bg-on-primary-fixed-variant/50 px-2 py-1 rounded-md">
+<span class="material-symbols-outlined text-[14px]">arrow_downward</span> Entrant
+                                    </span>
+</td>
+<td class="p-4">
+<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-tertiary-container/20 text-tertiary-container border border-tertiary-container/20">
+                                        En traitement
+                                    </span>
+</td>
+<td class="p-4 text-on-surface-variant dark:text-surface-variant font-numeric-md">20 Oct 2026</td>
+<td class="p-4 text-right">
+<div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 text-on-surface-variant hover:text-tertiary-container hover:bg-tertiary-container/10 rounded-md transition-colors" title="Envoyer accusé"><span class="material-symbols-outlined text-[18px]">done_all</span></button>
+<button class="p-1.5 text-on-surface-variant hover:text-tertiary-container hover:bg-tertiary-container/10 rounded-md transition-colors" title="Archiver"><span class="material-symbols-outlined text-[18px]">archive</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 3: Outgoing -->
+<tr class="hover:bg-surface-container-lowest/50 dark:hover:bg-on-primary-fixed/10 transition-colors group">
+<td class="p-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container-highest dark:bg-on-primary-fixed-variant/30 text-primary dark:text-primary-fixed flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[18px]">mark_email_read</span>
+</div>
+<div>
+<p class="font-medium text-primary dark:text-primary-fixed line-clamp-1">Invitation Assemblée Générale</p>
+<p class="text-xs text-on-surface-variant dark:text-surface-variant mt-0.5">Campagne d'emails</p>
+</div>
+</div>
+</td>
+<td class="p-4 text-on-surface-variant dark:text-surface-variant">Membres (Groupe)</td>
+<td class="p-4">
+<span class="inline-flex items-center gap-1 text-xs font-medium text-on-surface-variant dark:text-surface-variant bg-surface-container-high dark:bg-on-primary-fixed-variant/50 px-2 py-1 rounded-md">
+<span class="material-symbols-outlined text-[14px]">arrow_upward</span> Sortant
+                                    </span>
+</td>
+<td class="p-4">
+<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-surface-dim/30 text-on-surface-variant border border-on-surface-variant/20 dark:bg-on-primary-fixed-variant/30 dark:text-surface-variant">
+                                        Envoyé
+                                    </span>
+</td>
+<td class="p-4 text-on-surface-variant dark:text-surface-variant font-numeric-md">24 Oct 2026</td>
+<td class="p-4 text-right">
+<div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 text-on-surface-variant hover:text-tertiary-container hover:bg-tertiary-container/10 rounded-md transition-colors" title="Archiver"><span class="material-symbols-outlined text-[18px]">archive</span></button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="p-4 border-t border-ink-950/10 dark:border-white/10 flex items-center justify-between bg-surface-bright dark:bg-primary-container">
+<p class="text-xs text-on-surface-variant dark:text-surface-variant">Affichage 1 à 3 sur 142</p>
+<div class="flex items-center gap-2">
+<button class="w-8 h-8 flex items-center justify-center rounded border border-ink-950/10 dark:border-white/10 text-on-surface-variant hover:bg-surface-variant transition-colors disabled:opacity-50" disabled=""><span class="material-symbols-outlined text-[18px]">chevron_left</span></button>
+<button class="w-8 h-8 flex items-center justify-center rounded bg-tertiary-container text-on-tertiary-container text-sm font-medium">1</button>
+<button class="w-8 h-8 flex items-center justify-center rounded border border-ink-950/10 dark:border-white/10 text-on-surface-variant hover:bg-surface-variant dark:hover:bg-on-primary-fixed/20 transition-colors text-sm font-medium">2</button>
+<button class="w-8 h-8 flex items-center justify-center rounded border border-ink-950/10 dark:border-white/10 text-on-surface-variant hover:bg-surface-variant dark:hover:bg-on-primary-fixed/20 transition-colors text-sm font-medium">3</button>
+<span class="text-on-surface-variant">...</span>
+<button class="w-8 h-8 flex items-center justify-center rounded border border-ink-950/10 dark:border-white/10 text-on-surface-variant hover:bg-surface-variant dark:hover:bg-on-primary-fixed/20 transition-colors"><span class="material-symbols-outlined text-[18px]">chevron_right</span></button>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Bottom Navigation Bar (Mobile) -->
+<nav class="lg:hidden fixed bottom-0 left-0 w-full h-16 flex justify-around items-center z-50 px-4 bg-surface-container-lowest/90 dark:bg-primary-container/90 backdrop-blur-xl border-t border-tertiary-container/30 shadow-[0_-4px_10px_rgba(0,0,0,0.05)] rounded-t-xl pb-safe">
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 active:bg-surface-container-high transition-transform duration-200" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="home">home</span>
+<span class="font-label-sm text-label-sm-mobile">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 active:bg-surface-container-high transition-transform duration-200" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="calendar_month">calendar_month</span>
+<span class="font-label-sm text-label-sm-mobile">Events</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 active:bg-surface-container-high transition-transform duration-200" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="volunteer_activism">volunteer_activism</span>
+<span class="font-label-sm text-label-sm-mobile">Giving</span>
+</a>
+<a class="flex flex-col items-center justify-center text-tertiary font-bold after:content-[''] after:w-1 after:h-1 after:bg-tertiary after:rounded-full after:mt-1 scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="mail">mail</span>
+<span class="font-label-sm text-label-sm-mobile">Courrier</span>
+</a>
+</nav>
+<!-- Modals -->
+<!-- Modal: Courrier Physique -->
+<div class="hidden fixed inset-0 z-[100] flex items-center justify-center px-4" id="modalPhysique">
+<div class="absolute inset-0 bg-ink-950/50 backdrop-blur-sm" onclick="this.parentElement.classList.add('hidden')"></div>
+<div class="relative bg-white dark:bg-ink-900 rounded-2xl shadow-[0_10px_15px_-3px_rgba(15,27,46,0.1)] border border-ink-950/15 dark:border-white/10 w-full max-w-md p-6 overflow-hidden">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-title-md text-title-md text-primary dark:text-primary-fixed">Nouveau Courrier Physique</h3>
+<button class="text-on-surface-variant hover:text-primary transition-colors" onclick="document.getElementById('modalPhysique').classList.add('hidden')">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="space-y-4">
+<div class="border-2 border-dashed border-outline-variant/50 dark:border-outline/50 rounded-xl p-8 flex flex-col items-center justify-center text-center bg-surface-container-lowest/50 dark:bg-on-primary-fixed/5 hover:bg-surface-variant/50 transition-colors cursor-pointer group">
+<div class="w-16 h-16 rounded-full bg-surface-container-high dark:bg-on-primary-fixed-variant/50 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-3xl text-primary dark:text-primary-fixed">document_scanner</span>
+</div>
+<p class="font-medium text-primary dark:text-primary-fixed mb-1">Scanner un document</p>
+<p class="text-xs text-on-surface-variant dark:text-surface-variant">Utilisez la caméra ou un scanner connecté</p>
+</div>
+<div class="relative flex items-center py-2">
+<div class="flex-grow border-t border-outline-variant/30"></div>
+<span class="flex-shrink-0 mx-4 text-xs text-on-surface-variant">OU SAISIE MANUELLE</span>
+<div class="flex-grow border-t border-outline-variant/30"></div>
+</div>
+<div>
+<label class="block text-xs font-label-sm text-on-surface-variant dark:text-surface-variant mb-1 uppercase tracking-wide">Objet</label>
+<input class="w-full bg-parchment-100 dark:bg-ink-800 border border-ink-950/10 dark:border-white/10 rounded-lg p-3 focus:ring-2 focus:ring-tertiary-container focus:outline-none text-sm text-on-surface dark:text-on-primary" type="text"/>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="block text-xs font-label-sm text-on-surface-variant dark:text-surface-variant mb-1 uppercase tracking-wide">Expéditeur</label>
+<input class="w-full bg-parchment-100 dark:bg-ink-800 border border-ink-950/10 dark:border-white/10 rounded-lg p-3 focus:ring-2 focus:ring-tertiary-container focus:outline-none text-sm text-on-surface dark:text-on-primary" type="text"/>
+</div>
+<div>
+<label class="block text-xs font-label-sm text-on-surface-variant dark:text-surface-variant mb-1 uppercase tracking-wide">Date de réception</label>
+<input class="w-full bg-parchment-100 dark:bg-ink-800 border border-ink-950/10 dark:border-white/10 rounded-lg p-3 focus:ring-2 focus:ring-tertiary-container focus:outline-none text-sm text-on-surface dark:text-on-primary font-numeric-md" type="date"/>
+</div>
+</div>
+</div>
+<div class="mt-8 flex justify-end gap-3">
+<button class="px-4 py-2 border border-ink-950/15 dark:border-white/10 text-on-surface dark:text-on-primary rounded-lg text-sm font-medium hover:bg-surface-variant dark:hover:bg-on-primary-fixed/20 transition-colors" onclick="document.getElementById('modalPhysique').classList.add('hidden')">Annuler</button>
+<button class="px-4 py-2 bg-ink-950 dark:bg-tertiary-container text-parchment-50 dark:text-on-tertiary-container rounded-lg text-sm font-medium hover:bg-ink-800 transition-colors shadow-sm">Enregistrer</button>
+</div>
+</div>
+</div>
+<!-- Script for simple interactions -->
+<script>
+        // Theme toggle logic
+        const themeToggleBtn = document.getElementById('themeToggleBtn');
+        const htmlElement = document.documentElement;
+
+        themeToggleBtn.addEventListener('click', () => {
+            if (htmlElement.classList.contains('dark')) {
+                htmlElement.classList.remove('dark');
+                htmlElement.classList.add('light');
+            } else {
+                htmlElement.classList.remove('light');
+                htmlElement.classList.add('dark');
+            }
+        });
+    </script>
+</body></html>

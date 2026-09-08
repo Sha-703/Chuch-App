@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ChurchApp - Départements</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&amp;family=IBM+Plex+Mono:wght@400;500&amp;family=Work+Sans:wght@400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-fixed": "#101c2f",
+                        "surface-variant": "#d8e2ff",
+                        "primary-fixed": "#d7e3fd",
+                        "on-tertiary-container": "#4f3d00",
+                        "outline-variant": "#c5c6cd",
+                        "surface-container-highest": "#d8e2ff",
+                        "on-background": "#031b3e",
+                        "on-surface-variant": "#45474c",
+                        "on-secondary": "#ffffff",
+                        "tertiary": "#755b00",
+                        "on-tertiary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-primary-container": "#78849c",
+                        "surface-dim": "#cbdaff",
+                        "secondary-container": "#e1e0da",
+                        "tertiary-container": "#cea72c",
+                        "on-secondary-fixed": "#1b1c19",
+                        "primary": "#000000",
+                        "on-primary": "#ffffff",
+                        "surface-container-low": "#f1f3ff",
+                        "primary-container": "#101c2f",
+                        "tertiary-fixed-dim": "#ecc246",
+                        "inverse-surface": "#1c3054",
+                        "tertiary-fixed": "#ffe08e",
+                        "on-tertiary-fixed-variant": "#584400",
+                        "surface-tint": "#535f75",
+                        "outline": "#75777d",
+                        "on-surface": "#031b3e",
+                        "on-tertiary-fixed": "#241a00",
+                        "on-secondary-container": "#63635e",
+                        "surface-bright": "#f9f9ff",
+                        "background": "#f9f9ff",
+                        "inverse-on-surface": "#edf0ff",
+                        "secondary-fixed-dim": "#c8c6c1",
+                        "surface": "#f9f9ff",
+                        "on-primary-fixed-variant": "#3c475c",
+                        "on-secondary-fixed-variant": "#474743",
+                        "secondary": "#5f5f5a",
+                        "error-container": "#ffdad6",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-high": "#e0e8ff",
+                        "secondary-fixed": "#e4e2dd",
+                        "on-error-container": "#93000a",
+                        "on-error": "#ffffff",
+                        "inverse-primary": "#bbc7e0",
+                        "surface-container": "#e9edff",
+                        "primary-fixed-dim": "#bbc7e0"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-desktop": "2.5rem",
+                        "sidebar-width": "16rem",
+                        "margin-mobile": "1rem",
+                        "gutter": "1.5rem",
+                        "stack-lg": "2rem",
+                        "stack-sm": "0.5rem",
+                        "stack-md": "1rem"
+                    },
+                    "fontFamily": {
+                        "numeric-md": ["IBM Plex Mono"],
+                        "title-md": ["Fraunces"],
+                        "headline-lg-mobile": ["Fraunces"],
+                        "label-sm": ["IBM Plex Mono"],
+                        "body-lg": ["Work Sans"],
+                        "headline-lg": ["Fraunces"],
+                        "display-lg": ["Fraunces"],
+                        "body-md": ["Work Sans"]
+                    },
+                    "fontSize": {
+                        "numeric-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "title-md": ["24px", { "lineHeight": "32px", "fontWeight": "500" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-fill {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-surface dark:bg-background text-on-surface dark:text-surface-variant font-body-md transition-colors duration-300 min-h-screen flex flex-col md:flex-row relative">
+<!-- TopNavBar (Mobile Only) -->
+<nav class="md:hidden flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop h-16 bg-surface/80 dark:bg-primary-container/80 backdrop-blur-md shadow-sm border-b border-outline-variant dark:border-outline docked full-width top-0 sticky z-40">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary dark:text-primary-fixed">menu</span>
+<h1 class="font-display-lg text-display-lg text-primary dark:text-primary-fixed">ChurchApp</h1>
+</div>
+<div class="flex gap-4">
+<span class="material-symbols-outlined text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors cursor-pointer">notifications</span>
+<span class="material-symbols-outlined text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors cursor-pointer" onclick="document.documentElement.classList.toggle('dark')">contrast</span>
+</div>
+</nav>
+<!-- SideNavBar (Desktop Only) -->
+<aside class="hidden lg:flex flex-col z-40 bg-primary-container dark:bg-primary-container fixed left-0 top-0 h-full w-sidebar-width shadow-lg border-r border-outline-variant/10">
+<div class="p-6 flex flex-col items-center gap-2 border-b border-outline-variant/10">
+<img alt="Church Logo" class="w-16 h-16 rounded-full bg-surface-container object-cover" data-alt="A refined, minimalist vector logo of a church steeple depicted with clean lines in a monochromatic palette, suitable for a modern religious app. The style is elegant and neo-classical." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBO7_aJ0sAYGuklxxM8ROGRgqVHiZ2Yo7t_7eWB3UzxzHSulrJzLY52iMnrm5xCANnKC-EVvPUPtXuWskAMXHI3zu7_KL5u-rG5c1EW1jLQRN-BRWrLBvvqnCROQqVjN2LZYt5-n8LnPLCq7FcNdodNbgioj2mRkkYQ7iUc_SIgxGSJxJ0wjaBIn_q4RK00_qp9UVm3IPSAJMOEdQNhFYvbg0-dimywHjgwAWDn2hUkxgu3uizlsEJ33Q"/>
+<h2 class="font-headline-lg text-headline-lg text-on-primary">ChurchApp</h2>
+<p class="font-label-sm text-label-sm text-surface-variant/70">Grace &amp; Peace</p>
+</div>
+<nav class="flex-1 py-6 flex flex-col gap-2">
+<!-- Inactive -->
+<a class="text-surface-variant/70 hover:text-surface-variant px-4 py-3 flex items-center gap-3 hover:bg-on-primary-fixed-variant/10 transition-all font-label-sm text-label-sm" href="#">
+<span class="material-symbols-outlined">church</span>
+                Sanctuary
+            </a>
+<!-- Active -->
+<a class="bg-tertiary-container/20 text-tertiary-fixed border-l-4 border-tertiary-container px-4 py-3 flex items-center gap-3 hover:bg-on-primary-fixed-variant/10 transition-all scale-95 duration-200 font-label-sm text-label-sm" href="#">
+<span class="material-symbols-outlined icon-fill">groups</span>
+                Community
+            </a>
+<a class="text-surface-variant/70 hover:text-surface-variant px-4 py-3 flex items-center gap-3 hover:bg-on-primary-fixed-variant/10 transition-all font-label-sm text-label-sm" href="#">
+<span class="material-symbols-outlined">auto_stories</span>
+                Sacraments
+            </a>
+<a class="text-surface-variant/70 hover:text-surface-variant px-4 py-3 flex items-center gap-3 hover:bg-on-primary-fixed-variant/10 transition-all font-label-sm text-label-sm" href="#">
+<span class="material-symbols-outlined">payments</span>
+                Giving
+            </a>
+<a class="text-surface-variant/70 hover:text-surface-variant px-4 py-3 flex items-center gap-3 hover:bg-on-primary-fixed-variant/10 transition-all font-label-sm text-label-sm" href="#">
+<span class="material-symbols-outlined">settings</span>
+                Settings
+            </a>
+</nav>
+<div class="p-6 mt-auto">
+<button class="w-full bg-tertiary-container text-on-tertiary-container py-3 rounded-lg font-label-sm text-label-sm shadow-md hover:opacity-90 transition-opacity">
+                Give Now
+            </button>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 lg:ml-sidebar-width pb-24 md:pb-8">
+<!-- Top App Bar (Desktop) -->
+<header class="hidden lg:flex items-center justify-between px-margin-desktop h-20 border-b border-outline-variant/15 dark:border-white/10 bg-surface/80 dark:bg-background/80 backdrop-blur-md sticky top-0 z-30">
+<h1 class="font-headline-lg text-headline-lg text-primary dark:text-primary-fixed">Départements &amp; RH</h1>
+<div class="flex items-center gap-6">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container-low dark:bg-surface-container rounded-full border-none focus:ring-2 focus:ring-tertiary-container text-body-md font-body-md w-64" placeholder="Rechercher..." type="text"/>
+</div>
+<button class="p-2 rounded-full hover:bg-surface-container-high transition-colors" onclick="document.documentElement.classList.toggle('dark')">
+<span class="material-symbols-outlined text-on-surface-variant dark:text-surface-variant">contrast</span>
+</button>
+<img alt="Profile" class="w-10 h-10 rounded-full object-cover shadow-sm" data-alt="A close up portrait of a middle aged man with a warm, welcoming expression, wearing a simple button down shirt. Lighting is soft and natural, suggesting approachability and leadership within a community setting. Neo-classical aesthetic with high contrast." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPoedCmjuHxLdlH9KfFZdn660zMLIMF2gb9DHIol1z26EQKUaU0F_T--WTRfBG0EB24eeqkrZA0nULfJg7Q5L-JTN4ZZt-Z74sQ9Bv414D21tC3rAM1hRXUoYWiLQRm_-j9pI9ePxBBXi9y-ax-GXJDP5N80nMOunGGNaBqG4N3KhF6NqDVvIRt3g2a4saPxz8hXuTN431E79Je7zhQtRaPeuoyu7FzTOImqA9M6T0eXUSCUqHbj-PdQ"/>
+</div>
+</header>
+<div class="p-margin-mobile md:p-margin-desktop max-w-7xl mx-auto space-y-8">
+<!-- Header Actions -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<h2 class="font-title-md text-title-md text-primary dark:text-primary-fixed">Gestion des Départements</h2>
+<div class="h-[1px] w-12 bg-tertiary-container mt-2"></div>
+<p class="text-on-surface-variant dark:text-surface-variant/80 mt-2 font-body-md">Gérez les équipes, suivez les présences et organisez le service.</p>
+</div>
+<button class="bg-primary dark:bg-primary-fixed text-on-primary dark:text-primary px-6 py-3 rounded-lg font-label-sm text-label-sm flex items-center gap-2 hover:opacity-90 transition-opacity shadow-sm self-start md:self-auto" onclick="document.getElementById('createModal').classList.remove('hidden')">
+<span class="material-symbols-outlined">add</span>
+                    Créer département
+                </button>
+</div>
+<!-- Dashboard Grid -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<!-- Department Overview Cards (Bento style) -->
+<div class="md:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-gutter">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest dark:bg-inverse-surface rounded-2xl p-6 shadow-sm border border-outline-variant/15 dark:border-white/10 relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-6xl">music_note</span>
+</div>
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-tertiary-container/20 flex items-center justify-center text-tertiary-container">
+<span class="material-symbols-outlined">queue_music</span>
+</div>
+<h3 class="font-title-md text-title-md">Chorale</h3>
+</div>
+<span class="bg-surface-container-high px-2 py-1 rounded text-xs font-numeric-md">24 Membres</span>
+</div>
+<p class="text-sm text-on-surface-variant dark:text-surface-variant/70 mb-4 line-clamp-2">Animation musicale des cultes et événements spéciaux.</p>
+<div class="h-[1px] bg-outline-variant/20 mb-4"></div>
+<div class="flex items-center justify-between">
+<div class="flex -space-x-2">
+<img class="w-8 h-8 rounded-full border-2 border-surface object-cover" data-alt="Small circular avatar portrait of a smiling woman singing in a choir setting. Soft lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBAysuhuFzlfLefUNIckwNDYAhuUHsPXedb1fqZNr_d3-DHhe2BNhx7WvNJWwwmOtfv4sCjTEXfmpGxXRZkEtY94AWOuD3_C-2danZ0jXVEO4MJIRnHTDcAI6dnDJ51-JmCaThJCrPWEXQpB-Mmrok7SRufiyAB2lXNzddLO6WkQ-5ifxB4f-HYHtbQes1QgJGnsSgKQUT2qGDT4Pv8EnDtJJ4OE5Vxs8DXnwirV9dVfweby8lF3XlTNA"/>
+<img class="w-8 h-8 rounded-full border-2 border-surface object-cover" data-alt="Small circular avatar portrait of a man holding a microphone. Soft lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDohU9Qyg7A1BKNyM6B9pvX61Mv7sF7EUMAw8FteRB4mEvxpwvN8IHp4hoo22kkDogwGAs_I0cNlQxKCzX36_Kirf-yco7q0DGCm2eGQlBqPWxr6L4UhMFcUJmNw4xWlNbXUnBjl1Wg38b9aEfJmd69kwf2W82wJ0ja-SyUoLAM7a-U6C2uez-t9Nv4QzOwdNFD5twEkNs7pZD8S5Q45YfHr46l8y64xvCbHyF1jtqC1HYN2UGkPxM2EQ"/>
+<img class="w-8 h-8 rounded-full border-2 border-surface object-cover" data-alt="Small circular avatar portrait of a woman looking focused, possibly reading sheet music. Soft lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1Kj8sSSYyM_Bqi4h5VSI-skU9oG4lCAY290qIZv-G5tNeZf53Oz-dUlsZpaS2OFNjM5A73_16li1f5CORgXVOvzxUs6-1lLr-BYjfgWK0x9ZK9W_df0AcKVwAmCwxHT024_QMbpZU3FWVR6EHynjSXUlBKJhfSVBVLZ77tfL6BaYocz_YYURomRfpO-losLTFQO-OfZs9nesCYVmUbMizt5jbCxB-4Xo-tIA-fnW5joKxhmXrrifriQ"/>
+<div class="w-8 h-8 rounded-full border-2 border-surface bg-surface-container-high flex items-center justify-center text-xs font-numeric-md">+21</div>
+</div>
+<button class="text-tertiary-container text-sm font-label-sm hover:underline">Voir détails</button>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest dark:bg-inverse-surface rounded-2xl p-6 shadow-sm border border-outline-variant/15 dark:border-white/10 relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-6xl">waving_hand</span>
+</div>
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-secondary-container/50 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined">volunteer_activism</span>
+</div>
+<h3 class="font-title-md text-title-md">Accueil</h3>
+</div>
+<span class="bg-surface-container-high px-2 py-1 rounded text-xs font-numeric-md">12 Membres</span>
+</div>
+<p class="text-sm text-on-surface-variant dark:text-surface-variant/70 mb-4 line-clamp-2">Réception des invités, placement et sécurité basique.</p>
+<div class="h-[1px] bg-outline-variant/20 mb-4"></div>
+<div class="flex items-center justify-between">
+<div class="flex -space-x-2">
+<img class="w-8 h-8 rounded-full border-2 border-surface object-cover" data-alt="Small circular avatar portrait of an elderly man with a warm smile, wearing a suit. Soft lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJdgMo1NGfyLYwEmhqwjIf5qMzj_38jZNhjt1d8SIO8wix88WAfUHBAJvh0ZVHFQLjewMuu2A_oE6LUXvvMZZlz-8SwTyq8p_mtFPTk_noslpu2VO-7X2IEigyE54Y1EUU9R-Kh815YVxASLXsHjgrFlyyFBAcrt0AEs3MKt6OPcL3gGcEXe4DXx4GwrCnAx9NcAEAeAqQ-jnfFIOxVALxmzjXrLsHFhPND_HboSjm2R5kWq2ytL_W_w"/>
+<img class="w-8 h-8 rounded-full border-2 border-surface object-cover" data-alt="Small circular avatar portrait of a young woman offering a welcoming gesture. Soft lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAb1afx76LlpVxfmZt8aECeDmZSXXuKqc16bRXCVuuCmN9h43gevHmUmhBQeAaUTt-TSMgpNKfzJwAl2JgH3lxPjcr9YZSQoBZZp8kkBVMdnNNwOF-DZ370Vzm6BCpmdYRzk56IKlvRdLEglwmRYocrrtLqqEqnlgR_E5cA0ziyzzz-oieB80CxZAMF-K1ZZQvYEcFd5EpbDI3RQZm5cQVP_z_4j1JloiS9aq4hKK-H3JhFJDZwDETHSQ"/>
+<div class="w-8 h-8 rounded-full border-2 border-surface bg-surface-container-high flex items-center justify-center text-xs font-numeric-md">+10</div>
+</div>
+<button class="text-tertiary-container text-sm font-label-sm hover:underline">Voir détails</button>
+</div>
+</div>
+</div>
+<!-- Worker Status List (Right Sidebar) -->
+<div class="md:col-span-4 bg-surface-container-lowest dark:bg-inverse-surface rounded-2xl p-6 shadow-sm border border-outline-variant/15 dark:border-white/10 h-fit">
+<h3 class="font-title-md text-title-md mb-2">Présences du Jour</h3>
+<div class="h-[1px] w-8 bg-tertiary-container mb-6"></div>
+<div class="space-y-4">
+<!-- Worker 1 -->
+<div class="p-3 border border-outline-variant/20 rounded-xl bg-surface-container-low dark:bg-surface-container/50">
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center gap-3">
+<img class="w-10 h-10 rounded-full object-cover" data-alt="Headshot of a dedicated church volunteer, a young man with a slight smile. Neo-classical portrait style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDOjVbebQQuVt3KCJAbfSkNJJloSvs9wbhnkPYVYomgmoJImpMGJeWXttUYBWC_263I3oBmCoyF88TbD2CrVOwcnjRYjEheR51vtcsrgmR9kVY_4VjGgP-BWr0TysZd1bBV4Vzld33iN6FLX_wxR-YUILiiV7Ae-h9AWR68WS45mEl3WRqx0j0_pSJrvzWOVEkAEc_JHFlpKH0r52OVcMBxfL4ZNKPhInN_lVO8l0oe0zQwrHzPr1D6hQ"/>
+<div>
+<p class="font-label-sm text-sm font-bold">Jean Dupont</p>
+<p class="text-xs text-on-surface-variant">Chorale</p>
+</div>
+</div>
+<span class="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 px-2 py-1 rounded text-xs font-numeric-md flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-green-500"></span>
+                                    Présent
+                                </span>
+</div>
+</div>
+<!-- Worker 2 (Absent) -->
+<div class="p-3 border border-outline-variant/20 rounded-xl bg-surface-container-low dark:bg-surface-container/50">
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center gap-3">
+<img class="w-10 h-10 rounded-full object-cover grayscale opacity-70" data-alt="Headshot of a middle-aged female church worker, looking thoughtful. Neo-classical portrait style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAgdX9MF32TRbaMRHrYfG19wSUNBzmesi62ogcRnzCez9eANbNDt9icBnDcY-3HL6g3ft90W0PZNLvxahVKr6GShMTz3uHFMnrVS_iaSGEiduKl7UXekFEkdGO7CtNMY3koFryBkGXywvMPTEmdij-z7In502TsOb00eeAPyfyfWenj9kj4rMAPtwybsiJoazkcOK10svBaKCpA9sCWvmlIfBCUPsd-MGQaXHsf8MZUgab_9BjACcG9fQ"/>
+<div>
+<p class="font-label-sm text-sm font-bold">Marie Curie</p>
+<p class="text-xs text-on-surface-variant">Accueil</p>
+</div>
+</div>
+<span class="bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400 px-2 py-1 rounded text-xs font-numeric-md flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-red-500"></span>
+                                    Absent
+                                </span>
+</div>
+<div class="mt-2">
+<input class="w-full text-xs py-1 px-2 bg-surface dark:bg-surface-container border border-outline-variant/30 rounded focus:ring-1 focus:ring-tertiary-container" placeholder="Motif d'absence..." readonly="" type="text" value="Maladie"/>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="lg:hidden fixed bottom-0 left-0 w-full h-16 flex justify-around items-center z-50 px-4 bg-surface-container-lowest/90 dark:bg-primary-container/90 backdrop-blur-xl border-t border-tertiary-container/30 rounded-t-xl shadow-[0_-4px_10px_rgba(0,0,0,0.05)]">
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 font-label-sm text-label-sm-mobile" href="#">
+<span class="material-symbols-outlined">home</span>
+<span>Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-tertiary font-bold after:content-[''] after:w-1 after:h-1 after:bg-tertiary after:rounded-full after:mt-1 font-label-sm text-label-sm-mobile scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined icon-fill">groups</span>
+<span>Groups</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 font-label-sm text-label-sm-mobile" href="#">
+<span class="material-symbols-outlined">calendar_month</span>
+<span>Events</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 font-label-sm text-label-sm-mobile" href="#">
+<span class="material-symbols-outlined">account_circle</span>
+<span>Profile</span>
+</a>
+</nav>
+<!-- Modal: Créer département -->
+<div class="hidden fixed inset-0 z-50 flex items-center justify-center bg-primary/40 backdrop-blur-sm p-4" id="createModal">
+<div class="bg-surface-container-lowest dark:bg-inverse-surface rounded-2xl w-full max-w-lg shadow-[0_10px_15px_-3px_rgba(15,27,46,0.1)] border border-outline-variant/15 dark:border-white/10 overflow-hidden flex flex-col max-h-[921px]">
+<div class="px-6 py-4 border-b border-outline-variant/20 flex justify-between items-center bg-surface-container-low dark:bg-surface-container">
+<h3 class="font-title-md text-title-md">Nouveau Département</h3>
+<button class="text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed" onclick="document.getElementById('createModal').classList.add('hidden')">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="p-6 overflow-y-auto space-y-6">
+<!-- Nom -->
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Nom du département</label>
+<input class="w-full bg-surface dark:bg-surface-container border border-outline-variant/30 rounded-lg px-4 py-2 focus:ring-2 focus:ring-tertiary-container/50 font-body-md" placeholder="Ex: Chorale des Jeunes" type="text"/>
+</div>
+<!-- Description -->
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Description</label>
+<textarea class="w-full bg-surface dark:bg-surface-container border border-outline-variant/30 rounded-lg px-4 py-2 focus:ring-2 focus:ring-tertiary-container/50 font-body-md" placeholder="Mission du département..." rows="3"></textarea>
+</div>
+<div class="h-[1px] bg-tertiary-container w-full"></div>
+<!-- Chef de département -->
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Chef de département</label>
+<select class="w-full bg-surface dark:bg-surface-container border border-outline-variant/30 rounded-lg px-4 py-2 focus:ring-2 focus:ring-tertiary-container/50 font-body-md">
+<option>Sélectionner un membre...</option>
+<option>Jean Dupont</option>
+<option>Marie Curie</option>
+</select>
+</div>
+<!-- Ouvriers / Membres (Multi-select simulation) -->
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Ouvriers (Membres)</label>
+<div class="border border-outline-variant/30 rounded-lg p-2 bg-surface dark:bg-surface-container min-h-[80px] flex flex-wrap gap-2 items-start">
+<span class="bg-surface-variant/50 text-sm px-2 py-1 rounded flex items-center gap-1">
+                            Paul Martin <span class="material-symbols-outlined text-[14px] cursor-pointer hover:text-error">close</span>
+</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-24" placeholder="Ajouter..." type="text"/>
+</div>
+</div>
+</div>
+<div class="px-6 py-4 border-t border-outline-variant/20 flex justify-end gap-3 bg-surface-container-low dark:bg-surface-container mt-auto">
+<button class="px-4 py-2 border border-outline-variant/50 rounded-lg text-on-surface-variant font-label-sm hover:bg-surface-variant/20 transition-colors" onclick="document.getElementById('createModal').classList.add('hidden')">Annuler</button>
+<button class="px-4 py-2 bg-primary dark:bg-primary-fixed text-on-primary dark:text-primary rounded-lg font-label-sm hover:opacity-90 transition-opacity">Enregistrer</button>
+</div>
+</div>
+</div>
+</body></html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ChurchApp - Login</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&amp;family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&amp;family=Work+Sans:ital,wght@0,100..900;1,100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-fixed": "#101c2f",
+                        "surface-variant": "#d8e2ff",
+                        "primary-fixed": "#d7e3fd",
+                        "on-tertiary-container": "#4f3d00",
+                        "outline-variant": "#c5c6cd",
+                        "surface-container-highest": "#d8e2ff",
+                        "on-background": "#031b3e",
+                        "on-surface-variant": "#45474c",
+                        "on-secondary": "#ffffff",
+                        "tertiary": "#755b00",
+                        "on-tertiary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-primary-container": "#78849c",
+                        "surface-dim": "#cbdaff",
+                        "secondary-container": "#e1e0da",
+                        "tertiary-container": "#cea72c",
+                        "on-secondary-fixed": "#1b1c19",
+                        "primary": "#000000",
+                        "on-primary": "#ffffff",
+                        "surface-container-low": "#f1f3ff",
+                        "primary-container": "#101c2f",
+                        "tertiary-fixed-dim": "#ecc246",
+                        "inverse-surface": "#1c3054",
+                        "tertiary-fixed": "#ffe08e",
+                        "on-tertiary-fixed-variant": "#584400",
+                        "surface-tint": "#535f75",
+                        "outline": "#75777d",
+                        "on-surface": "#031b3e",
+                        "on-tertiary-fixed": "#241a00",
+                        "on-secondary-container": "#63635e",
+                        "surface-bright": "#f9f9ff",
+                        "background": "#f9f9ff",
+                        "inverse-on-surface": "#edf0ff",
+                        "secondary-fixed-dim": "#c8c6c1",
+                        "surface": "#f9f9ff",
+                        "on-primary-fixed-variant": "#3c475c",
+                        "on-secondary-fixed-variant": "#474743",
+                        "secondary": "#5f5f5a",
+                        "error-container": "#ffdad6",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-high": "#e0e8ff",
+                        "secondary-fixed": "#e4e2dd",
+                        "on-error-container": "#93000a",
+                        "on-error": "#ffffff",
+                        "inverse-primary": "#bbc7e0",
+                        "surface-container": "#e9edff",
+                        "primary-fixed-dim": "#bbc7e0"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-desktop": "2.5rem",
+                        "sidebar-width": "16rem",
+                        "margin-mobile": "1rem",
+                        "gutter": "1.5rem",
+                        "stack-lg": "2rem",
+                        "stack-sm": "0.5rem",
+                        "stack-md": "1rem"
+                    },
+                    "fontFamily": {
+                        "numeric-md": ["IBM Plex Mono"],
+                        "title-md": ["Fraunces"],
+                        "headline-lg-mobile": ["Fraunces"],
+                        "label-sm": ["IBM Plex Mono"],
+                        "body-lg": ["Work Sans"],
+                        "headline-lg": ["Fraunces"],
+                        "display-lg": ["Fraunces"],
+                        "body-md": ["Work Sans"]
+                    },
+                    "fontSize": {
+                        "numeric-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "title-md": ["24px", { "lineHeight": "32px", "fontWeight": "500" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col">
+<!-- TopNavBar Suppressed per instruction for Login flow -->
+<main class="flex-grow flex flex-col lg:flex-row">
+<!-- Left Column: Image -->
+<section class="lg:w-1/2 relative min-h-[409px] lg:min-h-screen flex items-center justify-center p-8 lg:p-margin-desktop overflow-hidden bg-primary-container">
+<div class="absolute inset-0 z-0" data-alt="A breathtaking, wide-angle interior shot of a majestic classical cathedral. Sunlight streams through ornate stained glass windows, casting ethereal, colorful rays across ancient stone pillars and wooden pews. The atmosphere is solemn, peaceful, and awe-inspiring, designed with a high-contrast Neo-Classical aesthetic. Deep shadows contrast with bright divine light, emphasizing the sacred geometry of the architecture. Organic tones of stone and subtle golden highlights reinforce the Modern Liturgical style." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuArytOEkunCCATc3G4h_GHqobNf2NZlkkcCrReo4Us2ZoLkcAwPDLzTEXOyBRKmqfik6AxKyBq595Yr0WrSfVOTi5glmJjTkwL9OvbP2gKHFZgYevoHG5dc9v9BUbhKivL7JBZCPAc_5yKO5mEE71SCw2ZofBVYIuuCW9sgdrYLPc1O_O8xtSzDO2GPGw28_ALREXUR-II3oGN4cyHG7LtKanXC-IOhgd0RtTootxoyVU9rFKr6MWeK_g')">
+<div class="absolute inset-0 bg-primary-container/85"></div>
+</div>
+<div class="relative z-10 text-center lg:text-left max-w-lg mx-auto lg:mx-0">
+<h1 class="font-display-lg text-display-lg text-on-primary mb-6">Chaque offrande comptée, chaque âme servie.</h1>
+<p class="font-body-lg text-body-lg text-on-primary/80">Rejoignez la communauté ChurchApp pour gérer votre église avec grâce et efficacité.</p>
+</div>
+</section>
+<!-- Right Column: Login Form -->
+<section class="lg:w-1/2 flex items-center justify-center p-8 lg:p-margin-desktop bg-surface">
+<div class="w-full max-w-md">
+<div class="text-center mb-10">
+<div class="font-display-lg text-display-lg text-primary mb-2 flex items-center justify-center gap-3">
+<span class="material-symbols-outlined text-4xl" data-weight="fill" style="font-variation-settings: 'FILL' 1;">church</span>
+                        ChurchApp
+                    </div>
+<p class="font-body-md text-body-md text-on-surface-variant">Bienvenue. Connectez-vous à votre espace.</p>
+</div>
+<!-- Woven Rule Divider -->
+<div class="h-px bg-tertiary-container mb-10 w-24 mx-auto lg:mx-0"></div>
+<form class="space-y-6">
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-2 uppercase tracking-wider" for="email">Adresse Email</label>
+<input class="w-full bg-surface-container-lowest border-outline-variant rounded p-3 font-body-md text-body-md focus:ring-2 focus:ring-tertiary-container/50 focus:border-tertiary-container transition-all" id="email" placeholder="exemple@eglise.fr" type="email"/>
+</div>
+<div>
+<div class="flex justify-between items-center mb-2">
+<label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider" for="password">Mot de passe</label>
+<a class="font-label-sm text-label-sm text-tertiary hover:text-primary transition-colors" href="#">Mot de passe oublié ?</a>
+</div>
+<input class="w-full bg-surface-container-lowest border-outline-variant rounded p-3 font-body-md text-body-md focus:ring-2 focus:ring-tertiary-container/50 focus:border-tertiary-container transition-all" id="password" placeholder="••••••••" type="password"/>
+</div>
+<button class="w-full bg-primary text-on-primary font-label-sm text-label-sm py-4 rounded-lg hover:bg-primary-container transition-colors uppercase tracking-wider flex justify-center items-center gap-2" type="submit">
+                        Se connecter
+                        <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</form>
+<div class="mt-8 text-center">
+<p class="font-body-md text-body-md text-on-surface-variant">
+                        Nouveau sur ChurchApp ? 
+                        <a class="font-label-sm text-label-sm text-tertiary font-bold hover:text-primary transition-colors uppercase tracking-wider ml-2" href="#">Créer un compte</a>
+</p>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full py-8 mt-auto border-t border-tertiary-container bg-tertiary-container h-[1px] mb-8 bg-surface dark:bg-background max-w-7xl mx-auto px-margin-desktop flex flex-col items-center gap-4">
+<div class="h-[1px] bg-tertiary-container w-full mb-8"></div>
+<p class="font-body-md text-body-md text-on-surface-variant dark:text-surface-variant">© 2026 ChurchApp</p>
+<div class="flex gap-6">
+<a class="font-label-sm text-label-sm text-on-surface-variant/60 hover:text-tertiary transition-colors" href="#">Privacy Policy</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant/60 hover:text-tertiary transition-colors" href="#">Terms of Service</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant/60 hover:text-tertiary transition-colors" href="#">Contact Support</a>
+</div>
+</footer>
+</body></html>

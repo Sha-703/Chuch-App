@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ChurchApp - Annonces</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&amp;family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&amp;family=Work+Sans:ital,wght@0,100..900;1,100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-fixed": "#101c2f",
+                        "surface-variant": "#d8e2ff",
+                        "primary-fixed": "#d7e3fd",
+                        "on-tertiary-container": "#4f3d00",
+                        "outline-variant": "#c5c6cd",
+                        "surface-container-highest": "#d8e2ff",
+                        "on-background": "#031b3e",
+                        "on-surface-variant": "#45474c",
+                        "on-secondary": "#ffffff",
+                        "tertiary": "#755b00",
+                        "on-tertiary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-primary-container": "#78849c",
+                        "surface-dim": "#cbdaff",
+                        "secondary-container": "#e1e0da",
+                        "tertiary-container": "#cea72c",
+                        "on-secondary-fixed": "#1b1c19",
+                        "primary": "#000000",
+                        "on-primary": "#ffffff",
+                        "surface-container-low": "#f1f3ff",
+                        "primary-container": "#101c2f",
+                        "tertiary-fixed-dim": "#ecc246",
+                        "inverse-surface": "#1c3054",
+                        "tertiary-fixed": "#ffe08e",
+                        "on-tertiary-fixed-variant": "#584400",
+                        "surface-tint": "#535f75",
+                        "outline": "#75777d",
+                        "on-surface": "#031b3e",
+                        "on-tertiary-fixed": "#241a00",
+                        "on-secondary-container": "#63635e",
+                        "surface-bright": "#f9f9ff",
+                        "background": "#f9f9ff",
+                        "inverse-on-surface": "#edf0ff",
+                        "secondary-fixed-dim": "#c8c6c1",
+                        "surface": "#f9f9ff",
+                        "on-primary-fixed-variant": "#3c475c",
+                        "on-secondary-fixed-variant": "#474743",
+                        "secondary": "#5f5f5a",
+                        "error-container": "#ffdad6",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-high": "#e0e8ff",
+                        "secondary-fixed": "#e4e2dd",
+                        "on-error-container": "#93000a",
+                        "on-error": "#ffffff",
+                        "inverse-primary": "#bbc7e0",
+                        "surface-container": "#e9edff",
+                        "primary-fixed-dim": "#bbc7e0"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-desktop": "2.5rem",
+                        "sidebar-width": "16rem",
+                        "margin-mobile": "1rem",
+                        "gutter": "1.5rem",
+                        "stack-lg": "2rem",
+                        "stack-sm": "0.5rem",
+                        "stack-md": "1rem"
+                    },
+                    "fontFamily": {
+                        "numeric-md": ["IBM Plex Mono"],
+                        "title-md": ["Fraunces"],
+                        "headline-lg-mobile": ["Fraunces"],
+                        "label-sm": ["IBM Plex Mono"],
+                        "body-lg": ["Work Sans"],
+                        "headline-lg": ["Fraunces"],
+                        "display-lg": ["Fraunces"],
+                        "body-md": ["Work Sans"]
+                    },
+                    "fontSize": {
+                        "numeric-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "title-md": ["24px", { "lineHeight": "32px", "fontWeight": "500" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: theme('colors.surface');
+            color: theme('colors.on-surface');
+        }
+        .dark body {
+            background-color: theme('colors.background');
+            color: theme('colors.on-surface');
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen bg-surface dark:bg-background text-on-surface transition-colors duration-300">
+<!-- TopNavBar (Mobile Only) -->
+<header class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop h-16 bg-surface/80 dark:bg-primary-container/80 backdrop-blur-md text-primary dark:text-primary-fixed docked full-width top-0 sticky border-b border-outline-variant dark:border-outline shadow-sm z-50 lg:hidden">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined cursor-pointer hover:text-primary dark:hover:text-primary-fixed transition-colors" data-icon="search">search</span>
+</div>
+<div class="font-display-lg text-display-lg text-primary dark:text-primary-fixed font-title-md text-title-md">
+            ChurchApp
+        </div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined cursor-pointer hover:text-primary dark:hover:text-primary-fixed transition-colors" data-icon="notifications">notifications</span>
+<span class="material-symbols-outlined cursor-pointer hover:text-primary dark:hover:text-primary-fixed transition-colors" data-icon="contrast" id="theme-toggle-mobile">contrast</span>
+<img alt="User profile" class="w-8 h-8 rounded-full object-cover border border-outline-variant" data-alt="A small circular profile picture of a person smiling, set against a warm, neutral background. The lighting is soft and natural, fitting a modern, community-focused app design." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDMDC4XIQ1M9xJAwRA-NobZ8ZAtskqRBNgUkuAfr-KoAD42kKmbfj36gsrjccVCg4qEnj2oMnaAVNGKxup5z1Fcs1uyTXcU5nj5UsK-jioVd5E6nIlEltn9-UH_QY7oSwv-jpKvl0FMW5VsctYz5iETyG8Y5_rNP3nL0u4auv-Ky0Noxv813TtJgi75wHVaqnQmZzv3BN_BkwIAJB_R5AvO5ZVKott9wzD84zV-7msfFo2luoOxJnxXGg"/>
+</div>
+</header>
+<div class="flex flex-1 w-full max-w-[1440px] mx-auto relative">
+<!-- SideNavBar (Desktop) -->
+<nav class="hidden lg:flex flex-col z-40 fixed left-0 top-0 h-full w-sidebar-width border-r border-outline-variant/10 shadow-lg bg-primary-container dark:bg-primary-container text-on-primary dark:text-on-primary">
+<div class="p-6 flex flex-col gap-2">
+<img alt="Church Logo" class="w-12 h-12 rounded-xl bg-surface mb-2" data-alt="A minimalist line-art logo of a church, colored in a deep, rich ink tone on a pale parchment background. The style is neo-classical and clean." src="https://lh3.googleusercontent.com/aida-public/AB6AXuArLkA7Rc284da-Tsxj6ayiKMrp0g75bqtDlbJyXVikWl-4Sc-0pWga5kAdAqsWgUmxjKkOfyvZECpez3TihRgMXkRbaQlYCKdWjqufA0Hy9qTaWDkT0dTnxanzjv7jUfDLOwBpZAHPjQBCyaeettZk0foWtrNLDmmwG7LRTiBFQPcZcEypaJTMyTlZWxKPZD2f2Ae01f1WPNUgVhRbAmvhqmV8QiwQXUMFAQUJLEDkpwRRkeKQBeM67w"/>
+<h1 class="font-headline-lg text-headline-lg text-on-primary">ChurchApp</h1>
+<p class="font-label-sm text-label-sm text-on-primary/70">Grace &amp; Peace</p>
+</div>
+<div class="flex flex-col gap-2 mt-8 flex-1">
+<a class="text-surface-variant/70 hover:text-surface-variant px-4 py-3 flex items-center gap-3 font-label-sm text-label-sm hover:bg-on-primary-fixed-variant/10 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="church">church</span>
+                    Sanctuary
+                </a>
+<a class="bg-tertiary-container/20 text-tertiary-fixed border-l-4 border-tertiary-container px-4 py-3 flex items-center gap-3 font-label-sm text-label-sm hover:bg-on-primary-fixed-variant/10 transition-all scale-95 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="groups">groups</span>
+                    Community
+                </a>
+<a class="text-surface-variant/70 hover:text-surface-variant px-4 py-3 flex items-center gap-3 font-label-sm text-label-sm hover:bg-on-primary-fixed-variant/10 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="auto_stories">auto_stories</span>
+                    Sacraments
+                </a>
+<a class="text-surface-variant/70 hover:text-surface-variant px-4 py-3 flex items-center gap-3 font-label-sm text-label-sm hover:bg-on-primary-fixed-variant/10 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+                    Giving
+                </a>
+</div>
+<div class="p-6 mt-auto">
+<a class="text-surface-variant/70 hover:text-surface-variant px-4 py-3 flex items-center gap-3 font-label-sm text-label-sm hover:bg-on-primary-fixed-variant/10 transition-all mb-4" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+                    Settings
+                </a>
+<button class="w-full bg-tertiary-container text-primary py-3 rounded-lg font-label-sm text-label-sm hover:bg-tertiary-fixed-dim transition-colors shadow-sm">
+                    Give Now
+                </button>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-1 w-full lg:ml-sidebar-width px-margin-mobile md:px-margin-desktop py-8 md:py-12 pb-24 md:pb-12 min-h-screen">
+<!-- Header & Actions -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-stack-lg gap-4">
+<div>
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-primary dark:text-primary-fixed mb-2">Annonces</h2>
+<div class="h-px bg-tertiary-container w-16 mb-4"></div>
+<p class="font-body-md text-on-surface-variant max-w-2xl">Restez informés des dernières nouvelles et événements de notre communauté.</p>
+</div>
+<div class="flex gap-3 w-full md:w-auto">
+<button class="hidden lg:flex items-center justify-center p-3 rounded-xl border border-outline-variant/30 text-on-surface hover:bg-surface-container transition-colors" id="theme-toggle-desktop">
+<span class="material-symbols-outlined" data-icon="contrast">contrast</span>
+</button>
+<button class="flex-1 md:flex-none flex items-center justify-center gap-2 bg-primary text-on-primary dark:bg-primary-fixed dark:text-primary px-6 py-3 rounded-xl font-label-sm text-label-sm hover:opacity-90 transition-opacity shadow-sm">
+<span class="material-symbols-outlined text-sm" data-icon="add">add</span>
+                        Créer annonce
+                    </button>
+</div>
+</div>
+<!-- Announcements Feed (Bento Grid Style) -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<!-- Featured Announcement -->
+<article class="col-span-1 md:col-span-12 lg:col-span-8 bg-surface-container-lowest dark:bg-primary-container rounded-2xl overflow-hidden shadow-[0_1px_2px_rgba(15,27,46,0.06)] border border-primary/10 dark:border-on-primary/10 flex flex-col md:flex-row h-full group hover:shadow-[0_10px_15px_-3px_rgba(15,27,46,0.1)] transition-shadow duration-300">
+<div class="w-full md:w-1/2 h-64 md:h-auto relative overflow-hidden">
+<img alt="Featured Image" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="A beautiful, sunlit interior of a modern sanctuary with wooden pews and warm natural light filtering through large architectural windows. The scene evokes peace and community gathering." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQofhQe5CZHNICVxa95U8DrzPTsebKryje3unByUnXIzAxpTcoJrB9atsN5p1Rt0APv3p_3NhPo1i_4J_O1UTqkvc-jEdkH2v0dHDVOqqiPuuClvA8MpDKMC1RGgxzVzfs9oeECryvHP1JMkcoIbwiA5UracBv3HKOZRYNYhTRDCQ47C1J2U7AHhPuaZzLT2UX12keSP3LAoCXOx8MVqb088ftRCPy5Sb_FSUQgw4YkKfNivXzgk3Ayg"/>
+<div class="absolute top-4 left-4 bg-tertiary-container text-primary px-3 py-1 rounded-full font-label-sm text-label-sm shadow-sm backdrop-blur-sm">
+                            Événement Spécial
+                        </div>
+</div>
+<div class="w-full md:w-1/2 p-6 md:p-8 flex flex-col justify-center">
+<div class="flex items-center gap-3 mb-4 text-on-surface-variant font-numeric-md text-numeric-md text-sm">
+<span class="material-symbols-outlined text-[18px]" data-icon="event">event</span>
+<time>15 Octobre 2026</time>
+</div>
+<h3 class="font-title-md text-title-md text-primary dark:text-primary-fixed mb-4">Retraite Spirituelle de Printemps</h3>
+<p class="font-body-md text-on-surface-variant mb-6 flex-1 line-clamp-3">Rejoignez-nous pour un week-end de ressourcement spirituel, de prière et de communion fraternelle dans le cadre paisible du Monastère des Collines. Places limitées.</p>
+<div class="flex items-center justify-between mt-auto pt-4 border-t border-outline-variant/20">
+<div class="flex items-center gap-3">
+<img alt="Author" class="w-10 h-10 rounded-full object-cover" data-alt="A professional headshot of an elderly pastor with a kind smile, wearing a simple dark shirt. Warm, inviting lighting on a clean, light parchment background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBHBz39Q-TuqWkNRtW7UGyLstkelVg3GyXvHQx8GBiR52LaZQCOTBGrX-nB8sGQQTqGwDuOYlAhO772TjWOwmWECrjVrVBWkKYZt8PPLrTlRgZtm5AibVQhSDlzPwkc93X9tvxDl_lPnyg50VWeBUcwqzdLzTdOctq4RMw99aAhftSiuZUKpgLiO9Q8NsXw92SIVTfqL7KETSATB39f1yDGd5FsgJPRnZcXsPa6-gSwx8Sa-nmWErmFcQ"/>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-primary dark:text-primary-fixed">Père Thomas</span>
+<span class="font-numeric-md text-numeric-md text-xs text-on-surface-variant">Pasteur Principal</span>
+</div>
+</div>
+<button class="text-tertiary hover:text-tertiary-container transition-colors">
+<span class="material-symbols-outlined" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Standard Announcement 1 -->
+<article class="col-span-1 md:col-span-6 lg:col-span-4 bg-surface-container-lowest dark:bg-primary-container rounded-2xl p-6 shadow-[0_1px_2px_rgba(15,27,46,0.06)] border border-primary/10 dark:border-on-primary/10 flex flex-col hover:shadow-[0_10px_15px_-3px_rgba(15,27,46,0.1)] transition-shadow duration-300">
+<div class="flex items-center gap-3 mb-4 text-on-surface-variant font-numeric-md text-numeric-md text-sm">
+<span class="material-symbols-outlined text-[18px]" data-icon="campaign">campaign</span>
+<time>Aujourd'hui</time>
+</div>
+<h3 class="font-title-md text-title-md text-primary dark:text-primary-fixed mb-3 line-clamp-2">Nouveaux horaires de la chorale</h3>
+<p class="font-body-md text-on-surface-variant mb-6 flex-1 line-clamp-4">Les répétitions de la chorale du dimanche matin sont déplacées à 19h00 le jeudi soir. Nouveaux membres bienvenus !</p>
+<div class="flex items-center gap-3 pt-4 border-t border-outline-variant/20 mt-auto">
+<div class="w-8 h-8 rounded-full bg-surface-variant flex items-center justify-center text-primary font-label-sm">MC</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Marie Dubois</span>
+</div>
+</article>
+<!-- Standard Announcement 2 -->
+<article class="col-span-1 md:col-span-6 lg:col-span-4 bg-surface-container-lowest dark:bg-primary-container rounded-2xl p-6 shadow-[0_1px_2px_rgba(15,27,46,0.06)] border border-primary/10 dark:border-on-primary/10 flex flex-col hover:shadow-[0_10px_15px_-3px_rgba(15,27,46,0.1)] transition-shadow duration-300 relative overflow-hidden">
+<div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(circle at 100% 100%, var(--tw-colors-tertiary-container) 0, transparent 50%);"></div>
+<div class="flex items-center gap-3 mb-4 text-on-surface-variant font-numeric-md text-numeric-md text-sm relative z-10">
+<span class="material-symbols-outlined text-[18px]" data-icon="volunteer_activism">volunteer_activism</span>
+<time>Hier</time>
+</div>
+<h3 class="font-title-md text-title-md text-primary dark:text-primary-fixed mb-3 line-clamp-2 relative z-10">Appel aux bénévoles: Soupe Populaire</h3>
+<p class="font-body-md text-on-surface-variant mb-6 flex-1 line-clamp-4 relative z-10">Nous avons besoin de 5 personnes pour aider à la préparation et au service ce samedi. Votre temps est précieux.</p>
+<div class="flex items-center gap-3 pt-4 border-t border-outline-variant/20 mt-auto relative z-10">
+<img alt="Author" class="w-8 h-8 rounded-full object-cover" data-alt="A close up of a young woman's face, smiling gently. She has curly hair and is wearing a modest linen blouse. The background is softly blurred in earthy tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCFtsRzmfkhVfLuFCg14s0mI5fZwkjcAcCDWazUYCfjflZAEgg-BfAZYJsDeioHUB6QXM2cB2Kq1PIdSnxRgcz214TX__ErSs2giR_iDm-YKMzHQhpENw1B_aiCbxr6maJt4hU-vaXi-D9IECByE8ttK-hMkVr7TMCJCkqIVPIOGsppEnyoWxJu7u1eEMmgTJn_IYqoNIi9927IN7F9PZL-JFZccAFjX69ul0kOJcuospgIQjr6eZhKQw"/>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Équipe Diaconie</span>
+</div>
+</article>
+<!-- Image Announcement -->
+<article class="col-span-1 md:col-span-12 lg:col-span-8 bg-surface-container-lowest dark:bg-primary-container rounded-2xl overflow-hidden shadow-[0_1px_2px_rgba(15,27,46,0.06)] border border-primary/10 dark:border-on-primary/10 flex flex-col hover:shadow-[0_10px_15px_-3px_rgba(15,27,46,0.1)] transition-shadow duration-300">
+<div class="h-48 w-full relative">
+<img alt="Youth Group" class="w-full h-full object-cover" data-alt="A group of diverse teenagers sitting in a circle during a youth group meeting, engaged in discussion. The setting is a cozy, modern room with warm ambient lighting and soft textures." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBOnyiiFfFdvoQNq3T1Pqthlxisa7omq_Fz9n6n4qXSeoVz477WW6NxbVfSZbm8EMjoAYHIDsfXbANEr8D_qieyQ6gOGyqmL5TKUnNxzBHY6NfevZkzKr2c1ZXrpfzgihXqIKnieflir9yiriJx34hTS8-WIyUxEQyyma6qNsp-4lNv7NoHcZb3YnnHeI_vXro6ll-JwVYpud9DQvV6ReJ6k0Gbg2Dg9VHn2OioN_HilI4b7vdJUksWJQ"/>
+</div>
+<div class="p-6 flex flex-col">
+<div class="flex items-center justify-between mb-3">
+<div class="flex items-center gap-3 text-on-surface-variant font-numeric-md text-numeric-md text-sm">
+<span class="material-symbols-outlined text-[18px]" data-icon="forum">forum</span>
+<time>10 Octobre 2026</time>
+</div>
+<span class="bg-surface-variant/50 text-on-surface px-2 py-1 rounded font-label-sm text-xs">Jeunesse</span>
+</div>
+<h3 class="font-title-md text-title-md text-primary dark:text-primary-fixed mb-3">Lancement du groupe de jeunes</h3>
+<p class="font-body-md text-on-surface-variant mb-4 line-clamp-2">Une nouvelle saison commence pour les 15-18 ans. Au programme : partage, jeux, et étude biblique adaptée.</p>
+<div class="flex items-center gap-3 pt-4 border-t border-outline-variant/20 mt-auto">
+<div class="w-8 h-8 rounded-full bg-surface-variant flex items-center justify-center text-primary font-label-sm">LJ</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Luc &amp; Jeanne</span>
+</div>
+</div>
+</article>
+</div>
+<!-- Load More -->
+<div class="mt-12 flex justify-center w-full border-t border-outline-variant/20 pt-8">
+<button class="px-8 py-3 rounded-full border border-primary/20 dark:border-on-primary/20 text-primary dark:text-primary-fixed font-label-sm text-label-sm hover:bg-surface-container transition-colors">
+                     Charger plus d'annonces
+                 </button>
+</div>
+</main>
+</div>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="lg:hidden fixed bottom-0 left-0 w-full h-16 flex justify-around items-center z-50 px-4 bg-surface-container-lowest/90 dark:bg-primary-container/90 backdrop-blur-xl rounded-t-xl border-t border-tertiary-container/30 shadow-[0_-4px_10px_rgba(0,0,0,0.05)] text-primary dark:text-primary-fixed">
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 active:bg-surface-container-high p-2 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="home">home</span>
+<span class="font-label-sm text-label-sm text-[10px]">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-tertiary font-bold after:content-[''] after:w-1 after:h-1 after:bg-tertiary after:rounded-full after:mt-1 active:bg-surface-container-high p-2 rounded-lg transition-transform scale-90 duration-200" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="calendar_month" style="font-variation-settings: 'FILL' 1;">calendar_month</span>
+<span class="font-label-sm text-label-sm text-[10px]">Events</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 active:bg-surface-container-high p-2 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="volunteer_activism">volunteer_activism</span>
+<span class="font-label-sm text-label-sm text-[10px]">Giving</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 active:bg-surface-container-high p-2 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="account_circle">account_circle</span>
+<span class="font-label-sm text-label-sm text-[10px]">Profile</span>
+</a>
+</nav>
+<script>
+        // Simple Theme Toggle Logic
+        const toggleTheme = () => {
+            document.documentElement.classList.toggle('dark');
+        };
+
+        const mobileToggle = document.getElementById('theme-toggle-mobile');
+        const desktopToggle = document.getElementById('theme-toggle-desktop');
+
+        if(mobileToggle) mobileToggle.addEventListener('click', toggleTheme);
+        if(desktopToggle) desktopToggle.addEventListener('click', toggleTheme);
+    </script>
+</body></html>

@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Cultes &amp; Présence - ChurchApp</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&amp;family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&amp;family=Work+Sans:ital,wght@0,100..900;1,100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-fixed": "#101c2f",
+                        "surface-variant": "#d8e2ff",
+                        "primary-fixed": "#d7e3fd",
+                        "on-tertiary-container": "#4f3d00",
+                        "outline-variant": "#c5c6cd",
+                        "surface-container-highest": "#d8e2ff",
+                        "on-background": "#031b3e",
+                        "on-surface-variant": "#45474c",
+                        "on-secondary": "#ffffff",
+                        "tertiary": "#755b00",
+                        "on-tertiary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-primary-container": "#78849c",
+                        "surface-dim": "#cbdaff",
+                        "secondary-container": "#e1e0da",
+                        "tertiary-container": "#cea72c",
+                        "on-secondary-fixed": "#1b1c19",
+                        "primary": "#000000",
+                        "on-primary": "#ffffff",
+                        "surface-container-low": "#f1f3ff",
+                        "primary-container": "#101c2f",
+                        "tertiary-fixed-dim": "#ecc246",
+                        "inverse-surface": "#1c3054",
+                        "tertiary-fixed": "#ffe08e",
+                        "on-tertiary-fixed-variant": "#584400",
+                        "surface-tint": "#535f75",
+                        "outline": "#75777d",
+                        "on-surface": "#031b3e",
+                        "on-tertiary-fixed": "#241a00",
+                        "on-secondary-container": "#63635e",
+                        "surface-bright": "#f9f9ff",
+                        "background": "#f9f9ff",
+                        "inverse-on-surface": "#edf0ff",
+                        "secondary-fixed-dim": "#c8c6c1",
+                        "surface": "#f9f9ff",
+                        "on-primary-fixed-variant": "#3c475c",
+                        "on-secondary-fixed-variant": "#474743",
+                        "secondary": "#5f5f5a",
+                        "error-container": "#ffdad6",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-high": "#e0e8ff",
+                        "secondary-fixed": "#e4e2dd",
+                        "on-error-container": "#93000a",
+                        "on-error": "#ffffff",
+                        "inverse-primary": "#bbc7e0",
+                        "surface-container": "#e9edff",
+                        "primary-fixed-dim": "#bbc7e0"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-desktop": "2.5rem",
+                        "sidebar-width": "16rem",
+                        "margin-mobile": "1rem",
+                        "gutter": "1.5rem",
+                        "stack-lg": "2rem",
+                        "stack-sm": "0.5rem",
+                        "stack-md": "1rem"
+                    },
+                    "fontFamily": {
+                        "numeric-md": ["IBM Plex Mono"],
+                        "title-md": ["Fraunces"],
+                        "headline-lg-mobile": ["Fraunces"],
+                        "label-sm": ["IBM Plex Mono"],
+                        "body-lg": ["Work Sans"],
+                        "headline-lg": ["Fraunces"],
+                        "display-lg": ["Fraunces"],
+                        "body-md": ["Work Sans"]
+                    },
+                    "fontSize": {
+                        "numeric-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "title-md": ["24px", { "lineHeight": "32px", "fontWeight": "500" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined[data-weight="fill"] {
+            font-variation-settings: 'FILL' 1;
+        }
+        
+        /* Smooth transitions for theme toggle */
+        body {
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .theme-transition * {
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, fill 0.3s ease;
+        }
+
+        /* Woven rule */
+        .woven-rule {
+            height: 1px;
+            background: linear-gradient(90deg, transparent 0%, rgba(206,167,44,0.5) 15%, rgba(206,167,44,1) 50%, rgba(206,167,44,0.5) 85%, transparent 100%);
+            margin: 1rem 0;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body class="bg-surface dark:bg-primary-container text-on-surface dark:text-on-primary-fixed-variant min-h-screen font-body-md text-body-md flex theme-transition">
+<!-- TopNavBar (Mobile/Tablet Top) -->
+<header class="md:hidden flex justify-between items-center w-full px-margin-mobile h-16 bg-surface/80 dark:bg-primary-container/80 backdrop-blur-md text-primary dark:text-primary-fixed docked full-width top-0 sticky border-b border-outline-variant dark:border-outline shadow-sm z-50">
+<div class="flex items-center gap-4">
+<span class="font-display-lg text-[24px] font-bold text-primary dark:text-primary-fixed">ChurchApp</span>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors" id="mobileThemeToggle">
+<span class="material-symbols-outlined" data-icon="contrast">contrast</span>
+</button>
+<button class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<img alt="User profile" class="w-8 h-8 rounded-full object-cover" data-alt="A small circular profile picture of a person looking forward in a softly lit, modern environment. Neo-classical minimal style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVRV9GAx0vzjZASQZpyR6tYsFEysx5t3zcGuFIRx5e8bl9KbEQ3AmFdXrtU42sQg3GKNLhTTc49b1enMo1MVmX0nhsSqIp9RfHFPNc8Htg4XiW0cdbR1BOQ3FytU5ncT4hr4JeYMaFJWJA5N7PjNpzFzanVFbIh95Cv-uSx1nzsFyRter_rD_deKLjyHxjtnt8dVkp0W0cwi2omIFsrQjXvRsGQjzxSmBAZ5StgBEfLLNzxSHwSfHg4Q"/>
+</div>
+</header>
+<!-- SideNavBar (Desktop/Tablet) -->
+<nav class="hidden md:flex flex-col z-40 bg-primary-container dark:bg-primary-container text-on-primary dark:text-on-primary font-label-sm text-label-sm fixed left-0 top-0 h-full w-20 lg:w-sidebar-width border-r border-outline-variant/10 shadow-lg transition-all duration-300">
+<div class="p-6 flex flex-col lg:flex-row items-center gap-4 mb-4">
+<img alt="Church Logo" class="w-10 h-10 rounded-lg object-cover" data-alt="A beautifully crafted, minimalist church logo symbol etched in metallic gold on a dark slate background, conveying reverence and modernity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDn5idPA1ISWgORNcUON83VXGACzJr1n4z1l4mlfH5M2TNm0O2js3xWCwaHA9nhPCR3_Be5MckNkCHH5VD51mpz9SEG1misg3-EaegL87Q_l7_wXCvJw4sSKSuTX3i0T5J2AHN09fNYocX6ErJM83HCrhz_94PTmnlRAQ6cGENKuwG9dgTD-OajZBHpuJpKDy5SMovMelfm1hp7Q0eOpEagPjfp4xjV85dtxIU_9OJ-XhWWFXr_sDT6PA"/>
+<div class="hidden lg:block">
+<h1 class="font-headline-lg text-[20px] leading-tight text-on-primary">ChurchApp</h1>
+<p class="text-surface-variant/70 text-[10px] uppercase tracking-wider">Grace &amp; Peace</p>
+</div>
+</div>
+<div class="flex-1 px-3 space-y-2">
+<a class="bg-tertiary-container/20 text-tertiary-fixed border-l-4 border-tertiary-container px-4 py-3 flex items-center justify-center lg:justify-start gap-3 rounded-r-lg group" href="#">
+<span class="material-symbols-outlined" data-icon="church" data-weight="fill">church</span>
+<span class="hidden lg:block font-bold">Sanctuary</span>
+</a>
+<a class="text-surface-variant/70 hover:text-surface-variant px-4 py-3 flex items-center justify-center lg:justify-start gap-3 border-l-4 border-transparent hover:bg-on-primary-fixed-variant/10 transition-all rounded-r-lg group" href="#">
+<span class="material-symbols-outlined" data-icon="groups">groups</span>
+<span class="hidden lg:block">Community</span>
+</a>
+<a class="text-surface-variant/70 hover:text-surface-variant px-4 py-3 flex items-center justify-center lg:justify-start gap-3 border-l-4 border-transparent hover:bg-on-primary-fixed-variant/10 transition-all rounded-r-lg group" href="#">
+<span class="material-symbols-outlined" data-icon="auto_stories">auto_stories</span>
+<span class="hidden lg:block">Sacraments</span>
+</a>
+<a class="text-surface-variant/70 hover:text-surface-variant px-4 py-3 flex items-center justify-center lg:justify-start gap-3 border-l-4 border-transparent hover:bg-on-primary-fixed-variant/10 transition-all rounded-r-lg group" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span class="hidden lg:block">Giving</span>
+</a>
+</div>
+<div class="p-4 mt-auto">
+<a class="text-surface-variant/70 hover:text-surface-variant px-4 py-3 flex items-center justify-center lg:justify-start gap-3 border-l-4 border-transparent hover:bg-on-primary-fixed-variant/10 transition-all rounded-r-lg group" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="hidden lg:block">Settings</span>
+</a>
+<button class="w-full mt-4 bg-tertiary-container text-on-tertiary-container hover:bg-tertiary-fixed transition-colors py-2 rounded-lg font-bold flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]">volunteer_activism</span>
+<span class="hidden lg:block">Give Now</span>
+</button>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col w-full md:ml-20 lg:ml-sidebar-width min-h-screen">
+<!-- Desktop Header -->
+<header class="hidden md:flex justify-between items-center w-full px-margin-desktop h-20 bg-surface/80 dark:bg-primary-container/80 backdrop-blur-md sticky top-0 z-30 border-b border-outline-variant/20 dark:border-outline/20">
+<div>
+<h2 class="font-title-md text-title-md text-primary dark:text-primary-fixed">Cultes &amp; Présence</h2>
+</div>
+<div class="flex items-center gap-4">
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant dark:text-surface-variant hover:bg-surface-variant/50 dark:hover:bg-primary-fixed-dim/20 transition-colors" id="desktopThemeToggle">
+<span class="material-symbols-outlined" data-icon="contrast">contrast</span>
+</button>
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant dark:text-surface-variant hover:bg-surface-variant/50 dark:hover:bg-primary-fixed-dim/20 transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<div class="h-8 w-px bg-outline-variant/30 dark:bg-outline/30 mx-2"></div>
+<button class="flex items-center gap-3 bg-surface-container dark:bg-inverse-surface rounded-full py-1 pr-4 pl-1 hover:shadow-sm transition-shadow border border-outline-variant/10 dark:border-white/5">
+<img alt="User Profile" class="w-8 h-8 rounded-full object-cover" data-alt="A high-quality close up of a thoughtful person in modern attire, soft cinematic lighting, neutral background, suitable for a refined neo-classical application profile photo." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCuyRl1KrB47jSvAGKnxZZ22OSfenpKnmL6p8Hpouq8mKmuFqcey29DuCmrcPYQreKXBMXtZ6V5pfw5mPJTwLYN9Ao_IAevyxT4t8WdjDuQEj3oWHjdZCiiMzEiqQEIqxbyF57eLaoduyO7MlUqQ5S2zQwELsxkVfwI1x3Tm5LhhNI-qQI33Fp_ZtAuJ_m3uSx5a6ZRv3MUpRDtYIAX4MIXNsgY6B35gzXtDU0eYZP29RxzcT-P28lfeQ"/>
+<span class="font-label-sm text-[13px] font-medium text-on-surface dark:text-primary-fixed">Pasteur Jean</span>
+</button>
+</div>
+</header>
+<!-- Content Canvas -->
+<div class="flex-1 p-margin-mobile md:p-margin-desktop space-y-8 max-w-7xl mx-auto w-full pb-24 md:pb-8">
+<!-- Header Actions -->
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+<div>
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface dark:text-on-primary">Tableau de Bord</h1>
+<p class="text-on-surface-variant dark:text-surface-variant/80 mt-1">Aperçu de la fréquentation des cultes récents.</p>
+</div>
+<button class="bg-primary dark:bg-primary-fixed text-on-primary dark:text-primary-container px-6 py-3 rounded-lg font-label-sm text-label-sm font-bold shadow-sm hover:opacity-90 transition-opacity flex items-center gap-2" onclick="openModal()">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+                    Enregistrer culte
+                </button>
+</div>
+<div class="woven-rule"></div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<!-- Chart Card (Spans 2 columns) -->
+<div class="lg:col-span-2 bg-white dark:bg-inverse-surface rounded-2xl p-6 shadow-sm border border-primary/10 dark:border-white/5">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-title-md text-[20px] text-on-surface dark:text-primary-fixed">Évolution de la Présence</h3>
+<div class="flex gap-4 font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant dark:text-surface-variant">
+<span class="flex items-center gap-1"><div class="w-2 h-2 rounded-full bg-tertiary-container"></div> Présentiel</span>
+<span class="flex items-center gap-1"><div class="w-2 h-2 rounded-full bg-primary dark:bg-primary-fixed-dim"></div> En ligne</span>
+</div>
+</div>
+<div class="h-64 w-full relative">
+<canvas id="presenceChart"></canvas>
+</div>
+</div>
+<!-- Summary Stats (Spans 1 column vertically) -->
+<div class="flex flex-col gap-6">
+<div class="bg-tertiary-container/10 dark:bg-tertiary-container/20 rounded-2xl p-6 shadow-sm border border-tertiary-container/30 relative overflow-hidden group">
+<div class="absolute -right-4 -top-4 w-24 h-24 bg-tertiary-container/20 rounded-full blur-xl group-hover:scale-110 transition-transform"></div>
+<h4 class="font-label-sm text-label-sm text-tertiary dark:text-tertiary-fixed uppercase tracking-widest mb-2">Moyenne ce mois</h4>
+<div class="font-display-lg text-[40px] text-on-surface dark:text-on-primary">342</div>
+<div class="flex items-center gap-1 text-[13px] text-tertiary dark:text-tertiary-fixed font-medium mt-2">
+<span class="material-symbols-outlined text-[16px]">trending_up</span> +12% vs mois dernier
+                        </div>
+</div>
+<div class="bg-surface-container dark:bg-inverse-surface/50 rounded-2xl p-6 shadow-sm border border-primary/5 dark:border-white/5">
+<h4 class="font-label-sm text-label-sm text-on-surface-variant dark:text-surface-variant uppercase tracking-widest mb-4">Répartition globale</h4>
+<div class="space-y-4">
+<div>
+<div class="flex justify-between text-[13px] mb-1 text-on-surface dark:text-primary-fixed">
+<span>Présentiel</span>
+<span class="font-numeric-md font-medium">68%</span>
+</div>
+<div class="w-full bg-surface-variant dark:bg-primary-container h-2 rounded-full overflow-hidden">
+<div class="bg-tertiary-container h-full rounded-full" style="width: 68%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-[13px] mb-1 text-on-surface dark:text-primary-fixed">
+<span>En ligne</span>
+<span class="font-numeric-md font-medium">32%</span>
+</div>
+<div class="w-full bg-surface-variant dark:bg-primary-container h-2 rounded-full overflow-hidden">
+<div class="bg-primary dark:bg-primary-fixed-dim h-full rounded-full" style="width: 32%"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Historique Table -->
+<div class="bg-white dark:bg-inverse-surface rounded-2xl shadow-sm border border-primary/10 dark:border-white/5 overflow-hidden">
+<div class="p-6 border-b border-outline-variant/20 dark:border-outline/20 flex justify-between items-center bg-surface-bright/50 dark:bg-transparent">
+<h3 class="font-title-md text-[20px] text-on-surface dark:text-primary-fixed">Historique des Cultes</h3>
+<button class="text-tertiary dark:text-tertiary-fixed hover:underline font-label-sm text-[13px]">Voir tout</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface/50 dark:bg-primary-container/30 border-b border-outline-variant/20 dark:border-outline/20 font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant dark:text-surface-variant/80">
+<th class="py-4 px-6 font-medium">Culte</th>
+<th class="py-4 px-6 font-medium hidden sm:table-cell">Prédicateur</th>
+<th class="py-4 px-6 font-medium">Date</th>
+<th class="py-4 px-6 font-medium text-right">Présentiel</th>
+<th class="py-4 px-6 font-medium text-right hidden md:table-cell">En ligne</th>
+<th class="py-4 px-6 font-medium text-right">Total</th>
+</tr>
+</thead>
+<tbody class="text-[14px] divide-y divide-outline-variant/10 dark:divide-white/5 font-body-md text-on-surface dark:text-primary-fixed/90">
+<tr class="hover:bg-surface-container-low/50 dark:hover:bg-primary-container/40 transition-colors">
+<td class="py-4 px-6 font-medium flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-tertiary-container/10 flex items-center justify-center text-tertiary-container">
+<span class="material-symbols-outlined text-[18px]">light_mode</span>
+</div>
+                                    Culte Dominical
+                                </td>
+<td class="py-4 px-6 hidden sm:table-cell">Pst. Emmanuel</td>
+<td class="py-4 px-6 font-numeric-md">12 Nov 2023</td>
+<td class="py-4 px-6 font-numeric-md text-right">245</td>
+<td class="py-4 px-6 font-numeric-md text-right hidden md:table-cell text-on-surface-variant dark:text-surface-variant">112</td>
+<td class="py-4 px-6 font-numeric-md text-right font-bold text-tertiary dark:text-tertiary-fixed">357</td>
+</tr>
+<tr class="hover:bg-surface-container-low/50 dark:hover:bg-primary-container/40 transition-colors">
+<td class="py-4 px-6 font-medium flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-surface-variant dark:bg-primary-container flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">book</span>
+</div>
+                                    Étude Biblique
+                                </td>
+<td class="py-4 px-6 hidden sm:table-cell">Fr. Thomas</td>
+<td class="py-4 px-6 font-numeric-md">08 Nov 2023</td>
+<td class="py-4 px-6 font-numeric-md text-right">85</td>
+<td class="py-4 px-6 font-numeric-md text-right hidden md:table-cell text-on-surface-variant dark:text-surface-variant">210</td>
+<td class="py-4 px-6 font-numeric-md text-right font-bold text-tertiary dark:text-tertiary-fixed">295</td>
+</tr>
+<tr class="hover:bg-surface-container-low/50 dark:hover:bg-primary-container/40 transition-colors">
+<td class="py-4 px-6 font-medium flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-tertiary-container/10 flex items-center justify-center text-tertiary-container">
+<span class="material-symbols-outlined text-[18px]">light_mode</span>
+</div>
+                                    Culte Dominical
+                                </td>
+<td class="py-4 px-6 hidden sm:table-cell">Pst. Jean</td>
+<td class="py-4 px-6 font-numeric-md">05 Nov 2023</td>
+<td class="py-4 px-6 font-numeric-md text-right">260</td>
+<td class="py-4 px-6 font-numeric-md text-right hidden md:table-cell text-on-surface-variant dark:text-surface-variant">95</td>
+<td class="py-4 px-6 font-numeric-md text-right font-bold text-tertiary dark:text-tertiary-fixed">355</td>
+</tr>
+<tr class="hover:bg-surface-container-low/50 dark:hover:bg-primary-container/40 transition-colors">
+<td class="py-4 px-6 font-medium flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary/5 dark:bg-primary-container/50 flex items-center justify-center text-primary dark:text-primary-fixed-dim">
+<span class="material-symbols-outlined text-[18px]">group</span>
+</div>
+                                    Réunion Jeunesse
+                                </td>
+<td class="py-4 px-6 hidden sm:table-cell">Sr. Marie</td>
+<td class="py-4 px-6 font-numeric-md">03 Nov 2023</td>
+<td class="py-4 px-6 font-numeric-md text-right">120</td>
+<td class="py-4 px-6 font-numeric-md text-right hidden md:table-cell text-on-surface-variant dark:text-surface-variant">45</td>
+<td class="py-4 px-6 font-numeric-md text-right font-bold text-tertiary dark:text-tertiary-fixed">165</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Footer -->
+<footer class="w-full py-8 mt-auto max-w-7xl mx-auto flex flex-col items-center gap-4 bg-surface dark:bg-background text-on-surface-variant dark:text-surface-variant font-body-md text-body-md">
+<div class="border-t border-tertiary-container bg-tertiary-container h-[1px] mb-8 w-full opacity-30"></div>
+<div class="flex gap-6 font-label-sm text-label-sm">
+<a class="hover:text-tertiary transition-colors" href="#">Privacy Policy</a>
+<a class="hover:text-tertiary transition-colors" href="#">Terms of Service</a>
+<a class="hover:text-tertiary transition-colors" href="#">Contact Support</a>
+</div>
+<div class="text-[12px] opacity-70">© 2026 ChurchApp</div>
+</footer>
+</div>
+</main>
+<!-- BottomNavBar (Mobile) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full h-16 flex justify-around items-center z-50 px-4 bg-surface-container-lowest/90 dark:bg-primary-container/90 backdrop-blur-xl border-t border-tertiary-container/30 shadow-[0_-4px_10px_rgba(0,0,0,0.05)] rounded-t-xl pb-safe">
+<a class="flex flex-col items-center justify-center text-tertiary font-bold after:content-[''] after:w-1 after:h-1 after:bg-tertiary after:rounded-full after:mt-1 active:bg-surface-container-high active:scale-90 transition-transform duration-200 p-2 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="home" data-weight="fill">home</span>
+<span class="font-label-sm text-[10px] mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 hover:opacity-100 active:bg-surface-container-high transition-all p-2 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_month">calendar_month</span>
+<span class="font-label-sm text-[10px] mt-1">Events</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 hover:opacity-100 active:bg-surface-container-high transition-all p-2 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="volunteer_activism">volunteer_activism</span>
+<span class="font-label-sm text-[10px] mt-1">Giving</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 hover:opacity-100 active:bg-surface-container-high transition-all p-2 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+<span class="font-label-sm text-[10px] mt-1">Profile</span>
+</a>
+</nav>
+<!-- Modal: Enregistrer Culte -->
+<div class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4" id="addCulteModal">
+<!-- Backdrop -->
+<div class="absolute inset-0 bg-primary/40 dark:bg-primary/60 backdrop-blur-sm transition-opacity" onclick="closeModal()"></div>
+<!-- Modal Content -->
+<div class="relative bg-white dark:bg-inverse-surface w-full max-w-lg rounded-2xl shadow-[0_10px_25px_-5px_rgba(0,0,0,0.1),0_8px_10px_-6px_rgba(0,0,0,0.1)] border border-primary/10 dark:border-white/10 overflow-hidden transform scale-95 opacity-0 transition-all duration-300" id="modalContent">
+<div class="px-6 py-4 border-b border-outline-variant/20 dark:border-outline/20 flex justify-between items-center bg-surface-bright/50 dark:bg-primary-container/30">
+<h3 class="font-title-md text-[20px] text-on-surface dark:text-on-primary">Enregistrer un culte</h3>
+<button class="text-on-surface-variant hover:text-on-surface dark:text-surface-variant dark:hover:text-primary-fixed transition-colors" onclick="closeModal()">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="p-6 space-y-5">
+<div>
+<label class="block font-label-sm text-[12px] uppercase tracking-wider text-on-surface-variant dark:text-surface-variant mb-2">Type de Culte</label>
+<select class="w-full bg-surface-container-low dark:bg-primary-container border border-outline-variant/30 dark:border-outline/30 text-on-surface dark:text-primary-fixed rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-tertiary-container/50 focus:border-tertiary-container outline-none transition-shadow font-body-md">
+<option>Culte Dominical</option>
+<option>Étude Biblique</option>
+<option>Réunion de Prière</option>
+<option>Événement Spécial</option>
+</select>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="block font-label-sm text-[12px] uppercase tracking-wider text-on-surface-variant dark:text-surface-variant mb-2">Date</label>
+<input class="w-full bg-surface-container-low dark:bg-primary-container border border-outline-variant/30 dark:border-outline/30 text-on-surface dark:text-primary-fixed rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-tertiary-container/50 outline-none font-numeric-md" type="date"/>
+</div>
+<div>
+<label class="block font-label-sm text-[12px] uppercase tracking-wider text-on-surface-variant dark:text-surface-variant mb-2">Prédicateur</label>
+<input class="w-full bg-surface-container-low dark:bg-primary-container border border-outline-variant/30 dark:border-outline/30 text-on-surface dark:text-primary-fixed rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-tertiary-container/50 outline-none font-body-md placeholder:text-outline-variant" placeholder="Nom..." type="text"/>
+</div>
+</div>
+<div class="woven-rule"></div>
+<div class="grid grid-cols-2 gap-6">
+<div class="bg-tertiary-container/5 rounded-xl p-4 border border-tertiary-container/20">
+<label class="flex items-center gap-2 font-label-sm text-[12px] uppercase tracking-wider text-tertiary dark:text-tertiary-fixed mb-3">
+<span class="material-symbols-outlined text-[16px]">church</span>
+                            Présentiel
+                        </label>
+<input class="w-full bg-white dark:bg-inverse-surface border border-outline-variant/30 dark:border-outline/30 text-on-surface dark:text-primary-fixed rounded-lg px-4 py-3 text-center text-[20px] focus:ring-2 focus:ring-tertiary-container/50 outline-none font-numeric-md" placeholder="0" type="number"/>
+</div>
+<div class="bg-primary/5 dark:bg-primary-container/30 rounded-xl p-4 border border-primary/10 dark:border-white/10">
+<label class="flex items-center gap-2 font-label-sm text-[12px] uppercase tracking-wider text-on-surface dark:text-primary-fixed-dim mb-3">
+<span class="material-symbols-outlined text-[16px]">wifi</span>
+                            En ligne
+                        </label>
+<input class="w-full bg-white dark:bg-inverse-surface border border-outline-variant/30 dark:border-outline/30 text-on-surface dark:text-primary-fixed rounded-lg px-4 py-3 text-center text-[20px] focus:ring-2 focus:ring-primary/30 outline-none font-numeric-md" placeholder="0" type="number"/>
+</div>
+</div>
+<div>
+<label class="block font-label-sm text-[12px] uppercase tracking-wider text-on-surface-variant dark:text-surface-variant mb-2">Notes (Optionnel)</label>
+<textarea class="w-full bg-surface-container-low dark:bg-primary-container border border-outline-variant/30 dark:border-outline/30 text-on-surface dark:text-primary-fixed rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-tertiary-container/50 outline-none font-body-md resize-none" rows="2"></textarea>
+</div>
+</div>
+<div class="px-6 py-4 border-t border-outline-variant/20 dark:border-outline/20 bg-surface-bright/50 dark:bg-primary-container/30 flex justify-end gap-3">
+<button class="px-5 py-2.5 rounded-lg border border-outline-variant dark:border-outline text-on-surface dark:text-primary-fixed font-label-sm text-[13px] hover:bg-surface-container-low dark:hover:bg-primary-container transition-colors" onclick="closeModal()">Annuler</button>
+<button class="px-5 py-2.5 rounded-lg bg-primary dark:bg-primary-fixed text-on-primary dark:text-primary-container font-label-sm text-[13px] font-bold shadow-sm hover:opacity-90 transition-opacity" onclick="closeModal()">Enregistrer</button>
+</div>
+</div>
+</div>
+<!-- Scripts -->
+<script>
+        // Theme Toggle Logic
+        const htmlEl = document.documentElement;
+        const toggleBtns = [document.getElementById('mobileThemeToggle'), document.getElementById('desktopThemeToggle')].filter(Boolean);
+        
+        let isDark = false; // Start in light mode as requested
+
+        function updateTheme() {
+            if (isDark) {
+                htmlEl.classList.add('dark');
+                htmlEl.classList.remove('light');
+            } else {
+                htmlEl.classList.remove('dark');
+                htmlEl.classList.add('light');
+            }
+            // Update chart colors if it exists
+            if(window.myChart) {
+                updateChartColors();
+            }
+        }
+
+        toggleBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                isDark = !isDark;
+                updateTheme();
+            });
+        });
+
+        // Modal Logic
+        const modal = document.getElementById('addCulteModal');
+        const modalContent = document.getElementById('modalContent');
+
+        function openModal() {
+            modal.classList.remove('hidden');
+            // Trigger reflow
+            void modal.offsetWidth;
+            modalContent.classList.remove('scale-95', 'opacity-0');
+            modalContent.classList.add('scale-100', 'opacity-100');
+        }
+
+        function closeModal() {
+            modalContent.classList.remove('scale-100', 'opacity-100');
+            modalContent.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300); // match transition duration
+        }
+
+        // Chart.js Setup
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('presenceChart').getContext('2d');
+            
+            // Tailwind colors from config
+            const colorGold = '#cea72c'; // tertiary-container
+            const colorInkLight = '#000000'; // primary
+            const colorInkDark = '#bbc7e0'; // primary-fixed-dim
+
+            const getInkColor = () => isDark ? colorInkDark : colorInkLight;
+            const getGridColor = () => isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
+            const getTextColor = () => isDark ? '#78849c' : '#75777d';
+
+            const data = {
+                labels: ['01 Oct', '08 Oct', '15 Oct', '22 Oct', '29 Oct', '05 Nov', '12 Nov'],
+                datasets: [
+                    {
+                        label: 'Présentiel',
+                        data: [210, 225, 200, 240, 235, 260, 245],
+                        borderColor: colorGold,
+                        backgroundColor: 'rgba(206,167,44,0.1)',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        fill: true,
+                        pointBackgroundColor: colorGold,
+                        pointBorderColor: '#fff',
+                        pointHoverRadius: 6,
+                        pointRadius: 4
+                    },
+                    {
+                        label: 'En ligne',
+                        data: [85, 90, 110, 95, 105, 95, 112],
+                        borderColor: getInkColor(),
+                        backgroundColor: 'transparent',
+                        borderWidth: 2,
+                        borderDash: [5, 5],
+                        tension: 0.4,
+                        fill: false,
+                        pointBackgroundColor: getInkColor(),
+                        pointBorderColor: '#fff',
+                        pointHoverRadius: 6,
+                        pointRadius: 4
+                    }
+                ]
+            };
+
+            const config = {
+                type: 'line',
+                data: data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        legend: {
+                            display: false // Using custom HTML legend
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(16, 28, 47, 0.9)',
+                            titleFont: { family: 'IBM Plex Mono', size: 12 },
+                            bodyFont: { family: 'Work Sans', size: 14 },
+                            padding: 12,
+                            cornerRadius: 8,
+                            displayColors: true
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false,
+                                drawBorder: false
+                            },
+                            ticks: {
+                                font: { family: 'IBM Plex Mono', size: 11 },
+                                color: getTextColor()
+                            }
+                        },
+                        y: {
+                            grid: {
+                                color: getGridColor(),
+                                drawBorder: false
+                            },
+                            ticks: {
+                                font: { family: 'IBM Plex Mono', size: 11 },
+                                color: getTextColor(),
+                                stepSize: 50
+                            },
+                            beginAtZero: true
+                        }
+                    }
+                }
+            };
+
+            window.myChart = new Chart(ctx, config);
+
+            // Function to update chart colors on theme toggle
+            window.updateChartColors = function() {
+                window.myChart.data.datasets[1].borderColor = getInkColor();
+                window.myChart.data.datasets[1].pointBackgroundColor = getInkColor();
+                window.myChart.options.scales.x.ticks.color = getTextColor();
+                window.myChart.options.scales.y.ticks.color = getTextColor();
+                window.myChart.options.scales.y.grid.color = getGridColor();
+                window.myChart.update();
+            };
+        });
+    </script>
+</body></html>

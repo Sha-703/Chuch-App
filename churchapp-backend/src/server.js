@@ -1,0 +1,18 @@
+import 'dotenv/config'
+import app from './app.js'
+import { sequelize } from './models/index.js'
+
+const PORT = process.env.PORT || 4000
+
+async function start() {
+  await sequelize.authenticate()
+  await sequelize.sync() // en production : utiliser des migrations plutôt que sync()
+  app.listen(PORT, () => {
+    console.log(`ChurchApp API démarrée sur http://localhost:${PORT}`)
+  })
+}
+
+start().catch((err) => {
+  console.error('Échec du démarrage du serveur :', err)
+  process.exit(1)
+})

@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ChurchApp - Vue d'ensemble</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&amp;family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&amp;family=Work+Sans:ital,wght@0,100..900;1,100..900&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-primary-fixed": "#101c2f",
+                    "surface-variant": "#d8e2ff",
+                    "primary-fixed": "#d7e3fd",
+                    "on-tertiary-container": "#4f3d00",
+                    "outline-variant": "#c5c6cd",
+                    "surface-container-highest": "#d8e2ff",
+                    "on-background": "#031b3e",
+                    "on-surface-variant": "#45474c",
+                    "on-secondary": "#ffffff",
+                    "tertiary": "#755b00",
+                    "on-tertiary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "on-primary-container": "#78849c",
+                    "surface-dim": "#cbdaff",
+                    "secondary-container": "#e1e0da",
+                    "tertiary-container": "#cea72c",
+                    "on-secondary-fixed": "#1b1c19",
+                    "primary": "#000000",
+                    "on-primary": "#ffffff",
+                    "surface-container-low": "#f1f3ff",
+                    "primary-container": "#101c2f",
+                    "tertiary-fixed-dim": "#ecc246",
+                    "inverse-surface": "#1c3054",
+                    "tertiary-fixed": "#ffe08e",
+                    "on-tertiary-fixed-variant": "#584400",
+                    "surface-tint": "#535f75",
+                    "outline": "#75777d",
+                    "on-surface": "#031b3e",
+                    "on-tertiary-fixed": "#241a00",
+                    "on-secondary-container": "#63635e",
+                    "surface-bright": "#f9f9ff",
+                    "background": "#f9f9ff",
+                    "inverse-on-surface": "#edf0ff",
+                    "secondary-fixed-dim": "#c8c6c1",
+                    "surface": "#f9f9ff",
+                    "on-primary-fixed-variant": "#3c475c",
+                    "on-secondary-fixed-variant": "#474743",
+                    "secondary": "#5f5f5a",
+                    "error-container": "#ffdad6",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-high": "#e0e8ff",
+                    "secondary-fixed": "#e4e2dd",
+                    "on-error-container": "#93000a",
+                    "on-error": "#ffffff",
+                    "inverse-primary": "#bbc7e0",
+                    "surface-container": "#e9edff",
+                    "primary-fixed-dim": "#bbc7e0"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-desktop": "2.5rem",
+                    "sidebar-width": "16rem",
+                    "margin-mobile": "1rem",
+                    "gutter": "1.5rem",
+                    "stack-lg": "2rem",
+                    "stack-sm": "0.5rem",
+                    "stack-md": "1rem"
+            },
+            "fontFamily": {
+                    "numeric-md": ["IBM Plex Mono"],
+                    "title-md": ["Fraunces"],
+                    "headline-lg-mobile": ["Fraunces"],
+                    "label-sm": ["IBM Plex Mono"],
+                    "body-lg": ["Work Sans"],
+                    "headline-lg": ["Fraunces"],
+                    "display-lg": ["Fraunces"],
+                    "body-md": ["Work Sans"]
+            },
+            "fontSize": {
+                    "numeric-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "title-md": ["24px", {"lineHeight": "32px", "fontWeight": "500"}],
+                    "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "600"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        /* Base styles mapped from JSON and Guidance */
+        body {
+            background-color: theme('colors.background');
+            color: theme('colors.on-background');
+        }
+        .dark body {
+            background-color: theme('colors.primary-container');
+            color: theme('colors.on-primary-container');
+        }
+        
+        /* Custom scrollbar for minimalist feel */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: theme('colors.outline-variant'); border-radius: 4px; }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex selection:bg-tertiary-container selection:text-on-tertiary-container">
+<!-- 
+      SIDENAVBAR (Desktop Only)
+      Based on Shared Components JSON 
+    -->
+<nav class="hidden lg:flex flex-col z-40 fixed left-0 top-0 h-full w-sidebar-width shadow-lg border-r border-outline-variant/10 bg-primary-container dark:bg-primary-container text-on-primary dark:text-on-primary">
+<!-- Header / Brand -->
+<div class="p-6 flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-container-lowest flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">church</span>
+</div>
+<div>
+<h1 class="font-headline-lg text-headline-lg text-on-primary tracking-tight">ChurchApp</h1>
+<p class="font-label-sm text-label-sm text-on-primary/70">Grace &amp; Peace</p>
+</div>
+</div>
+<!-- Navigation Links -->
+<div class="flex-1 px-2 mt-4 space-y-1">
+<!-- Active Item: Sanctuary -->
+<a class="bg-tertiary-container/20 text-tertiary-fixed border-l-4 border-tertiary-container px-4 py-3 flex items-center gap-3 font-label-sm text-label-sm scale-95 duration-200" href="#">
+<span class="material-symbols-outlined">church</span>
+<span>Sanctuary</span>
+</a>
+<!-- Inactive Items -->
+<a class="text-surface-variant/70 hover:text-surface-variant px-4 py-3 flex items-center gap-3 hover:bg-on-primary-fixed-variant/10 transition-all font-label-sm text-label-sm" href="#">
+<span class="material-symbols-outlined">groups</span>
+<span>Community</span>
+</a>
+<a class="text-surface-variant/70 hover:text-surface-variant px-4 py-3 flex items-center gap-3 hover:bg-on-primary-fixed-variant/10 transition-all font-label-sm text-label-sm" href="#">
+<span class="material-symbols-outlined">auto_stories</span>
+<span>Sacraments</span>
+</a>
+<a class="text-surface-variant/70 hover:text-surface-variant px-4 py-3 flex items-center gap-3 hover:bg-on-primary-fixed-variant/10 transition-all font-label-sm text-label-sm" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span>Giving</span>
+</a>
+<a class="text-surface-variant/70 hover:text-surface-variant px-4 py-3 flex items-center gap-3 hover:bg-on-primary-fixed-variant/10 transition-all font-label-sm text-label-sm" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span>Settings</span>
+</a>
+</div>
+<!-- CTA -->
+<div class="p-6 mt-auto">
+<button class="w-full bg-tertiary-container text-on-tertiary-container py-3 rounded-lg font-label-sm text-label-sm hover:bg-tertiary transition-colors shadow-sm">
+                Give Now
+            </button>
+</div>
+</nav>
+<!-- 
+      MAIN CONTENT CANVAS 
+    -->
+<div class="flex-1 flex flex-col lg:ml-sidebar-width min-h-screen relative pb-20 lg:pb-0">
+<!-- 
+          TOPNAVBAR 
+          Based on Shared Components JSON 
+        -->
+<header class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop h-16 docked full-width top-0 sticky shadow-sm border-b border-outline-variant dark:border-outline bg-surface/80 dark:bg-primary-container/80 backdrop-blur-md z-30">
+<div class="flex items-center gap-4">
+<!-- Mobile Logo/Brand (Hidden on Desktop due to Sidebar) -->
+<span class="lg:hidden font-display-lg text-display-lg text-primary dark:text-primary-fixed leading-none">ChurchApp</span>
+<!-- Search Bar (on_left configuration) -->
+<div class="hidden md:flex items-center bg-surface-container-lowest/50 border border-outline-variant/30 rounded-full px-4 py-1.5 focus-within:ring-2 focus-within:ring-tertiary-container/50 transition-all">
+<span class="material-symbols-outlined text-outline text-sm mr-2">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-body-md font-body-md w-48 placeholder:text-outline/70" placeholder="Rechercher..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4 text-primary dark:text-primary-fixed">
+<button class="hover:text-primary dark:hover:text-primary-fixed transition-colors opacity-80 hover:opacity-100 p-2 rounded-full hover:bg-surface-variant/50">
+<span class="material-symbols-outlined">contrast</span>
+</button>
+<button class="hover:text-primary dark:hover:text-primary-fixed transition-colors opacity-80 hover:opacity-100 p-2 rounded-full hover:bg-surface-variant/50 relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<div class="w-8 h-8 rounded-full bg-secondary-container border border-outline-variant/20 overflow-hidden ml-2 cursor-pointer">
+<img alt="User profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDWh1YqtHAiJKycFDHUs-ke74spkhMIxjDXYkPpoilu6vp5QwNVVdA7uOCrhLQJ6ipEvno9GOD9MGTT-eelATP_lS2vF_7P1SQvkpqtVkp8iibeBWCF38BddWf4T8wINLot5tAwXxlaS395xF1vU4wfK7lpaTh0YHqvkVy-qP5i8IHTC3OAUHW7kVlfmBS8ezowW30jc_1z_ThYCG3ds_BovN1TeV-b3nxUl5DZVw46VMlGzWNCxFBlVw"/>
+</div>
+</div>
+</header>
+<!-- 
+          DASHBOARD CONTENT 
+        -->
+<main class="flex-1 px-margin-mobile md:px-margin-desktop py-8 w-full max-w-7xl mx-auto">
+<!-- Page Header -->
+<div class="mb-stack-lg">
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">Vue d'ensemble</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">L'état actuel de votre communauté et de ses ressources.</p>
+<!-- Woven Rule under Fraunces Title -->
+<div class="w-16 h-[1px] bg-tertiary-container mt-4"></div>
+</div>
+<!-- 
+              BENTO GRID: STAT CARDS 
+            -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-gutter mb-stack-lg">
+<!-- Stat Card 1: Entrées (Gold Theme) -->
+<div class="bg-surface-container-lowest dark:bg-primary-container rounded-2xl p-6 border border-outline-variant/30 shadow-[0_1px_2px_rgba(15,27,46,0.06)] flex flex-col justify-between group hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 rounded-lg bg-tertiary-container/10 text-tertiary-container">
+<span class="material-symbols-outlined">payments</span>
+</div>
+<span class="font-label-sm text-label-sm text-tertiary-container bg-tertiary-container/10 px-2 py-1 rounded-full">+12%</span>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-1 uppercase tracking-wider">Entrées Mensuelles</p>
+<h3 class="font-title-md text-title-md text-on-surface">45 200 €</h3>
+</div>
+</div>
+<!-- Stat Card 2: Charges (Clay/Surface Theme) -->
+<div class="bg-surface-container-lowest dark:bg-primary-container rounded-2xl p-6 border border-outline-variant/30 shadow-[0_1px_2px_rgba(15,27,46,0.06)] flex flex-col justify-between group hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 rounded-lg bg-surface-tint/10 text-surface-tint">
+<span class="material-symbols-outlined">receipt_long</span>
+</div>
+<span class="font-label-sm text-label-sm text-error bg-error/10 px-2 py-1 rounded-full">+4%</span>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-1 uppercase tracking-wider">Charges Courantes</p>
+<h3 class="font-title-md text-title-md text-on-surface">28 450 €</h3>
+</div>
+</div>
+<!-- Stat Card 3: Solde (Leaf/Secondary Theme) -->
+<div class="bg-surface-container-lowest dark:bg-primary-container rounded-2xl p-6 border border-outline-variant/30 shadow-[0_1px_2px_rgba(15,27,46,0.06)] flex flex-col justify-between group hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 rounded-lg bg-secondary/10 text-secondary">
+<span class="material-symbols-outlined">account_balance</span>
+</div>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-1 uppercase tracking-wider">Solde Disponible</p>
+<h3 class="font-title-md text-title-md text-on-surface">16 750 €</h3>
+</div>
+</div>
+<!-- Stat Card 4: Dernier culte (Ink/Primary Theme) -->
+<div class="bg-primary text-on-primary rounded-2xl p-6 border border-primary/20 shadow-[0_1px_2px_rgba(15,27,46,0.06)] flex flex-col justify-between relative overflow-hidden">
+<!-- Subtle background pattern -->
+<div class="absolute -right-4 -top-4 opacity-5 text-9xl leading-none font-display-lg select-none">C</div>
+<div class="flex justify-between items-start mb-4 relative z-10">
+<div class="p-2 rounded-lg bg-on-primary/10 text-on-primary">
+<span class="material-symbols-outlined">groups</span>
+</div>
+<span class="font-label-sm text-label-sm text-tertiary-container bg-tertiary-container/20 px-2 py-1 rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-[10px]">arrow_upward</span> 45
+                        </span>
+</div>
+<div class="relative z-10">
+<p class="font-label-sm text-label-sm text-on-primary/70 mb-1 uppercase tracking-wider">Présence Dimanche</p>
+<div class="flex items-baseline gap-2">
+<h3 class="font-title-md text-title-md text-on-primary">412</h3>
+<span class="font-body-md text-body-md text-on-primary/60">fidèles</span>
+</div>
+</div>
+</div>
+</div>
+<!-- 
+              COMPLEX GRID: CHARTS & SIDE LIST 
+            -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
+<!-- Chart Area (Spans 2 cols) -->
+<div class="lg:col-span-2 bg-surface-container-lowest dark:bg-primary-container rounded-2xl p-6 border border-outline-variant/30 shadow-[0_1px_2px_rgba(15,27,46,0.06)] flex flex-col">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-title-md text-title-md text-on-surface">Évolution financière</h3>
+<div class="flex gap-4">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-sm bg-tertiary-container"></span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Entrées</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-3 h-1 rounded-full bg-surface-tint"></span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Charges</span>
+</div>
+</div>
+</div>
+<!-- Placeholder for Composed Chart -->
+<div class="flex-1 min-h-[300px] w-full relative flex items-end justify-between pt-8 pb-4 border-b border-outline-variant/30">
+<!-- Y Axis Lines -->
+<div class="absolute inset-0 flex flex-col justify-between pb-4 pointer-events-none">
+<div class="border-t border-outline-variant/10 w-full"></div>
+<div class="border-t border-outline-variant/10 w-full"></div>
+<div class="border-t border-outline-variant/10 w-full"></div>
+<div class="border-t border-outline-variant/10 w-full"></div>
+</div>
+<!-- Chart Bars & Lines (Simulated Data) -->
+<div class="relative w-[12%] h-[60%] flex flex-col justify-end items-center group">
+<div class="w-full bg-tertiary-container/80 rounded-t-sm group-hover:bg-tertiary-container transition-colors h-full relative">
+<!-- Line Point Overlay -->
+<div class="absolute left-1/2 -top-4 w-2 h-2 rounded-full bg-surface-tint transform -translate-x-1/2 shadow-sm z-10"></div>
+</div>
+<span class="absolute -bottom-6 font-numeric-md text-xs text-on-surface-variant">Jan</span>
+</div>
+<div class="relative w-[12%] h-[75%] flex flex-col justify-end items-center group">
+<div class="w-full bg-tertiary-container/80 rounded-t-sm group-hover:bg-tertiary-container transition-colors h-full relative">
+<div class="absolute left-1/2 top-4 w-2 h-2 rounded-full bg-surface-tint transform -translate-x-1/2 shadow-sm z-10"></div>
+</div>
+<span class="absolute -bottom-6 font-numeric-md text-xs text-on-surface-variant">Fév</span>
+</div>
+<div class="relative w-[12%] h-[55%] flex flex-col justify-end items-center group">
+<div class="w-full bg-tertiary-container/80 rounded-t-sm group-hover:bg-tertiary-container transition-colors h-full relative">
+<div class="absolute left-1/2 -top-8 w-2 h-2 rounded-full bg-surface-tint transform -translate-x-1/2 shadow-sm z-10"></div>
+</div>
+<span class="absolute -bottom-6 font-numeric-md text-xs text-on-surface-variant">Mar</span>
+</div>
+<div class="relative w-[12%] h-[85%] flex flex-col justify-end items-center group">
+<div class="w-full bg-tertiary-container/80 rounded-t-sm group-hover:bg-tertiary-container transition-colors h-full relative">
+<div class="absolute left-1/2 top-10 w-2 h-2 rounded-full bg-surface-tint transform -translate-x-1/2 shadow-sm z-10"></div>
+</div>
+<span class="absolute -bottom-6 font-numeric-md text-xs text-on-surface-variant">Avr</span>
+</div>
+<div class="relative w-[12%] h-[70%] flex flex-col justify-end items-center group">
+<div class="w-full bg-tertiary-container/80 rounded-t-sm group-hover:bg-tertiary-container transition-colors h-full relative">
+<div class="absolute left-1/2 top-2 w-2 h-2 rounded-full bg-surface-tint transform -translate-x-1/2 shadow-sm z-10"></div>
+</div>
+<span class="absolute -bottom-6 font-numeric-md text-xs text-on-surface-variant">Mai</span>
+</div>
+<div class="relative w-[12%] h-[95%] flex flex-col justify-end items-center group">
+<div class="w-full bg-tertiary-container/80 rounded-t-sm group-hover:bg-tertiary-container transition-colors h-full relative">
+<div class="absolute left-1/2 top-16 w-2 h-2 rounded-full bg-surface-tint transform -translate-x-1/2 shadow-sm z-10"></div>
+</div>
+<span class="absolute -bottom-6 font-numeric-md text-xs text-on-surface-variant">Juin</span>
+</div>
+<!-- SVG Line connecting points (visual approximation) -->
+<svg class="absolute inset-0 w-full h-full pointer-events-none" preserveaspectratio="none" viewbox="0 0 100 100">
+<polyline fill="none" points="8,35 25,20 42,45 58,15 75,28 92,10" stroke="theme('colors.surface-tint')" stroke-width="0.5" vector-effect="non-scaling-stroke"></polyline>
+</svg>
+</div>
+</div>
+<!-- Sidebar Card (List) -->
+<div class="lg:col-span-1 bg-primary-container text-on-primary-container rounded-2xl p-6 shadow-sm border border-outline-variant/10 flex flex-col relative overflow-hidden">
+<!-- Decorative subtle icon -->
+<span class="material-symbols-outlined absolute -bottom-10 -right-10 text-[160px] opacity-5 text-on-primary-container select-none">auto_stories</span>
+<h3 class="font-title-md text-title-md text-on-primary mb-6 relative z-10">Derniers cultes</h3>
+<div class="flex-1 flex flex-col gap-4 relative z-10">
+<!-- List Item 1 -->
+<div class="flex items-center justify-between pb-4 border-b border-on-primary-container/10">
+<div>
+<p class="font-body-md text-body-md text-on-primary">Dim. 15 Octobre</p>
+<p class="font-label-sm text-label-sm text-on-primary/60 flex items-center gap-1 mt-1">
+<span class="w-2 h-2 rounded-full bg-tertiary-container"></span> Présentiel
+                                </p>
+</div>
+<div class="text-right">
+<p class="font-numeric-md text-numeric-md text-on-primary">412</p>
+<p class="font-label-sm text-label-sm text-on-primary/60">personnes</p>
+</div>
+</div>
+<!-- List Item 2 -->
+<div class="flex items-center justify-between pb-4 border-b border-on-primary-container/10">
+<div>
+<p class="font-body-md text-body-md text-on-primary">Dim. 08 Octobre</p>
+<p class="font-label-sm text-label-sm text-on-primary/60 flex items-center gap-1 mt-1">
+<span class="w-2 h-2 rounded-full bg-surface-tint"></span> En ligne
+                                </p>
+</div>
+<div class="text-right">
+<p class="font-numeric-md text-numeric-md text-on-primary">285</p>
+<p class="font-label-sm text-label-sm text-on-primary/60">connexions</p>
+</div>
+</div>
+<!-- List Item 3 -->
+<div class="flex items-center justify-between pb-4 border-b border-on-primary-container/10">
+<div>
+<p class="font-body-md text-body-md text-on-primary">Dim. 01 Octobre</p>
+<p class="font-label-sm text-label-sm text-on-primary/60 flex items-center gap-1 mt-1">
+<span class="w-2 h-2 rounded-full bg-tertiary-container"></span> Présentiel
+                                </p>
+</div>
+<div class="text-right">
+<p class="font-numeric-md text-numeric-md text-on-primary">398</p>
+<p class="font-label-sm text-label-sm text-on-primary/60">personnes</p>
+</div>
+</div>
+<!-- Action Link -->
+<a class="mt-auto text-tertiary-fixed text-label-sm font-label-sm hover:underline flex items-center gap-1 pt-2 w-max" href="#">
+                            Voir tout l'historique <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</a>
+</div>
+</div>
+</div>
+</main>
+<!-- 
+          FOOTER 
+          Based on Shared Components JSON 
+        -->
+<footer class="w-full py-8 mt-auto max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop flex flex-col items-center gap-4 bg-surface dark:bg-background">
+<!-- Woven-Rule Divider strictly from guidelines -->
+<div class="w-full border-t border-tertiary-container bg-tertiary-container h-[1px] mb-8"></div>
+<div class="flex flex-col md:flex-row justify-between items-center w-full gap-4 text-on-surface-variant dark:text-surface-variant font-body-md text-body-md">
+<p>© 2026 ChurchApp</p>
+<div class="flex gap-6 font-label-sm text-label-sm">
+<a class="text-on-surface-variant/60 hover:text-tertiary transition-colors" href="#">Privacy Policy</a>
+<a class="text-on-surface-variant/60 hover:text-tertiary transition-colors" href="#">Terms of Service</a>
+<a class="text-on-surface-variant/60 hover:text-tertiary transition-colors" href="#">Contact Support</a>
+</div>
+</div>
+</footer>
+</div>
+<!-- 
+      BOTTOMNAVBAR (Mobile Only)
+      Based on Shared Components JSON 
+    -->
+<nav class="lg:hidden fixed bottom-0 left-0 w-full h-16 flex justify-around items-center z-50 px-4 bg-surface-container-lowest/90 dark:bg-primary-container/90 backdrop-blur-xl rounded-t-xl border-t border-tertiary-container/30 shadow-[0_-4px_10px_rgba(0,0,0,0.05)] pb-safe">
+<!-- Active Item: Home -->
+<a class="flex flex-col items-center justify-center text-tertiary font-bold after:content-[''] after:w-1 after:h-1 after:bg-tertiary after:rounded-full after:mt-1 scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-label-sm text-[10px] mt-0.5">Home</span>
+</a>
+<!-- Inactive Items -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 active:bg-surface-container-high p-2 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">calendar_month</span>
+<span class="font-label-sm text-[10px] mt-0.5">Events</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 active:bg-surface-container-high p-2 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">volunteer_activism</span>
+<span class="font-label-sm text-[10px] mt-0.5">Giving</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 active:bg-surface-container-high p-2 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">account_circle</span>
+<span class="font-label-sm text-[10px] mt-0.5">Profile</span>
+</a>
+</nav>
+<!-- Support for safe area inset on mobile devices (e.g. iOS home indicator) -->
+<style>
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+    </style>
+</body></html>
