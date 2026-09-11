@@ -1,5 +1,6 @@
 import bcrypt from 'bcryptjs'
 import { Membre, Utilisateur } from '../models/index.js'
+import { genererOTP } from '../lib/otp.js'
 
 export async function listerMembres(req, res) {
   const membres = await Membre.findAll({
@@ -30,13 +31,14 @@ export async function creerCompteOuvrier(req, res) {
   const existant = await Utilisateur.findOne({ where: { email } })
   if (existant) return res.status(409).json({ message: 'Un compte existe déjà avec cet e-mail.' })
 
-  const motDePasseProvisoire = Math.random().toString(36).slice(-10)
-  const hash = await bcrypt.hash(motDePasseProvisoire, 10)
+  const otp = genererOTP()
+  const hash = await bcrypt.hash(otp, 10)
 
   const compte = await Utilisateur.create({
     nom: membre.nom,
     email,
     motDePasseHash: hash,
+    motDePasseDoitEtreChange: true,
     role: 'ouvrier',
     egliseId: req.egliseId,
   })
@@ -44,8 +46,8 @@ export async function creerCompteOuvrier(req, res) {
   membre.utilisateurId = compte.id
   await membre.save()
 
-  // NOTE: comme pour la création d'église, le mot de passe provisoire est
-  // renvoyé ici pour permettre de tester sans service d'e-mail ; en
-  // production il faudrait l'envoyer directement au membre par e-mail.
-  res.status(201).json({ email: compte.email, motDePasseProvisoire })
+  // NOTE: comme pour la création d'église, le code OTP est renvoyé ici pour
+  // permettre de tester sans service d'e-mail ; en production il faudrait
+  // l'envoyer directement au membre par e-mail ou SMS.
+  res.status(201).json({ email: compte.email, otp })
 }

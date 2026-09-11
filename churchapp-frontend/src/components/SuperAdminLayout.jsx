@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom'
-import { LayoutGrid, Church, Users2, Megaphone, ScrollText, LogOut, ShieldCheck, Network } from 'lucide-react'
+import { LayoutGrid, Church, Users2, Megaphone, ScrollText, LogOut, ShieldCheck, Network, Settings } from 'lucide-react'
 import { useSuperAdminAuth } from '../context/SuperAdminAuthContext'
 import ThemeToggle from './ThemeToggle'
 
@@ -10,6 +10,7 @@ const links = [
   { to: '/super-admin/utilisateurs', label: 'Utilisateurs', icon: Users2 },
   { to: '/super-admin/annonces', label: 'Annonces', icon: Megaphone },
   { to: '/super-admin/journal', label: 'Journal d\u2019activité', icon: ScrollText },
+  { to: '/super-admin/parametres', label: 'Paramètres', icon: Settings },
 ]
 
 export default function SuperAdminLayout({ title, subtitle, children }) {

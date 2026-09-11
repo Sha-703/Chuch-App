@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom'
-import { LayoutGrid, Church, Wallet, TrendingUp, LogOut } from 'lucide-react'
+import { LayoutGrid, Church, Wallet, TrendingUp, LogOut, Settings } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import ThemeToggle from './ThemeToggle'
 
@@ -8,6 +8,7 @@ const links = [
   { to: '/communaute/eglises', label: 'Nos églises', icon: Church },
   { to: '/communaute/cotisations', label: 'Cotisations', icon: Wallet },
   { to: '/communaute/recouvrement', label: 'Recouvrement', icon: TrendingUp },
+  { to: '/parametres', label: 'Paramètres', icon: Settings },
 ]
 
 export default function CommunauteLayout({ title, subtitle, children }) {

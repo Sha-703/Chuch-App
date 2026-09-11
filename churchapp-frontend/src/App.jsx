@@ -29,9 +29,12 @@ import SuperAdminUtilisateurs from './pages/SuperAdminUtilisateurs'
 import SuperAdminAnnonces from './pages/SuperAdminAnnonces'
 import SuperAdminJournal from './pages/SuperAdminJournal'
 import SuperAdminCommunautes from './pages/SuperAdminCommunautes'
+import Parametres from './pages/Parametres'
+import SuperAdminParametres from './pages/SuperAdminParametres'
 import NotFound from './pages/NotFound'
 
 const ADMIN = ['pasteur', 'administrateur', 'tresorier']
+const TOUS_ROLES_EGLISE = ['pasteur', 'administrateur', 'tresorier', 'ouvrier', 'communaute']
 
 export default function App() {
   return (
@@ -53,6 +56,7 @@ export default function App() {
               <Route path="/correspondance" element={<ProtectedRoute allow={ADMIN}><Correspondance /></ProtectedRoute>} />
               <Route path="/annonces" element={<ProtectedRoute allow={ADMIN}><Annonces /></ProtectedRoute>} />
               <Route path="/recherche" element={<ProtectedRoute allow={ADMIN}><Recherche /></ProtectedRoute>} />
+              <Route path="/parametres" element={<ProtectedRoute allow={TOUS_ROLES_EGLISE}><Parametres /></ProtectedRoute>} />
 
               {/* Espace Communauté — connexion via la page normale, comme une église */}
               <Route path="/communaute/dashboard" element={<ProtectedRoute allow={['communaute']}><CommunauteDashboard /></ProtectedRoute>} />
@@ -68,6 +72,7 @@ export default function App() {
               <Route path="/super-admin/utilisateurs" element={<SuperAdminProtectedRoute><SuperAdminUtilisateurs /></SuperAdminProtectedRoute>} />
               <Route path="/super-admin/annonces" element={<SuperAdminProtectedRoute><SuperAdminAnnonces /></SuperAdminProtectedRoute>} />
               <Route path="/super-admin/journal" element={<SuperAdminProtectedRoute><SuperAdminJournal /></SuperAdminProtectedRoute>} />
+              <Route path="/super-admin/parametres" element={<SuperAdminProtectedRoute><SuperAdminParametres /></SuperAdminProtectedRoute>} />
 
               <Route path="*" element={<NotFound />} />
             </Routes>

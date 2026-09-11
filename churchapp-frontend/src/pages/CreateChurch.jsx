@@ -48,15 +48,15 @@ export default function CreateChurch() {
           <h1 className="font-display text-2xl text-ink-950 mb-2">Église créée avec succès</h1>
           <p className="text-sm text-ink-700/70 mb-6">
             Les comptes du pasteur et de l'administrateur ont été créés pour{' '}
-            <strong>{succes.eglise.nom}</strong>.
+            <strong>{succes.eglise.nom}</strong>. Chacun a reçu un code OTP à usage unique, à saisir comme mot de passe à la première connexion.
           </p>
-          <div className="bg-parchment-100 rounded-lg p-4 text-left text-sm space-y-1 mb-6">
+          <div className="bg-parchment-100 rounded-lg p-4 text-left text-sm space-y-2 mb-6">
             {succes.comptes.map((c) => (
-              <p key={c.email}><span className="text-ink-700/60">{c.role} :</span> {c.email}</p>
+              <div key={c.email} className="pb-2 border-b border-ink-950/5 last:border-0 last:pb-0">
+                <p><span className="text-ink-700/60">{c.role} :</span> {c.email}</p>
+                <p className="text-xs text-ink-700/50">Code OTP : <span className="font-mono text-sm text-ink-950">{c.otp}</span></p>
+              </div>
             ))}
-            <p className="pt-2 text-xs text-ink-700/50">
-              Mot de passe provisoire (démo) : <span className="font-mono">{succes.motDePasseProvisoire}</span>
-            </p>
           </div>
           <Link to="/" className="inline-flex items-center gap-2 bg-ink-950 text-parchment-50 rounded-lg px-5 py-2.5 text-sm font-semibold hover:bg-ink-900 transition-colors">
             Aller à la connexion <ArrowRight size={16} />

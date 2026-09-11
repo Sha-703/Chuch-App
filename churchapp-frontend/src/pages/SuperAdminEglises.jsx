@@ -117,11 +117,13 @@ export default function SuperAdminEglises() {
         <div className="fixed inset-0 bg-ink-950/40 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-2xl shadow-card w-full max-w-sm p-6">
             <h3 className="font-display text-lg text-ink-950 mb-3">Église créée</h3>
-            <div className="bg-parchment-100 rounded-lg p-4 text-sm space-y-1">
+            <div className="bg-parchment-100 rounded-lg p-4 text-sm space-y-2">
               {resultat.comptes.map((c) => (
-                <p key={c.email}><span className="text-ink-700/60">{c.role} :</span> {c.email}</p>
+                <div key={c.email} className="pb-2 border-b border-ink-950/5 last:border-0 last:pb-0">
+                  <p><span className="text-ink-700/60">{c.role} :</span> {c.email}</p>
+                  <p className="text-xs text-ink-700/50">Code OTP : <span className="font-mono text-sm text-ink-950">{c.otp}</span></p>
+                </div>
               ))}
-              <p className="pt-2 text-xs text-ink-700/50">Mot de passe provisoire : <span className="font-mono">{resultat.motDePasseProvisoire}</span></p>
             </div>
             <button onClick={() => setResultat(null)} className="w-full mt-4 bg-ink-950 text-parchment-50 rounded-lg py-2.5 text-sm font-semibold hover:bg-ink-900">Fermer</button>
           </div>

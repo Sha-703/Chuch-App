@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { CheckCircle2, XCircle, HelpCircle, LogOut, Loader2, Church, Moon, Sun } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { CheckCircle2, XCircle, HelpCircle, LogOut, Loader2, Church, Moon, Sun, Settings } from 'lucide-react'
 import { api } from '../lib/api'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
@@ -36,9 +37,14 @@ export default function MonEspace() {
           <span className="font-display text-xl text-gold-500">ChurchApp</span>
           <p className="text-xs text-ink-600 mt-0.5">{eglise?.nom}</p>
         </div>
-        <button onClick={logout} className="flex items-center gap-1.5 text-sm text-ink-600 hover:text-clay-400">
-          <LogOut size={16} /> Déconnexion
-        </button>
+        <div className="flex items-center gap-3">
+          <Link to="/parametres" className="flex items-center gap-1.5 text-sm text-ink-600 hover:text-gold-400">
+            <Settings size={16} />
+          </Link>
+          <button onClick={logout} className="flex items-center gap-1.5 text-sm text-ink-600 hover:text-clay-400">
+            <LogOut size={16} /> Déconnexion
+          </button>
+        </div>
       </header>
       <div className="max-w-lg mx-auto px-5 pt-3 flex justify-end">
         <button

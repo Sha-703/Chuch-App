@@ -5,6 +5,7 @@ import {
   SuperAdmin, Eglise, Utilisateur, Membre, Annonce, Correspondance, JournalActivite, Communaute,
 } from '../models/index.js'
 import { journaliser } from '../lib/journal.js'
+import { genererOTP } from '../lib/otp.js'
 
 export async function login(req, res) {
   const { email, motDePasse } = req.body
@@ -119,8 +120,9 @@ export async function reinitialiserMotDePasse(req, res) {
   const utilisateur = await Utilisateur.findByPk(req.params.id)
   if (!utilisateur) return res.status(404).json({ message: 'Utilisateur introuvable.' })
 
-  const motDePasseProvisoire = Math.random().toString(36).slice(-10)
-  utilisateur.motDePasseHash = await bcrypt.hash(motDePasseProvisoire, 10)
+  const otp = genererOTP()
+  utilisateur.motDePasseHash = await bcrypt.hash(otp, 10)
+  utilisateur.motDePasseDoitEtreChange = true
   await utilisateur.save()
 
   await journaliser({
@@ -129,7 +131,7 @@ export async function reinitialiserMotDePasse(req, res) {
     utilisateurNom: 'Super Admin',
   })
 
-  res.json({ email: utilisateur.email, motDePasseProvisoire })
+  res.json({ email: utilisateur.email, otp })
 }
 
 export async function toggleBlocageUtilisateur(req, res) {
@@ -198,16 +200,16 @@ export async function creerEgliseParSuperAdmin(req, res) {
     communauteId: communauteId || null,
   })
 
-  const motDePasseProvisoire = Math.random().toString(36).slice(-10)
-  const hash = await bcrypt.hash(motDePasseProvisoire, 10)
+  const otpPasteur = genererOTP()
+  const otpAdmin = genererOTP()
 
   const comptePasteur = await Utilisateur.create({
     nom: pasteur.nom, email: pasteur.email, telephone: pasteur.telephone,
-    role: 'pasteur', motDePasseHash: hash, egliseId: nouvelleEglise.id,
+    role: 'pasteur', motDePasseHash: await bcrypt.hash(otpPasteur, 10), motDePasseDoitEtreChange: true, egliseId: nouvelleEglise.id,
   })
   const compteAdmin = await Utilisateur.create({
     nom: administrateur.nom, email: administrateur.email,
-    role: 'administrateur', motDePasseHash: hash, egliseId: nouvelleEglise.id,
+    role: 'administrateur', motDePasseHash: await bcrypt.hash(otpAdmin, 10), motDePasseDoitEtreChange: true, egliseId: nouvelleEglise.id,
   })
 
   await journaliser({
@@ -220,10 +222,9 @@ export async function creerEgliseParSuperAdmin(req, res) {
   res.status(201).json({
     eglise: nouvelleEglise,
     comptes: [
-      { email: comptePasteur.email, role: 'pasteur' },
-      { email: compteAdmin.email, role: 'administrateur' },
+      { email: comptePasteur.email, role: 'pasteur', otp: otpPasteur },
+      { email: compteAdmin.email, role: 'administrateur', otp: otpAdmin },
     ],
-    motDePasseProvisoire,
   })
 }
 
@@ -281,13 +282,13 @@ export async function creerCompteCommunaute(req, res) {
   const existant = await Utilisateur.findOne({ where: { email } })
   if (existant) return res.status(409).json({ message: 'Un compte existe déjà avec cet e-mail.' })
 
-  const motDePasseProvisoire = Math.random().toString(36).slice(-10)
-  const hash = await bcrypt.hash(motDePasseProvisoire, 10)
+  const otp = genererOTP()
 
   const compte = await Utilisateur.create({
     nom: nom || communaute.nom,
     email,
-    motDePasseHash: hash,
+    motDePasseHash: await bcrypt.hash(otp, 10),
+    motDePasseDoitEtreChange: true,
     role: 'communaute',
     communauteId: communaute.id,
   })
@@ -298,5 +299,24 @@ export async function creerCompteCommunaute(req, res) {
     utilisateurNom: 'Super Admin',
   })
 
-  res.status(201).json({ email: compte.email, motDePasseProvisoire })
+  res.status(201).json({ email: compte.email, otp })
+}
+
+// --- Le Super Admin change son propre mot de passe (page Paramètres) ---
+export async function changerMonMotDePasseSuperAdmin(req, res) {
+  const { motDePasseActuel, nouveauMotDePasse } = req.body
+  if (!motDePasseActuel || !nouveauMotDePasse || nouveauMotDePasse.length < 6) {
+    return res.status(400).json({ message: 'Mot de passe actuel et nouveau mot de passe (6 caractères min.) requis.' })
+  }
+
+  const superAdmin = await SuperAdmin.findByPk(req.superAdmin.sub)
+  if (!superAdmin) return res.status(404).json({ message: 'Compte introuvable.' })
+
+  const valide = await bcrypt.compare(motDePasseActuel, superAdmin.motDePasseHash)
+  if (!valide) return res.status(401).json({ message: 'Mot de passe actuel incorrect.' })
+
+  superAdmin.motDePasseHash = await bcrypt.hash(nouveauMotDePasse, 10)
+  await superAdmin.save()
+
+  res.json({ message: 'Mot de passe mis à jour.' })
 }

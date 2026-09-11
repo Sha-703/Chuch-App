@@ -16,7 +16,11 @@ export default function Login() {
     setErreur('')
     setChargement(true)
     try {
-      const { utilisateur } = await login(email, motDePasse)
+      const { utilisateur, doitChangerMotDePasse } = await login(email, motDePasse)
+      if (doitChangerMotDePasse) {
+        navigate('/parametres?premiere=1')
+        return
+      }
       const accueil = utilisateur.role === 'ouvrier' ? '/mon-espace'
         : utilisateur.role === 'communaute' ? '/communaute/dashboard'
         : '/dashboard'

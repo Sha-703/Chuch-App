@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { Eglise, Utilisateur, Communaute } from '../models/index.js'
 import { journaliser } from '../lib/journal.js'
+import { genererOTP } from '../lib/otp.js'
 
 function signToken(utilisateur) {
   return jwt.sign(
@@ -37,6 +38,7 @@ export async function login(req, res) {
       utilisateur: { id: utilisateur.id, nom: utilisateur.nom, role: utilisateur.role, email: utilisateur.email },
       eglise: null,
       communaute: communaute ? { id: communaute.id, nom: communaute.nom } : null,
+      doitChangerMotDePasse: utilisateur.motDePasseDoitEtreChange,
     })
   }
 
@@ -52,7 +54,34 @@ export async function login(req, res) {
     utilisateur: { id: utilisateur.id, nom: utilisateur.nom, role: utilisateur.role, email: utilisateur.email },
     eglise: eglise ? { id: eglise.id, nom: eglise.nom, ville: eglise.ville } : null,
     communaute: null,
+    doitChangerMotDePasse: utilisateur.motDePasseDoitEtreChange,
   })
+}
+
+// Un utilisateur déjà connecté change son propre mot de passe (page Paramètres).
+// Si son compte porte encore un code OTP provisoire (motDePasseDoitEtreChange),
+// l'ancien mot de passe n'a pas besoin d'être re-saisi : le simple fait d'avoir
+// un token valide prouve déjà qu'il connaissait le code OTP au moment du login.
+export async function changerMonMotDePasse(req, res) {
+  const { motDePasseActuel, nouveauMotDePasse } = req.body
+  if (!nouveauMotDePasse || nouveauMotDePasse.length < 6) {
+    return res.status(400).json({ message: 'Le nouveau mot de passe doit contenir au moins 6 caractères.' })
+  }
+
+  const utilisateur = await Utilisateur.findByPk(req.auth.sub)
+  if (!utilisateur) return res.status(404).json({ message: 'Utilisateur introuvable.' })
+
+  if (!utilisateur.motDePasseDoitEtreChange) {
+    if (!motDePasseActuel) return res.status(400).json({ message: 'Mot de passe actuel requis.' })
+    const valide = await bcrypt.compare(motDePasseActuel, utilisateur.motDePasseHash)
+    if (!valide) return res.status(401).json({ message: 'Mot de passe actuel incorrect.' })
+  }
+
+  utilisateur.motDePasseHash = await bcrypt.hash(nouveauMotDePasse, 10)
+  utilisateur.motDePasseDoitEtreChange = false
+  await utilisateur.save()
+
+  res.json({ message: 'Mot de passe mis à jour.' })
 }
 
 // Création d'une nouvelle église + ses deux comptes (pasteur, administrateur)
@@ -76,16 +105,19 @@ export async function creerEglise(req, res) {
     ville: eglise.ville,
   })
 
-  // Mot de passe provisoire — à remplacer par un vrai flux d'invitation par e-mail
-  const motDePasseProvisoire = Math.random().toString(36).slice(-10)
-  const hash = await bcrypt.hash(motDePasseProvisoire, 10)
+  // Chaque compte reçoit son propre code OTP à usage unique — à saisir comme
+  // mot de passe à la première connexion, puis remplacé obligatoirement par
+  // un mot de passe personnel sur la page Paramètres (voir motDePasseDoitEtreChange).
+  const otpPasteur = genererOTP()
+  const otpAdmin = genererOTP()
 
   const comptePasteur = await Utilisateur.create({
     nom: pasteur.nom,
     email: pasteur.email,
     telephone: pasteur.telephone,
     role: 'pasteur',
-    motDePasseHash: hash,
+    motDePasseHash: await bcrypt.hash(otpPasteur, 10),
+    motDePasseDoitEtreChange: true,
     egliseId: nouvelleEglise.id,
   })
 
@@ -93,7 +125,8 @@ export async function creerEglise(req, res) {
     nom: administrateur.nom,
     email: administrateur.email,
     role: 'administrateur',
-    motDePasseHash: hash,
+    motDePasseHash: await bcrypt.hash(otpAdmin, 10),
+    motDePasseDoitEtreChange: true,
     egliseId: nouvelleEglise.id,
   })
 
@@ -104,15 +137,14 @@ export async function creerEglise(req, res) {
     utilisateurNom: pasteur.nom,
   })
 
-  // NOTE: en production, envoyer motDePasseProvisoire par e-mail à chaque compte,
-  // ne jamais le renvoyer dans la réponse HTTP. On le renvoie ici uniquement
+  // NOTE: en production, envoyer ces codes OTP par e-mail à chaque compte,
+  // ne jamais les renvoyer dans la réponse HTTP. On les renvoie ici uniquement
   // pour permettre de tester le flux en développement sans service d'e-mail.
   res.status(201).json({
     eglise: nouvelleEglise,
     comptes: [
-      { email: comptePasteur.email, role: 'pasteur' },
-      { email: compteAdmin.email, role: 'administrateur' },
+      { email: comptePasteur.email, role: 'pasteur', otp: otpPasteur },
+      { email: compteAdmin.email, role: 'administrateur', otp: otpAdmin },
     ],
-    motDePasseProvisoire,
   })
 }

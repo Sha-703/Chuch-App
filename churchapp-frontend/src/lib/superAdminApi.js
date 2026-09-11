@@ -24,6 +24,7 @@ async function request(path, options = {}) {
 
 export const superAdminApi = {
   login: (email, motDePasse) => request('/auth/login', { method: 'POST', body: JSON.stringify({ email, motDePasse }) }),
+  changerMotDePasse: (payload) => request('/mon-mot-de-passe', { method: 'PUT', body: JSON.stringify(payload) }),
 
   dashboard: () => request('/dashboard'),
 

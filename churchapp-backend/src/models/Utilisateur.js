@@ -12,6 +12,9 @@ const Utilisateur = sequelize.define('Utilisateur', {
   // Un compte "communaute" n'appartient à aucune église (egliseId reste vide) —
   // il est rattaché à une Communaute via communauteId à la place.
   communauteId: { type: DataTypes.UUID, allowNull: true },
+  // true tant que l'utilisateur n'a pas remplacé son code provisoire (OTP) par
+  // un mot de passe personnel — force le passage par la page Paramètres.
+  motDePasseDoitEtreChange: { type: DataTypes.BOOLEAN, defaultValue: false },
 })
 
 export default Utilisateur

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
-import { LayoutGrid, Landmark, CalendarDays, FileBarChart, Users2, LogOut, Menu, X, Mail, Megaphone, CalendarClock, Boxes } from 'lucide-react'
+import { LayoutGrid, Landmark, CalendarDays, FileBarChart, Users2, LogOut, Menu, X, Mail, Megaphone, CalendarClock, Boxes, Settings } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 
 const links = [
@@ -10,6 +10,7 @@ const links = [
   { to: '/ressources-humaines', label: 'Ressources Humaines', icon: Users2 },
   { to: '/planning', label: 'Planning', icon: CalendarClock },
   { to: '/logistique', label: 'Logistique', icon: Boxes },
+  { to: '/parametres', label: 'Paramètres', icon: Settings },
   { to: '/correspondance', label: 'Correspondance', icon: Mail },
   { to: '/annonces', label: 'Annonces', icon: Megaphone },
   { to: '/rapports', label: 'Rapports', icon: FileBarChart },

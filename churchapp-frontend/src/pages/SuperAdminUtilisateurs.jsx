@@ -6,7 +6,7 @@ import { superAdminApi } from '../lib/superAdminApi'
 export default function SuperAdminUtilisateurs() {
   const [utilisateurs, setUtilisateurs] = useState(null)
   const [erreur, setErreur] = useState('')
-  const [resultat, setResultat] = useState(null) // { email, motDePasseProvisoire }
+  const [resultat, setResultat] = useState(null) // { email, otp }
 
   function recharger() {
     superAdminApi.listerUtilisateurs().then(setUtilisateurs).catch((err) => setErreur(err.message))
@@ -89,7 +89,7 @@ export default function SuperAdminUtilisateurs() {
             <h3 className="font-display text-lg text-ink-950 mb-3">Mot de passe réinitialisé</h3>
             <div className="bg-parchment-100 rounded-lg p-4 text-sm space-y-1">
               <p><span className="text-ink-700/60">E-mail :</span> {resultat.email}</p>
-              <p><span className="text-ink-700/60">Nouveau mot de passe provisoire :</span> <span className="font-mono">{resultat.motDePasseProvisoire}</span></p>
+              <p><span className="text-ink-700/60">Nouveau code OTP :</span> <span className="font-mono">{resultat.otp}</span></p>
             </div>
             <button onClick={() => setResultat(null)} className="w-full mt-4 bg-ink-950 text-parchment-50 rounded-lg py-2.5 text-sm font-semibold hover:bg-ink-900">
               Fermer

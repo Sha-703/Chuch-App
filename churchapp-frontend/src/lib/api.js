@@ -26,6 +26,7 @@ async function request(path, options = {}) {
 export const api = {
   login: (email, motDePasse) =>
     request('/auth/login', { method: 'POST', body: JSON.stringify({ email, motDePasse }) }),
+  changerMotDePasse: (payload) => request('/auth/mon-mot-de-passe', { method: 'PUT', body: JSON.stringify(payload) }),
 
   creerEglise: (payload) =>
     request('/auth/eglises', { method: 'POST', body: JSON.stringify(payload) }),

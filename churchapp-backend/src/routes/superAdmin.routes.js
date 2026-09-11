@@ -7,6 +7,7 @@ import {
   listerAnnoncesSysteme, supprimerAnnonceSysteme,
   listerJournal,
   listerCommunautes, creerCommunaute, rattacherEglise, creerCompteCommunaute,
+  changerMonMotDePasseSuperAdmin,
 } from '../controllers/superAdmin.controller.js'
 
 const router = Router()
@@ -35,5 +36,7 @@ router.post('/communautes', creerCommunaute)
 router.post('/communautes/:id/compte', creerCompteCommunaute)
 
 router.get('/journal', listerJournal)
+
+router.put('/mon-mot-de-passe', changerMonMotDePasseSuperAdmin)
 
 export default router

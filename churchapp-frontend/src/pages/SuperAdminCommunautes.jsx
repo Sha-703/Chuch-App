@@ -68,7 +68,7 @@ export default function SuperAdminCommunautes() {
             <h3 className="font-display text-lg text-ink-950 mb-3">Accès créé</h3>
             <div className="bg-parchment-100 rounded-lg p-4 text-sm space-y-1">
               <p><span className="text-ink-700/60">E-mail :</span> {resultat.email}</p>
-              <p><span className="text-ink-700/60">Mot de passe provisoire :</span> <span className="font-mono">{resultat.motDePasseProvisoire}</span></p>
+              <p><span className="text-ink-700/60">Code OTP :</span> <span className="font-mono">{resultat.otp}</span></p>
             </div>
             <p className="text-xs text-ink-700/50 mt-3">Ce compte se connecte via la page normale, comme une église.</p>
             <button onClick={() => setResultat(null)} className="w-full mt-4 bg-ink-950 text-parchment-50 rounded-lg py-2.5 text-sm font-semibold hover:bg-ink-900">Fermer</button>
