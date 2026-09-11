@@ -22,6 +22,15 @@ const app = express()
 const corsOrigins = (process.env.CORS_ORIGIN || '*').split(',').map(o => o.trim()).filter(Boolean)
 console.log('CORS_ORIGINS:', corsOrigins)
 app.use(cors({ origin: corsOrigins.length ? corsOrigins : '*' }))
+
+// Fallback CORS — toujours actif pour éviter les blocages
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*')
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH')
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+  if (req.method === 'OPTIONS') return res.sendStatus(200)
+  next()
+})
 app.use(express.json())
 app.use('/uploads', express.static(process.env.UPLOAD_DIR || './uploads'))
 
