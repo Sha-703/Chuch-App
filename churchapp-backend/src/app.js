@@ -19,7 +19,8 @@ import notificationRoutes from './routes/notification.routes.js'
 
 const app = express()
 
-app.use(cors({ origin: process.env.CORS_ORIGIN || '*' }))
+const corsOrigins = (process.env.CORS_ORIGIN || '*').split(',').map(o => o.trim()).filter(Boolean)
+app.use(cors({ origin: corsOrigins }))
 app.use(express.json())
 app.use('/uploads', express.static(process.env.UPLOAD_DIR || './uploads'))
 
