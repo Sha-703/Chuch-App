@@ -29,7 +29,7 @@ export default function MobileNav() {
   return (
     <div className="md:hidden">
       <div className="flex items-center justify-between px-4 py-3.5 bg-ink-950 text-parchment-100 sticky top-0 z-40">
-        <span className="font-display text-xl text-gold-500">ChurchApp</span>
+        <img src="/chuchapp.jpeg" alt="ChurchApp" className="h-8 w-auto object-contain" />
         <button
           onClick={() => setOuvert(true)}
           aria-label="Ouvrir le menu"
@@ -44,7 +44,7 @@ export default function MobileNav() {
           <div className="absolute inset-0 bg-ink-950/50" onClick={() => setOuvert(false)} />
           <div className="relative w-72 max-w-[85%] bg-ink-950 text-parchment-100 h-full flex flex-col">
             <div className="flex items-center justify-between px-5 pt-6 pb-4">
-              <span className="font-display text-xl text-gold-500">ChurchApp</span>
+              <img src="/chuchapp.jpeg" alt="ChurchApp" className="h-8 w-auto object-contain" />
               <button onClick={() => setOuvert(false)} aria-label="Fermer le menu" className="p-1 text-parchment-100">
                 <X size={20} />
               </button>

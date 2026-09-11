@@ -6,6 +6,7 @@ import {
 } from '../models/index.js'
 import { journaliser } from '../lib/journal.js'
 import { genererOTP } from '../lib/otp.js'
+import { envoyerMail } from '../lib/mail.js'
 
 export async function login(req, res) {
   const { email, motDePasse } = req.body
@@ -131,7 +132,24 @@ export async function reinitialiserMotDePasse(req, res) {
     utilisateurNom: 'Super Admin',
   })
 
-  res.json({ email: utilisateur.email, otp })
+  await envoyerMail({
+    to: utilisateur.email,
+    sujet: 'Réinitialisation de votre mot de passe ChurchApp',
+    texte: `Bonjour,
+
+Votre mot de passe a été réinitialisé. Voici votre code de connexion provisoire :
+
+Code OTP : ${otp}
+
+Utilisez ce code comme mot de passe à votre prochaine connexion. Vous serez ensuite invité à le remplacer par un mot de passe personnel.
+
+Cordialement,
+L'équipe ChurchApp`,
+  })
+
+  console.log(`[OTP] ${utilisateur.email}: ${otp} (réinitialisation envoyée par mail)`)
+
+  res.json({ email: utilisateur.email })
 }
 
 export async function toggleBlocageUtilisateur(req, res) {
@@ -219,11 +237,47 @@ export async function creerEgliseParSuperAdmin(req, res) {
     utilisateurNom: 'Super Admin',
   })
 
+  const [pasteurMailOk, adminMailOk] = await Promise.all([
+    envoyerMail({
+      to: comptePasteur.email,
+      sujet: 'Votre code de connexion ChurchApp',
+      texte: `Bonjour ${comptePasteur.nom},
+
+Voici votre code de connexion provisoire pour l'église "${eglise?.nom || nouvelleEglise.nom}" :
+
+Code OTP : ${otpPasteur}
+
+Utilisez ce code comme mot de passe à votre première connexion. Vous serez ensuite invité à le remplacer par un mot de passe personnel.
+
+Cordialement,
+L'équipe ChurchApp`,
+    }),
+    envoyerMail({
+      to: compteAdmin.email,
+      sujet: 'Votre code de connexion ChurchApp',
+      texte: `Bonjour ${compteAdmin.nom},
+
+Voici votre code de connexion provisoire pour l'église "${eglise?.nom || nouvelleEglise.nom}" :
+
+Code OTP : ${otpAdmin}
+
+Utilisez ce code comme mot de passe à votre première connexion. Vous serez ensuite invité à le remplacer par un mot de passe personnel.
+
+Cordialement,
+L'équipe ChurchApp`,
+    }),
+  ])
+
+  console.log(
+    `[OTP] Pasteur ${comptePasteur.email}: ${otpPasteur} (${pasteurMailOk ? 'envoyé' : 'échec'}) | ` +
+    `Admin ${compteAdmin.email}: ${otpAdmin} (${adminMailOk ? 'envoyé' : 'échec'})`
+  )
+
   res.status(201).json({
     eglise: nouvelleEglise,
     comptes: [
-      { email: comptePasteur.email, role: 'pasteur', otp: otpPasteur },
-      { email: compteAdmin.email, role: 'administrateur', otp: otpAdmin },
+      { email: comptePasteur.email, role: 'pasteur' },
+      { email: compteAdmin.email, role: 'administrateur' },
     ],
   })
 }
@@ -299,7 +353,24 @@ export async function creerCompteCommunaute(req, res) {
     utilisateurNom: 'Super Admin',
   })
 
-  res.status(201).json({ email: compte.email, otp })
+  await envoyerMail({
+    to: compte.email,
+    sujet: 'Votre code de connexion ChurchApp',
+    texte: `Bonjour ${compte.nom},
+
+Voici votre code de connexion provisoire pour la communauté "${communaute.nom}" :
+
+Code OTP : ${otp}
+
+Utilisez ce code comme mot de passe à votre première connexion. Vous serez ensuite invité à le remplacer par un mot de passe personnel.
+
+Cordialement,
+L'équipe ChurchApp`,
+  })
+
+  console.log(`[OTP] ${compte.email}: ${otp} (communauté, envoyé par mail)`)
+
+  res.status(201).json({ email: compte.email })
 }
 
 // --- Le Super Admin change son propre mot de passe (page Paramètres) ---

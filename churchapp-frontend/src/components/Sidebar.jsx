@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom'
-import { LayoutGrid, Landmark, CalendarDays, FileBarChart, Users2, LogOut, Mail, Megaphone, Church, CalendarClock, Boxes, Settings } from 'lucide-react'
+import { LayoutGrid, Landmark, CalendarDays, FileBarChart, Users2, LogOut, Mail, Megaphone, CalendarClock, Boxes, Settings } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 
 const links = [
@@ -28,9 +28,9 @@ export default function Sidebar() {
     <aside className="hidden md:flex md:flex-col w-64 shrink-0 bg-ink-950 text-parchment-100 h-screen sticky top-0">
       <div className="px-6 pt-6 pb-4">
         <span className="inline-flex items-center gap-2">
-          <span className="w-7 h-7 rounded-lg bg-gold-500 text-ink-950 flex items-center justify-center shrink-0">
-            <Church size={15} strokeWidth={2} />
-          </span>
+          <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-gold-500/40 shrink-0">
+            <img src="/chuchapp.jpeg" alt="ChurchApp" className="w-full h-full object-cover" />
+          </div>
           <span className="font-display text-2xl tracking-tight text-parchment-50">ChurchApp</span>
         </span>
       </div>
@@ -45,7 +45,7 @@ export default function Sidebar() {
             onClick={handleLogout}
             title="Se déconnecter"
             aria-label="Se déconnecter"
-            className="shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-ink-600 hover:text-clay-500 hover:bg-ink-950 transition-colors"
+            className="shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-red-500 hover:text-red-400 hover:bg-red-500/10 transition-colors"
           >
             <LogOut size={16} />
           </button>

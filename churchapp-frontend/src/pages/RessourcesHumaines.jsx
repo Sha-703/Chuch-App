@@ -212,7 +212,7 @@ function ModalCompteOuvrier({ membre, onClose, onSaved }) {
         </p>
         <div className="bg-parchment-100 rounded-lg p-4 text-sm space-y-1">
           <p><span className="text-ink-700/60">E-mail :</span> {resultat.email}</p>
-          <p><span className="text-ink-700/60">Code OTP (à saisir comme mot de passe à la première connexion) :</span> <span className="font-mono">{resultat.otp}</span></p>
+          <p><span className="text-ink-700/60">Code envoyé par e-mail :</span> ✉️</p>
         </div>
         <button onClick={onClose} className="w-full mt-4 bg-ink-950 text-parchment-50 rounded-lg py-2.5 text-sm font-semibold hover:bg-ink-900">
           Fermer

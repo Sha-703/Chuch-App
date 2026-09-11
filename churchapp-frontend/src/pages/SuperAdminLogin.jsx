@@ -29,14 +29,17 @@ export default function SuperAdminLogin() {
     <div className="min-h-screen grid md:grid-cols-2 bg-parchment-100">
       <div className="hidden md:flex flex-col justify-between text-parchment-100 p-12 relative overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1714991850840-ef17f8795355?fm=jpg&q=80&w=1200&auto=format&fit=crop"
-          alt=""
-          className="absolute inset-0 w-full h-full object-cover"
+          src="/chuchapp.jpeg"
+          alt="ChurchApp"
+          className="absolute inset-0 w-full h-full object-cover blur-[3px]"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-ink-950/90 via-ink-950/85 to-ink-950/95" />
+        <div className="absolute inset-0 bg-ink-950/20 backdrop-blur-[2px]" />
         <div className="relative flex items-center gap-2">
           <ShieldCheck className="text-gold-500" size={22} />
-          <span className="font-display text-3xl text-gold-500">ChurchApp</span>
+          <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-gold-500/40 shadow-lg">
+            <img src="/chuchapp.jpeg" alt="ChurchApp" className="w-full h-full object-cover" />
+          </div>
         </div>
         <div className="relative">
           <div className="woven-rule mb-8 w-24" />
@@ -53,9 +56,10 @@ export default function SuperAdminLogin() {
 
       <div className="flex items-center justify-center p-8">
         <div className="w-full max-w-sm">
-          <div className="md:hidden mb-8 text-center flex items-center justify-center gap-2">
-            <ShieldCheck className="text-ink-950" size={20} />
-            <span className="font-display text-2xl text-ink-950">ChurchApp</span>
+          <div className="md:hidden mb-8 text-center">
+            <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-gold-500/40 shadow-lg mx-auto">
+              <img src="/chuchapp.jpeg" alt="ChurchApp" className="w-full h-full object-cover" />
+            </div>
           </div>
           <h1 className="font-display text-2xl text-ink-950">Connexion Super Admin</h1>
           <p className="text-sm text-ink-700/70 mt-1 mb-8">Espace réservé — pas pour les églises.</p>

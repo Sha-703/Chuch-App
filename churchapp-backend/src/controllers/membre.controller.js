@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs'
 import { Membre, Utilisateur } from '../models/index.js'
 import { genererOTP } from '../lib/otp.js'
+import { envoyerMail } from '../lib/mail.js'
 
 export async function listerMembres(req, res) {
   const membres = await Membre.findAll({
@@ -46,8 +47,22 @@ export async function creerCompteOuvrier(req, res) {
   membre.utilisateurId = compte.id
   await membre.save()
 
-  // NOTE: comme pour la création d'église, le code OTP est renvoyé ici pour
-  // permettre de tester sans service d'e-mail ; en production il faudrait
-  // l'envoyer directement au membre par e-mail ou SMS.
-  res.status(201).json({ email: compte.email, otp })
+  await envoyerMail({
+    to: compte.email,
+    sujet: 'Votre code de connexion ChurchApp',
+    texte: `Bonjour ${compte.nom},
+
+Voici votre code de connexion provisoire :
+
+Code OTP : ${otp}
+
+Utilisez ce code comme mot de passe à votre première connexion. Vous serez ensuite invité à le remplacer par un mot de passe personnel.
+
+Cordialement,
+L'équipe ChurchApp`,
+  })
+
+  console.log(`[OTP] ${compte.email}: ${otp} (à envoyer par mail)`)
+
+  res.status(201).json({ email: compte.email })
 }
