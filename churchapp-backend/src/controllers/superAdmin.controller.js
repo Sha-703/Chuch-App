@@ -29,11 +29,12 @@ export async function login(req, res) {
 
 // --- Tableau de bord système ---
 export async function dashboard(req, res) {
-  const [nbEglises, nbEglisesActives, nbMembres, nbAnnonces] = await Promise.all([
+  const [nbEglises, nbEglisesActives, nbMembres, nbAnnonces, nbCommunautes] = await Promise.all([
     Eglise.count(),
     Eglise.count({ where: { statut: 'actif' } }),
     Membre.count(),
     Annonce.count(),
+    Communaute.count(),
   ])
 
   const aujourdHui = new Date().toISOString().slice(0, 10)
@@ -49,6 +50,7 @@ export async function dashboard(req, res) {
     nbEglisesSuspendues: nbEglises - nbEglisesActives,
     nbMembres,
     nbAnnonces,
+    nbCommunautes,
     nbCorrespondancesEnRetard: nbEnRetard,
   })
 }
@@ -59,6 +61,7 @@ export async function listerEglisesSysteme(req, res) {
   const where = recherche ? { nom: { [Op.like]: `%${recherche}%` } } : {}
   const eglises = await Eglise.findAll({
     where,
+    include: [{ model: Communaute, attributes: ['id', 'nom'] }],
     order: [['nom', 'ASC']],
   })
 
@@ -269,15 +272,15 @@ L'équipe ChurchApp`,
   ])
 
   console.log(
-    `[OTP] Pasteur ${comptePasteur.email}: ${otpPasteur} (${pasteurMailOk ? 'envoyé' : 'échec'}) | ` +
-    `Admin ${compteAdmin.email}: ${otpAdmin} (${adminMailOk ? 'envoyé' : 'échec'})`
+    `[OTP] Pasteur ${comptePasteur.email}: ${otpPasteur} (${pasteurMailOk ? 'envoyé' : 'échec email'}) | ` +
+    `Admin ${compteAdmin.email}: ${otpAdmin} (${adminMailOk ? 'envoyé' : 'échec email'})`
   )
 
   res.status(201).json({
     eglise: nouvelleEglise,
     comptes: [
-      { email: comptePasteur.email, role: 'pasteur' },
-      { email: compteAdmin.email, role: 'administrateur' },
+      { email: comptePasteur.email, role: 'pasteur', otp: pasteurMailOk ? undefined : otpPasteur },
+      { email: compteAdmin.email, role: 'administrateur', otp: adminMailOk ? undefined : otpAdmin },
     ],
   })
 }
@@ -353,7 +356,7 @@ export async function creerCompteCommunaute(req, res) {
     utilisateurNom: 'Super Admin',
   })
 
-  await envoyerMail({
+  const mailOk = await envoyerMail({
     to: compte.email,
     sujet: 'Votre code de connexion ChurchApp',
     texte: `Bonjour ${compte.nom},
@@ -368,9 +371,9 @@ Cordialement,
 L'équipe ChurchApp`,
   })
 
-  console.log(`[OTP] ${compte.email}: ${otp} (communauté, envoyé par mail)`)
+  console.log(`[OTP] ${compte.email}: ${otp} (communauté, ${mailOk ? 'envoyé' : 'échec email'})`)
 
-  res.status(201).json({ email: compte.email })
+  res.status(201).json({ email: compte.email, otp: mailOk ? undefined : otp })
 }
 
 // --- Le Super Admin change son propre mot de passe (page Paramètres) ---

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Church, Users2, Megaphone, AlertTriangle, Loader2 } from 'lucide-react'
+import { Church, Users2, Megaphone, AlertTriangle, Building2, Loader2 } from 'lucide-react'
 import SuperAdminLayout from '../components/SuperAdminLayout'
 import StatCard from '../components/StatCard'
 import { superAdminApi } from '../lib/superAdminApi'
@@ -24,6 +24,7 @@ export default function SuperAdminDashboard() {
   return (
     <SuperAdminLayout title="Vue d'ensemble" subtitle="Toutes les églises du système, en un coup d'œil">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <StatCard label="Communautés" value={String(donnees.nbCommunautes)} icon={Building2} accent="gold" />
         <StatCard
           label="Églises inscrites"
           value={String(donnees.nbEglises)}

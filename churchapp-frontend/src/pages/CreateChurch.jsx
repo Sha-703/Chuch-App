@@ -1,7 +1,8 @@
-import { Link, useNavigate } from 'react-router-dom'
-import { useState } from 'react'
+import { Link } from 'react-router-dom'
+import { useState, useEffect } from 'react'
 import { Church, ArrowRight, ArrowLeft, Loader2, CheckCircle2 } from 'lucide-react'
 import { api } from '../lib/api'
+import { superAdminApi } from '../lib/superAdminApi'
 
 const steps = ['Église', 'Pasteur', 'Administrateur']
 
@@ -17,7 +18,26 @@ export default function CreateChurch() {
   const [chargement, setChargement] = useState(false)
   const [erreur, setErreur] = useState('')
   const [succes, setSucces] = useState(null)
-  const navigate = useNavigate()
+  const [communauteId, setCommunauteId] = useState('')
+  const [communautes, setCommunautes] = useState([])
+  const [chargementCommunes, setChargementCommunes] = useState(true)
+  const [erreurCommunes, setErreurCommunes] = useState('')
+
+  // Charger les communautés (réussit si Super Admin, échoue sinon)
+  useEffect(() => {
+    console.log('[CreateChurch] Tentative chargement communautés...')
+    superAdminApi.listerCommunautes()
+      .then((cs) => {
+        console.log('[CreateChurch] Communautés reçues:', cs)
+        setCommunautes(cs || [])
+      })
+      .catch((err) => {
+        console.error('[CreateChurch] Erreur:', err)
+        setCommunautes([])
+        setErreurCommunes(err.message || 'Erreur de chargement')
+      })
+      .finally(() => setChargementCommunes(false))
+  }, [])
 
   function setChamp(section, champ, valeur) {
     setForm((f) => ({ ...f, [section]: { ...f[section], [champ]: valeur } }))
@@ -31,7 +51,10 @@ export default function CreateChurch() {
     setErreur('')
     setChargement(true)
     try {
-      const data = await api.creerEglise(form)
+      const data = await api.creerEglise({
+        ...form,
+        ...(communauteId ? { communauteId } : {}),
+      })
       setSucces(data)
     } catch (err) {
       setErreur(err.message)
@@ -48,13 +71,13 @@ export default function CreateChurch() {
           <h1 className="font-display text-2xl text-ink-950 mb-2">Église créée avec succès</h1>
           <p className="text-sm text-ink-700/70 mb-6">
             Les comptes du pasteur et de l'administrateur ont été créés pour{' '}
-            <strong>{succes.eglise.nom}</strong>. Chacun a reçu un code OTP à usage unique, à saisir comme mot de passe à la première connexion.
+            <strong>{succes.eglise.nom}</strong>. Chacun a reçu un code OTP à usage unique.
           </p>
           <div className="bg-parchment-100 rounded-lg p-4 text-left text-sm space-y-2 mb-6">
             {succes.comptes.map((c) => (
               <div key={c.email} className="pb-2 border-b border-ink-950/5 last:border-0 last:pb-0">
                 <p><span className="text-ink-700/60">{c.role} :</span> {c.email}</p>
-                <p className="text-xs text-ink-700/50">Code envoyé par e-mail ✉️</p>
+                <p className="text-xs text-ink-700/50">{c.otp ? <>Code OTP : <strong className="text-ink-950">{c.otp}</strong></> : 'Code envoyé par e-mail ✉️'}</p>
               </div>
             ))}
           </div>
@@ -91,8 +114,34 @@ export default function CreateChurch() {
           {step === 0 && (
             <div className="space-y-4">
               <Field label="Nom de l'église" placeholder="Ex. CEC Bethel Mbanza-Ngungu" value={form.eglise.nom} onChange={(v) => setChamp('eglise', 'nom', v)} />
-              <Field label="Dénomination" placeholder="Ex. Communauté des Églises de..." value={form.eglise.denomination} onChange={(v) => setChamp('eglise', 'denomination', v)} />
-              <Field label="Ville / territoire" placeholder="Ex. Mbanza-Ngungu, Kongo-Central" value={form.eglise.ville} onChange={(v) => setChamp('eglise', 'ville', v)} />
+              <div className="grid grid-cols-2 gap-3">
+                <Field label="Dénomination" placeholder="Ex. Communauté des Églises de..." value={form.eglise.denomination} onChange={(v) => setChamp('eglise', 'denomination', v)} />
+                <Field label="Ville / territoire" placeholder="Ex. Mbanza-Ngungu, Kongo-Central" value={form.eglise.ville} onChange={(v) => setChamp('eglise', 'ville', v)} />
+              </div>
+              {chargementCommunes ? (
+                <div className="flex items-center gap-2 text-ink-700/60 text-sm py-1">
+                  <Loader2 size={14} className="animate-spin" /> Chargement des communautés...
+                </div>
+              ) : erreurCommunes ? (
+                <div>
+                  <p className="text-sm text-clay-600 bg-clay-500/10 rounded-lg px-3 py-2">⚠️ {erreurCommunes}</p>
+                  <p className="text-xs text-ink-700/40 mt-1">Vérifie ta session Super Admin (Ctrl+Maj+R pour rafraîchir)</p>
+                </div>
+              ) : communautes.length > 0 ? (
+                <div>
+                  <label className="text-xs font-semibold uppercase tracking-wide text-ink-700/60">Communauté (optionnel)</label>
+                  <select
+                    value={communauteId}
+                    onChange={(e) => setCommunauteId(e.target.value)}
+                    className="mt-1.5 w-full rounded-lg border border-ink-950/15 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/50 bg-white"
+                  >
+                    <option value="">— Aucune (église indépendante) —</option>
+                    {communautes.map((c) => (
+                      <option key={c.id} value={c.id}>{c.nom}</option>
+                    ))}
+                  </select>
+                </div>
+              ) : null}
             </div>
           )}
           {step === 1 && (

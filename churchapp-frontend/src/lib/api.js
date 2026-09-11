@@ -31,6 +31,9 @@ export const api = {
   creerEglise: (payload) =>
     request('/auth/eglises', { method: 'POST', body: JSON.stringify(payload) }),
 
+  demanderReset: (payload) =>
+    request('/auth/demander-reset', { method: 'POST', body: JSON.stringify(payload) }),
+
   bilanMensuel: () => request('/finances/bilan-mensuel'),
   telechargerBilanPdf: async (mois) => {
     const token = getToken()

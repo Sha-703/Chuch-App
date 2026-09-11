@@ -87,7 +87,7 @@ export async function changerMonMotDePasse(req, res) {
 
 // Création d'une nouvelle église + ses deux comptes (pasteur, administrateur)
 export async function creerEglise(req, res) {
-  const { eglise, pasteur, administrateur } = req.body
+  const { eglise, pasteur, administrateur, communauteId } = req.body
 
   if (!eglise?.nom || !pasteur?.email || !administrateur?.email) {
     return res.status(400).json({ message: 'Champs obligatoires manquants.' })
@@ -104,6 +104,7 @@ export async function creerEglise(req, res) {
     nom: eglise.nom,
     denomination: eglise.denomination,
     ville: eglise.ville,
+    communauteId: communauteId || null,
   })
 
   // Chaque compte reçoit son propre code OTP à usage unique — à saisir comme
@@ -138,7 +139,8 @@ export async function creerEglise(req, res) {
     utilisateurNom: pasteur.nom,
   })
 
-  // Envoyer les codes OTP par e-mail (ne jamais les exposer dans la réponse HTTP)
+  // Envoyer les codes OTP par e-mail. En cas d'échec, le code OTP
+  // est renvoyé dans la réponse pour usage manuel.
   const [pasteurMailOk, adminMailOk] = await Promise.all([
     envoyerMail({
       to: comptePasteur.email,
@@ -171,15 +173,53 @@ L'équipe ChurchApp`,
   ])
 
   console.log(
-    `[OTP] Pasteur ${comptePasteur.email}: ${otpPasteur} (${pasteurMailOk ? 'envoyé' : 'échec'}) | ` +
-    `Admin ${compteAdmin.email}: ${otpAdmin} (${adminMailOk ? 'envoyé' : 'échec'})`
+    `[OTP] Pasteur ${comptePasteur.email}: ${otpPasteur} (${pasteurMailOk ? 'envoyé' : 'échec email'}) | ` +
+    `Admin ${compteAdmin.email}: ${otpAdmin} (${adminMailOk ? 'envoyé' : 'échec email'})`
   )
 
+  // En cas d'échec email, le code OTP est renvoyé pour usage manuel
   res.status(201).json({
     eglise: nouvelleEglise,
     comptes: [
-      { email: comptePasteur.email, role: 'pasteur' },
-      { email: compteAdmin.email, role: 'administrateur' },
+      { email: comptePasteur.email, role: 'pasteur', otp: pasteurMailOk ? undefined : otpPasteur },
+      { email: compteAdmin.email, role: 'administrateur', otp: adminMailOk ? undefined : otpAdmin },
     ],
   })
+}
+
+// Demander une réinitialisation de mot de passe (publique)
+// L'utilisateur entre son email → reçoit un OTP par mail → se connecte avec ce code → est forcé de changer le mot de passe
+export async function demanderReinitialisation(req, res) {
+  const { email } = req.body
+  if (!email) return res.status(400).json({ message: 'E-mail requis.' })
+
+  const utilisateur = await Utilisateur.findOne({ where: { email } })
+  if (!utilisateur) {
+    // Ne pas révéler que l'email n'existe pas
+    return res.json({ email })
+  }
+
+  const otp = genererOTP()
+  utilisateur.motDePasseHash = await bcrypt.hash(otp, 10)
+  utilisateur.motDePasseDoitEtreChange = true
+  await utilisateur.save()
+
+  await envoyerMail({
+    to: utilisateur.email,
+    sujet: 'Réinitialisation de votre mot de passe ChurchApp',
+    texte: `Bonjour ${utilisateur.nom || utilisateur.email},
+
+Vous avez demandé à réinitialiser votre mot de passe. Voici votre code de connexion provisoire :
+
+Code OTP : ${otp}
+
+Utilisez ce code comme mot de passe pour vous connecter. Vous serez ensuite invité à le remplacer par un mot de passe personnel.
+
+Cordialement,
+L'équipe ChurchApp`,
+  })
+
+  console.log(`[OTP] ${utilisateur.email}: ${otp} (réinitialisation demandée)`)
+
+  res.json({ email })
 }
