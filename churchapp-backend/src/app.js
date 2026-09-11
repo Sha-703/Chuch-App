@@ -20,7 +20,6 @@ import notificationRoutes from './routes/notification.routes.js'
 const app = express()
 
 const corsOrigins = (process.env.CORS_ORIGIN || '*').split(',').map(o => o.trim()).filter(Boolean)
-console.log('CORS_ORIGINS:', corsOrigins)
 app.use(cors({ origin: corsOrigins.length ? corsOrigins : '*' }))
 
 // Fallback CORS — toujours actif pour éviter les blocages
