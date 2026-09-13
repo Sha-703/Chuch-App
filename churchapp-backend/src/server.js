@@ -7,8 +7,8 @@ const PORT = process.env.PORT || 4000
 async function start() {
   await sequelize.authenticate()
   await sequelize.sync() // en production : utiliser des migrations plutôt que sync()
-  app.listen(PORT, () => {
-    console.log(`ChurchApp API démarrée sur http://localhost:${PORT}`)
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`ChurchApp API démarrée sur http://0.0.0.0:${PORT}`)
   })
 }
 
