@@ -4,6 +4,37 @@ import { Eglise, Utilisateur, Communaute } from '../models/index.js'
 import { journaliser } from '../lib/journal.js'
 import { genererOTP } from '../lib/otp.js'
 import { envoyerMail } from '../lib/mail.js'
+import { envoyerOTPSms } from '../lib/zavu.js'
+
+// Emails : Gmail SMTP seulement
+async function sendOtpEmail({ to, code, destinataireNom }) {
+  const ok = await envoyerMail({
+    to,
+    sujet: 'Votre code de connexion ChurchApp',
+    texte: `Bonjour ${destinataireNom || to},
+
+Voici votre code de connexion provisoire :
+
+Code OTP : ${code}
+
+Utilisez ce code comme mot de passe à votre première connexion. Vous serez ensuite invité à le remplacer par un mot de passe personnel.
+
+Cordialement,
+L'équipe ChurchApp`,
+  })
+  return !!ok
+}
+
+// SMS : ZAVU seulement, jamais d'email
+async function sendOtpSms({ to, code, destinataireNom }) {
+  try {
+    await envoyerOTPSms({ to, code, destinataireNom })
+    return true
+  } catch (err) {
+    console.error('[ZAVU][SMS] Échec envoi OTP SMS :', err.message)
+    return false
+  }
+}
 
 function signToken(utilisateur) {
   return jwt.sign(
@@ -139,45 +170,16 @@ export async function creerEglise(req, res) {
     utilisateurNom: pasteur.nom,
   })
 
-  // Envoyer les codes OTP par e-mail. En cas d'échec, le code OTP
-  // est renvoyé dans la réponse pour usage manuel.
   const [pasteurMailOk, adminMailOk] = await Promise.all([
-    envoyerMail({
-      to: comptePasteur.email,
-      sujet: 'Votre code de connexion ChurchApp',
-      texte: `Bonjour ${comptePasteur.nom},
-
-Voici votre code de connexion provisoire pour l'église "${eglise?.nom || nouvelleEglise.nom}" :
-
-Code OTP : ${otpPasteur}
-
-Utilisez ce code comme mot de passe à votre première connexion. Vous serez ensuite invité à le remplacer par un mot de passe personnel.
-
-Cordialement,
-L'équipe ChurchApp`,
-    }),
-    envoyerMail({
-      to: compteAdmin.email,
-      sujet: 'Votre code de connexion ChurchApp',
-      texte: `Bonjour ${compteAdmin.nom},
-
-Voici votre code de connexion provisoire pour l'église "${eglise?.nom || nouvelleEglise.nom}" :
-
-Code OTP : ${otpAdmin}
-
-Utilisez ce code comme mot de passe à votre première connexion. Vous serez ensuite invité à le remplacer par un mot de passe personnel.
-
-Cordialement,
-L'équipe ChurchApp`,
-    }),
+    sendOtpEmail({ to: comptePasteur.email, code: otpPasteur, destinataireNom: comptePasteur.nom }),
+    sendOtpEmail({ to: compteAdmin.email, code: otpAdmin, destinataireNom: compteAdmin.nom }),
   ])
 
   console.log(
-    `[OTP] Pasteur ${comptePasteur.email}: ${otpPasteur} (${pasteurMailOk ? 'envoyé' : 'échec email'}) | ` +
-    `Admin ${compteAdmin.email}: ${otpAdmin} (${adminMailOk ? 'envoyé' : 'échec email'})`
+    `[OTP] Pasteur ${comptePasteur.email}: ${otpPasteur} (${pasteurMailOk ? 'email envoyé' : 'échec email'}) | ` +
+    `Admin ${compteAdmin.email}: ${otpAdmin} (${adminMailOk ? 'email envoyé' : 'échec email'})`
   )
 
-  // En cas d'échec email, le code OTP est renvoyé pour usage manuel
   res.status(201).json({
     eglise: nouvelleEglise,
     comptes: [
@@ -204,10 +206,12 @@ export async function demanderReinitialisation(req, res) {
   utilisateur.motDePasseDoitEtreChange = true
   await utilisateur.save()
 
-  await envoyerMail({
-    to: utilisateur.email,
-    sujet: 'Réinitialisation de votre mot de passe ChurchApp',
-    texte: `Bonjour ${utilisateur.nom || utilisateur.email},
+  const sent = await sendOtpEmail({ to: utilisateur.email, code: otp, destinataireNom: utilisateur.nom })
+  if (!sent) {
+    await envoyerMail({
+      to: utilisateur.email,
+      sujet: 'Réinitialisation de votre mot de passe ChurchApp',
+      texte: `Bonjour ${utilisateur.nom || utilisateur.email},
 
 Vous avez demandé à réinitialiser votre mot de passe. Voici votre code de connexion provisoire :
 
@@ -217,7 +221,8 @@ Utilisez ce code comme mot de passe pour vous connecter. Vous serez ensuite invi
 
 Cordialement,
 L'équipe ChurchApp`,
-  })
+    }).then(() => true).catch(() => false)
+  }
 
   console.log(`[OTP] ${utilisateur.email}: ${otp} (réinitialisation demandée)`)
 

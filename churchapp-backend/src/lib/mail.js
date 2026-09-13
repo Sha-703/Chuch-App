@@ -9,12 +9,11 @@ function getTransporter() {
   if (transporter && now - lastTransportTime < TRANSPORT_TTL) {
     return transporter
   }
-  // Recycler le transporteur (TTL écoulé ou première utilisation)
   transporter = null
   lastTransportTime = now
 
   const host = process.env.SMTP_HOST
-  const port = parseInt(process.env.SMTP_PORT, 10) || 587
+  const port = parseInt(process.env.SMTP_PORT, 10) || 465
   const user = process.env.SMTP_USER
   const pass = process.env.SMTP_PASS
 
