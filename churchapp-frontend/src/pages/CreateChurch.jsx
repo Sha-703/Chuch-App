@@ -2,7 +2,6 @@ import { Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { Church, ArrowRight, ArrowLeft, Loader2, CheckCircle2 } from 'lucide-react'
 import { api } from '../lib/api'
-import { superAdminApi } from '../lib/superAdminApi'
 
 const steps = ['Église', 'Pasteur', 'Administrateur']
 
@@ -23,18 +22,18 @@ export default function CreateChurch() {
   const [chargementCommunes, setChargementCommunes] = useState(true)
   const [erreurCommunes, setErreurCommunes] = useState('')
 
-  // Charger les communautés (réussit si Super Admin, échoue sinon)
+  // Charger les communautés via endpoint PUBLIC
   useEffect(() => {
-    console.log('[CreateChurch] Tentative chargement communautés...')
-    superAdminApi.listerCommunautes()
+    console.log('[CreateChurch] Chargement communautés (public)...')
+    api.listerCommunautes()
       .then((cs) => {
         console.log('[CreateChurch] Communautés reçues:', cs)
         setCommunautes(cs || [])
       })
       .catch((err) => {
-        console.error('[CreateChurch] Erreur:', err)
+        console.error('[CreateChurch] Erreur chargement communautés:', err)
         setCommunautes([])
-        setErreurCommunes(err.message || 'Erreur de chargement')
+        setErreurCommunes('Impossible de charger les communautés pour le moment.')
       })
       .finally(() => setChargementCommunes(false))
   }, [])

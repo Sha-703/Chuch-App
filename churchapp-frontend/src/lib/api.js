@@ -124,6 +124,9 @@ export const api = {
   communauteListerEcheances: (egliseId) => request(`/communaute/echeances${egliseId ? `?egliseId=${egliseId}` : ''}`),
   communauteEnregistrerVersement: (payload) => request('/communaute/versements', { method: 'POST', body: JSON.stringify(payload) }),
   communauteRecouvrement: () => request('/communaute/recouvrement'),
+
+  // --- Endpoint PUBLIC pour les communautés (création d'église) ---
+  listerCommunautes: () => request('/communautes'),
 }
 
 export function saveSession({ token, utilisateur, eglise, communaute }) {

@@ -7,7 +7,27 @@ import {
   enregistrerVersement, recouvrement,
 } from '../controllers/communaute.controller.js'
 
+import { Communaute } from '../models/index.js'
+
 const router = Router()
+
+// --- Endpoint PUBLIC pour lister les communautés (utilisé par CreateChurch) ---
+async function listerCommunautesPublic(req, res) {
+  try {
+    const communautes = await Communaute.findAll({
+      attributes: ['id', 'nom', 'description'],
+      order: [['nom', 'ASC']],
+    })
+    res.json(communautes)
+  } catch (err) {
+    console.error('Erreur liste communautés publique:', err)
+    res.status(500).json({ message: 'Erreur serveur lors du chargement des communautés.' })
+  }
+}
+
+router.get('/communautes/public', listerCommunautesPublic)
+
+// Routes protégées (espace communauté)
 router.use(authRequired, communauteScope)
 
 router.get('/dashboard', dashboard)

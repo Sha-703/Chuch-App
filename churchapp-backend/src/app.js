@@ -20,16 +20,7 @@ import notificationRoutes from './routes/notification.routes.js'
 const app = express()
 
 const corsOrigins = (process.env.CORS_ORIGIN || '*').split(',').map(o => o.trim()).filter(Boolean)
-app.use(cors({ origin: corsOrigins.length ? corsOrigins : '*' }))
-
-// Fallback CORS — toujours actif pour éviter les blocages
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*')
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH')
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
-  if (req.method === 'OPTIONS') return res.sendStatus(200)
-  next()
-})
+app.use(cors({ origin: corsOrigins.length ? corsOrigins : '*', credentials: true }))
 app.use(express.json())
 app.use('/uploads', express.static(process.env.UPLOAD_DIR || './uploads'))
 
@@ -49,6 +40,22 @@ app.use('/api/evenements', evenementRoutes)
 app.use('/api/super-admin', superAdminRoutes)
 app.use('/api/materiel', materielRoutes)
 app.use('/api/communaute', communauteRoutes)
+
+// Endpoint public pour lister les communautés (création d'église)
+app.get('/api/communautes', async (req, res) => {
+  try {
+    const { Communaute } = await import('./models/index.js')
+    const communautes = await Communaute.findAll({
+      attributes: ['id', 'nom', 'description'],
+      order: [['nom', 'ASC']],
+    })
+    res.json(communautes)
+  } catch (err) {
+    console.error('Erreur /api/communautes:', err)
+    res.status(500).json({ message: 'Erreur serveur.' })
+  }
+})
+
 app.use('/api/notifications', notificationRoutes)
 
 // Gestion d'erreurs centralisée
