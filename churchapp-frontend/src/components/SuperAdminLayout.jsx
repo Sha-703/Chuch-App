@@ -2,6 +2,7 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import { LayoutGrid, Church, Users2, Megaphone, ScrollText, LogOut, ShieldCheck, Network, Settings } from 'lucide-react'
 import { useSuperAdminAuth } from '../context/SuperAdminAuthContext'
 import ThemeToggle from './ThemeToggle'
+import SuperAdminMobileNav from './SuperAdminMobileNav'
 
 const links = [
   { to: '/super-admin/dashboard', label: 'Vue d\u2019ensemble', icon: LayoutGrid },
@@ -24,6 +25,7 @@ export default function SuperAdminLayout({ title, subtitle, children }) {
 
   return (
     <div className="flex min-h-screen bg-parchment-100">
+      <SuperAdminMobileNav />
       <aside className="hidden md:flex md:flex-col w-64 shrink-0 bg-ink-950 text-parchment-100 h-screen sticky top-0">
         <div className="px-6 pt-6 pb-4 flex items-center gap-2">
           <ShieldCheck size={20} className="text-gold-500" />

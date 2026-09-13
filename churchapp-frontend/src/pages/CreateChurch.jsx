@@ -22,20 +22,25 @@ export default function CreateChurch() {
   const [chargementCommunes, setChargementCommunes] = useState(true)
   const [erreurCommunes, setErreurCommunes] = useState('')
 
-  // Charger les communautés via endpoint PUBLIC
+  // Charger les communautés via endpoint PUBLIC sans bloquer l'UI
   useEffect(() => {
-    console.log('[CreateChurch] Chargement communautés (public)...')
+    let mounted = true
     api.listerCommunautes()
       .then((cs) => {
-        console.log('[CreateChurch] Communautés reçues:', cs)
+        if (!mounted) return
         setCommunautes(cs || [])
       })
       .catch((err) => {
-        console.error('[CreateChurch] Erreur chargement communautés:', err)
+        if (!mounted) return
+        console.error('[CreateChurch] communautes:', err)
         setCommunautes([])
         setErreurCommunes('Impossible de charger les communautés pour le moment.')
       })
-      .finally(() => setChargementCommunes(false))
+      .finally(() => {
+        if (!mounted) return
+        setChargementCommunes(false)
+      })
+    return () => { mounted = false }
   }, [])
 
   function setChamp(section, champ, valeur) {

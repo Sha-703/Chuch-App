@@ -43,21 +43,6 @@ export async function envoyerMail({ to, sujet, texte }) {
     return false
   }
 
-  // Vérifier la connexion SMTP AVANT d'envoyer
-  try {
-    await transport.verify()
-  } catch (verifyErr) {
-    console.error(`[MAIL] Vérification SMTP échouée pour ${to}:`, verifyErr.message)
-    console.error(
-      '  → Vérifie tes identifiants SMTP (SMTP_USER/SMTP_PASS) dans le .env\n' +
-      '  → Si Gmail : https://myaccount.google.com/apppasswords\n' +
-      '  → Si Railway : utilise Mailtrap (https://mailtrap.io) comme alternative'
-    )
-    // Forcer la recréation du transporteur au prochain appel
-    transporter = null
-    return false
-  }
-
   try {
     await transport.sendMail({
       from: `"ChurchApp" <${process.env.SMTP_USER}>`,
