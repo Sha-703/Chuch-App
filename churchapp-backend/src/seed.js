@@ -21,7 +21,7 @@ async function seed() {
     description: 'Catégorie pour les églises n\'appartenant à aucune dénomination spécifique.',
   })
 
-  console.log('Communautés créées:', { cad ec: communauteCadec.nom, cepac: communauteCepac.nom, independantes: communauteIndependante.nom })
+  console.log('Communautés créées:', { cadEc: communauteCadec.nom, cepac: communauteCepac.nom, independantes: communauteIndependante.nom })
 
   const eglise = await Eglise.create({
     nom: 'CEC Bethel Mbanza-Ngungu',
