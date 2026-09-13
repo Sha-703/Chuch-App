@@ -1,14 +1,33 @@
 import 'dotenv/config'
 import bcrypt from 'bcryptjs'
-import { sequelize, Eglise, Utilisateur, Membre, Culte, Entree, Charge, SuperAdmin } from './models/index.js'
+import { sequelize, Eglise, Utilisateur, Membre, Culte, Entree, Charge, SuperAdmin, Communaute } from './models/index.js'
 
 async function seed() {
   await sequelize.sync({ force: true })
+
+  // --- Créer les communautés (dénominations) ---
+  const communauteCadec = await Communaute.create({
+    nom: 'Communauté des Églises du Christ (CADEC)',
+    description: 'Dénomination regroupant plusieurs églises au Kongo-Central et à Kinshasa.',
+  })
+
+  const communauteCepac = await Communaute.create({
+    nom: 'Communauté des Églises de Pentecôte en Afrique Centrale (8e CEPAC)',
+    description: 'Églises pentecôtistes de la 8e région de la CEPAC.',
+  })
+
+  const communauteIndependante = await Communaute.create({
+    nom: 'Églises indépendantes',
+    description: 'Catégorie pour les églises n'appartenant à aucune dénomination spécifique.',
+  })
+
+  console.log('Communautés créées:', { cad ec: communauteCadec.nom, cepac: communauteCepac.nom, independantes: communauteIndependante.nom })
 
   const eglise = await Eglise.create({
     nom: 'CEC Bethel Mbanza-Ngungu',
     denomination: 'Communauté des Églises du Christ',
     ville: 'Mbanza-Ngungu, Kongo-Central',
+    communauteId: communauteCadec.id,
   })
 
   const hash = await bcrypt.hash('demo1234', 10)
@@ -70,6 +89,7 @@ async function seed() {
     nom: 'Église Nouvelle Alliance Kinshasa',
     denomination: '8e CEPAC',
     ville: 'Kinshasa',
+    communauteId: communauteCepac.id,
   })
   await Utilisateur.create({
     nom: 'Past. Emmanuel Lutete',
