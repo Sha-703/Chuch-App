@@ -2,7 +2,7 @@ import 'dotenv/config'
 import app from './app.js'
 import { sequelize } from './models/index.js'
 
-const PORT = process.env.PORT || 4000
+const PORT = process.env.PORT ? Number(process.env.PORT) : (process.env.NODE_ENV === 'production' ? 8080 : 4000)
 
 async function start() {
   await sequelize.authenticate()
