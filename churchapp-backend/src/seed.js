@@ -18,7 +18,7 @@ async function seed() {
 
   const communauteIndependante = await Communaute.create({
     nom: 'Églises indépendantes',
-    description: 'Catégorie pour les églises n'appartenant à aucune dénomination spécifique.',
+    description: 'Catégorie pour les églises n\'appartenant à aucune dénomination spécifique.',
   })
 
   console.log('Communautés créées:', { cad ec: communauteCadec.nom, cepac: communauteCepac.nom, independantes: communauteIndependante.nom })
