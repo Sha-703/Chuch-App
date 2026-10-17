@@ -342,5 +342,5 @@ export async function demanderVerification(req, res) {
 
   console.log(`[VERIF] ${utilisateur.email}: token renvoyé (${sent ? 'email envoyé' : 'échec email'})`)
 
-  res.json({ message: 'Si ce compte existe et n'est pas encore vérifié, un e-mail de vérification a été renvoyé.' })
+  res.json({ message: "Si ce compte existe et n'est pas encore vérifié, un e-mail de vérification a été renvoyé." })
 }
