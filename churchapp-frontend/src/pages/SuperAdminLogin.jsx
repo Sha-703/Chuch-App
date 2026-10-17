@@ -97,9 +97,6 @@ export default function SuperAdminLogin() {
             </button>
           </form>
 
-          <p className="text-xs text-ink-700/50 mt-4 text-center">
-            Démo : superadmin@churchapp.cd — mot de passe demo1234
-          </p>
         </div>
       </div>
     </div>

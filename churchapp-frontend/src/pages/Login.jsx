@@ -138,10 +138,6 @@ export default function Login() {
             </button>
           </p>
 
-          <p className="text-xs text-ink-700/40 mt-2 text-center">
-            Démo : pasteur@demo.cd — mot de passe demo1234
-          </p>
-
 
         </div>
       </div>
