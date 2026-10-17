@@ -7,7 +7,6 @@ import ProtectedRoute from './components/ProtectedRoute'
 import SuperAdminProtectedRoute from './components/SuperAdminProtectedRoute'
 import Login from './pages/Login'
 import CreateChurch from './pages/CreateChurch'
-import VerifierEmail from './pages/VerifierEmail'
 import Dashboard from './pages/Dashboard'
 import Finances from './pages/Finances'
 import Cultes from './pages/Cultes'
@@ -45,7 +44,6 @@ export default function App() {
           <ToastProvider>
             <Routes>
               <Route path="/" element={<Login />} />
-              <Route path="/verifier-email" element={<VerifierEmail />} />
               <Route path="/creer-eglise" element={<CreateChurch />} />
               <Route path="/mon-espace" element={<ProtectedRoute allow={['ouvrier']}><MonEspace /></ProtectedRoute>} />
               <Route path="/dashboard" element={<ProtectedRoute allow={ADMIN}><Dashboard /></ProtectedRoute>} />
