@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { body } from 'express-validator'
-import { login, creerEglise, changerMonMotDePasse, demanderReinitialisation, verifierEmail, demanderVerification } from '../controllers/auth.controller.js'
+import { login, creerEglise, changerMonMotDePasse, demanderReinitialisation } from '../controllers/auth.controller.js'
 import { authRequired } from '../middlewares/auth.js'
 import { validerRequete } from '../middlewares/validation.js'
 
@@ -11,12 +11,12 @@ router.post('/login', [
   body('motDePasse').notEmpty().withMessage('Mot de passe requis.'),
   validerRequete,
 ], login)
-router.post('/eglises', [
+router.post('/eglises', authRequired, [
   body('eglise.nom').notEmpty().withMessage('Nom de l\'église requis.'),
   body('pasteur.email').isEmail().normalizeEmail().withMessage('E-mail pasteur invalide.'),
   body('administrateur.email').isEmail().normalizeEmail().withMessage('E-mail administrateur invalide.'),
   validerRequete,
-], creerEglise) // route publique : inscription d'une nouvelle église
+], creerEglise) // protégée : seul un utilisateur authentifié peut créer une église
 router.post('/demander-reset', [
   body('email').isEmail().normalizeEmail().withMessage('E-mail invalide.'),
   validerRequete,
@@ -24,12 +24,6 @@ router.post('/demander-reset', [
 router.put('/mon-mot-de-passe', authRequired, [
   body('nouveauMotDePasse').isLength({ min: 6 }).withMessage('Le nouveau mot de passe doit faire au moins 6 caractères.'),
   validerRequete,
-], changerMonMotDePasse) // pasteur/administrateur/ouvrier/communaute
-
-router.get('/verifier-email', verifierEmail) // GET public : clic sur le lien e-mail
-router.post('/demander-verification', [
-  body('email').isEmail().normalizeEmail().withMessage('E-mail invalide.'),
-  validerRequete,
-], demanderVerification) // POST public : renvoyer l'e-mail de vérification
+], changerMonMotDePasse)
 
 export default router
