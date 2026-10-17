@@ -183,8 +183,8 @@ export async function creerEglise(req, res) {
   res.status(201).json({
     eglise: nouvelleEglise,
     comptes: [
-      { email: comptePasteur.email, role: 'pasteur', otp: pasteurMailOk ? undefined : otpPasteur },
-      { email: compteAdmin.email, role: 'administrateur', otp: adminMailOk ? undefined : otpAdmin },
+      { email: comptePasteur.email, role: 'pasteur' },
+      { email: compteAdmin.email, role: 'administrateur' },
     ],
   })
 }

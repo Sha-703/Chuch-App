@@ -279,8 +279,8 @@ L'équipe ChurchApp`,
   res.status(201).json({
     eglise: nouvelleEglise,
     comptes: [
-      { email: comptePasteur.email, role: 'pasteur', otp: pasteurMailOk ? undefined : otpPasteur },
-      { email: compteAdmin.email, role: 'administrateur', otp: adminMailOk ? undefined : otpAdmin },
+      { email: comptePasteur.email, role: 'pasteur' },
+      { email: compteAdmin.email, role: 'administrateur' },
     ],
   })
 }
@@ -373,7 +373,7 @@ L'équipe ChurchApp`,
 
   console.log(`[OTP] ${compte.email}: ${otp} (communauté, ${mailOk ? 'envoyé' : 'échec email'})`)
 
-  res.status(201).json({ email: compte.email, otp: mailOk ? undefined : otp })
+  res.status(201).json({ email: compte.email })
 }
 
 // --- Le Super Admin change son propre mot de passe (page Paramètres) ---

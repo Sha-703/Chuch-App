@@ -1,5 +1,7 @@
 import express from 'express'
 import cors from 'cors'
+import helmet from 'helmet'
+import rateLimit from 'express-rate-limit'
 import 'dotenv/config'
 import authRoutes from './routes/auth.routes.js'
 import financeRoutes from './routes/finance.routes.js'
@@ -18,6 +20,32 @@ import communauteRoutes from './routes/communaute.routes.js'
 import notificationRoutes from './routes/notification.routes.js'
 
 const app = express()
+
+// Headers de sécurité
+app.use(helmet({
+  crossOriginEmbedderPolicy: false, // nécessaire pour les uploads / affichage de fichiers
+}))
+
+// Rate limiting global
+const globalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 300, // 300 requêtes par IP par fenêtre de 15 min
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: 'Trop de requêtes, veuillez réessayer plus tard.' },
+})
+app.use(globalLimiter)
+
+// Rate limiting renforcé sur l'authentification
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // 10 tentatives de connexion par IP par fenêtre de 15 min
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: 'Trop de tentatives de connexion, veuillez réessayer plus tard.' },
+})
+app.use('/api/auth/login', authLimiter)
+app.use('/api/super-admin/auth/login', authLimiter)
 
 const corsOrigins = (process.env.CORS_ORIGIN || '*').split(',').map(o => o.trim()).filter(Boolean)
 app.use(cors({ origin: corsOrigins.length ? corsOrigins : '*', credentials: true }))
