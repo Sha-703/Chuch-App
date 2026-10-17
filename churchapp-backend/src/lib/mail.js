@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer'
+import { lookup as dnsLookup } from 'dns'
 
 let transporter = null
 let lastTransportTime = 0
@@ -30,6 +31,10 @@ function getTransporter() {
     port,
     secure: port === 465,
     auth: { user, pass },
+    // Forcer IPv4 : Railway n'a pas de connectivité IPv6 sortante
+    lookup: (hostname, callback) => {
+      dnsLookup(hostname, { family: 4 }, callback)
+    },
   })
 
   return transporter
