@@ -16,7 +16,7 @@ if (process.env.NODE_ENV === 'production' && process.env.JWT_SECRET === 'change-
 
 async function start() {
   await sequelize.authenticate()
-  await sequelize.sync() // en production : utiliser des migrations plutôt que sync()
+  await sequelize.sync({ alter: true }) // ajoute les colonnes manquantes (estVerifie, etc.)
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`ChurchApp API démarrée sur http://0.0.0.0:${PORT}`)
   })

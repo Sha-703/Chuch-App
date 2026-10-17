@@ -21,6 +21,8 @@ import notificationRoutes from './routes/notification.routes.js'
 
 const app = express()
 
+app.set('trust proxy', true) // nécessaire derrière Railway pour express-rate-limit
+
 // Headers de sécurité
 app.use(helmet({
   crossOriginEmbedderPolicy: false, // nécessaire pour les uploads / affichage de fichiers
