@@ -142,12 +142,7 @@ export default function Login() {
             Démo : pasteur@demo.cd — mot de passe demo1234
           </p>
 
-          <p className="text-sm text-ink-700/70 mt-6 text-center">
-            Votre église n'est pas encore inscrite ?{' '}
-            <Link to="/creer-eglise" className="text-gold-600 font-semibold hover:underline">
-              Créer un compte
-            </Link>
-          </p>
+
         </div>
       </div>
 

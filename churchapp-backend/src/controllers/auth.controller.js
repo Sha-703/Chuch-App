@@ -2,39 +2,6 @@ import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { Eglise, Utilisateur, Communaute } from '../models/index.js'
 import { journaliser } from '../lib/journal.js'
-import { genererOTP } from '../lib/otp.js'
-import { envoyerMail } from '../lib/mail.js'
-import { envoyerOTPSms } from '../lib/zavu.js'
-
-// Emails : Gmail SMTP seulement — OTP jamais dans la réponse HTTP
-async function sendOtpEmail({ to, code, destinataireNom }) {
-  const ok = await envoyerMail({
-    to,
-    sujet: 'Votre code de connexion ChurchApp',
-    texte: `Bonjour ${destinataireNom || to},
-
-Voici votre code de connexion provisoire :
-
-Code OTP : ${code}
-
-Utilisez ce code comme mot de passe à votre première connexion. Vous serez ensuite invité à le remplacer par un mot de passe personnel.
-
-Cordialement,
-L'équipe ChurchApp`,
-  })
-  return !!ok
-}
-
-// SMS : ZAVU seulement, jamais d'email
-async function sendOtpSms({ to, code, destinataireNom }) {
-  try {
-    await envoyerOTPSms({ to, code, destinataireNom })
-    return true
-  } catch (err) {
-    console.error('[ZAVU][SMS] Échec envoi OTP SMS :', err.message)
-    return false
-  }
-}
 
 function signToken(utilisateur) {
   return jwt.sign(
@@ -55,12 +22,10 @@ export async function login(req, res) {
   const valide = await bcrypt.compare(motDePasse, utilisateur.motDePasseHash)
   if (!valide) return res.status(401).json({ message: 'Identifiants invalides.' })
 
-  // Comptes/églises bloqués par le Super Admin
   if (!utilisateur.actif) {
     return res.status(403).json({ message: 'Ce compte a été bloqué. Contactez le support ChurchApp.' })
   }
 
-  // Un compte "communaute" n'a pas d'église
   if (utilisateur.role === 'communaute') {
     const communaute = await Communaute.findByPk(utilisateur.communauteId)
     const token = signToken(utilisateur)
@@ -89,7 +54,6 @@ export async function login(req, res) {
   })
 }
 
-// Un utilisateur déjà connecté change son propre mot de passe (page Paramètres).
 export async function changerMonMotDePasse(req, res) {
   const { motDePasseActuel, nouveauMotDePasse } = req.body
   if (!nouveauMotDePasse || nouveauMotDePasse.length < 6) {
@@ -112,8 +76,9 @@ export async function changerMonMotDePasse(req, res) {
   res.json({ message: 'Mot de passe mis à jour.' })
 }
 
-// Création d'une nouvelle église + ses deux comptes (pasteur, administrateur)
-// Chaque compte reçoit son propre code OTP à usage unique par email.
+// Création d'une église par un utilisateur déjà connecté (admin)
+// Le mot de passe initial de chaque compte = son adresse e-mail.
+// L'utilisateur devra le changer à sa première connexion.
 export async function creerEglise(req, res) {
   const { eglise, pasteur, administrateur, communauteId } = req.body
 
@@ -135,15 +100,13 @@ export async function creerEglise(req, res) {
     communauteId: communauteId || null,
   })
 
-  const otpPasteur = genererOTP()
-  const otpAdmin = genererOTP()
-
+  // Mot de passe initial = adresse e-mail de chaque compte
   const comptePasteur = await Utilisateur.create({
     nom: pasteur.nom,
     email: pasteur.email,
     telephone: pasteur.telephone,
     role: 'pasteur',
-    motDePasseHash: await bcrypt.hash(otpPasteur, 10),
+    motDePasseHash: await bcrypt.hash(pasteur.email, 10),
     motDePasseDoitEtreChange: true,
     egliseId: nouvelleEglise.id,
   })
@@ -152,7 +115,7 @@ export async function creerEglise(req, res) {
     nom: administrateur.nom,
     email: administrateur.email,
     role: 'administrateur',
-    motDePasseHash: await bcrypt.hash(otpAdmin, 10),
+    motDePasseHash: await bcrypt.hash(administrateur.email, 10),
     motDePasseDoitEtreChange: true,
     egliseId: nouvelleEglise.id,
   })
@@ -164,60 +127,12 @@ export async function creerEglise(req, res) {
     utilisateurNom: pasteur.nom,
   })
 
-  const [pasteurMailOk, adminMailOk] = await Promise.all([
-    sendOtpEmail({ to: comptePasteur.email, code: otpPasteur, destinataireNom: comptePasteur.nom }),
-    sendOtpEmail({ to: compteAdmin.email, code: otpAdmin, destinataireNom: compteAdmin.nom }),
-  ])
-
-  console.log(
-    `[OTP] Pasteur ${comptePasteur.email}: ${otpPasteur} (${pasteurMailOk ? 'email envoyé' : 'échec email'}) | ` +
-    `Admin ${compteAdmin.email}: ${otpAdmin} (${adminMailOk ? 'email envoyé' : 'échec email'})`
-  )
-
   res.status(201).json({
     eglise: nouvelleEglise,
     comptes: [
-      { email: comptePasteur.email, role: 'pasteur' },
-      { email: compteAdmin.email, role: 'administrateur' },
+      { email: comptePasteur.email, role: 'pasteur', motDePasseInitial: pasteur.email },
+      { email: compteAdmin.email, role: 'administrateur', motDePasseInitial: administrateur.email },
     ],
-    message: 'Comptes créés. Chaque compte a reçu son code OTP par e-mail.',
+    message: 'Église créée. Le mot de passe initial de chaque compte est son adresse e-mail.',
   })
-}
-
-// Demander une réinitialisation de mot de passe (publique)
-export async function demanderReinitialisation(req, res) {
-  const { email } = req.body
-  if (!email) return res.status(400).json({ message: 'E-mail requis.' })
-
-  const utilisateur = await Utilisateur.findOne({ where: { email } })
-  if (!utilisateur) {
-    return res.json({ email })
-  }
-
-  const otp = genererOTP()
-  utilisateur.motDePasseHash = await bcrypt.hash(otp, 10)
-  utilisateur.motDePasseDoitEtreChange = true
-  await utilisateur.save()
-
-  const sent = await sendOtpEmail({ to: utilisateur.email, code: otp, destinataireNom: utilisateur.nom })
-  if (!sent) {
-    await envoyerMail({
-      to: utilisateur.email,
-      sujet: 'Réinitialisation de votre mot de passe ChurchApp',
-      texte: `Bonjour ${utilisateur.nom || utilisateur.email},
-
-Vous avez demandé à réinitialiser votre mot de passe. Voici votre code de connexion provisoire :
-
-Code OTP : ${otp}
-
-Utilisez ce code comme mot de passe pour vous connecter. Vous serez ensuite invité à le remplacer par un mot de passe personnel.
-
-Cordialement,
-L'équipe ChurchApp`,
-    }).then(() => true).catch(() => false)
-  }
-
-  console.log(`[OTP] ${utilisateur.email}: ${otp} (réinitialisation demandée)`)
-
-  res.json({ email })
 }

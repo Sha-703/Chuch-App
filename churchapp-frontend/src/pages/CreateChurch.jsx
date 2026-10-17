@@ -49,15 +49,20 @@ export default function CreateChurch() {
           <h1 className="font-display text-2xl text-ink-950 mb-2">Église créée avec succès</h1>
           <p className="text-sm text-ink-700/70 mb-6">
             Les comptes du pasteur et de l'administrateur ont été créés pour{' '}
-            <strong>{succes.eglise.nom}</strong>. Chacun a reçu un code OTP à usage unique.
+            <strong>{succes.eglise.nom}</strong>.
           </p>
           <div className="bg-parchment-100 rounded-lg p-4 text-left text-sm space-y-2 mb-6">
             {succes.comptes.map((c) => (
               <div key={c.email} className="pb-2 border-b border-ink-950/5 last:border-0 last:pb-0">
                 <p><span className="text-ink-700/60">{c.role} :</span> {c.email}</p>
-                <p className="text-xs text-ink-700/50">{c.otp ? <>Code OTP : <strong className="text-ink-950">{c.otp}</strong></> : 'Code envoyé par e-mail ✉️'}</p>
+                <p className="text-xs text-ink-700/50">
+                  Mot de passe initial : <strong className="text-ink-950">{c.motDePasseInitial}</strong>
+                </p>
               </div>
             ))}
+            <p className="text-xs text-ink-700/50 mt-2">
+              Chaque utilisateur devra changer son mot de passe à sa première connexion.
+            </p>
           </div>
           <Link to="/" className="inline-flex items-center gap-2 bg-ink-950 text-parchment-50 rounded-lg px-5 py-2.5 text-sm font-semibold hover:bg-ink-900 transition-colors">
             Aller à la connexion <ArrowRight size={16} />
@@ -78,7 +83,6 @@ export default function CreateChurch() {
           <p className="text-sm text-ink-700/70 mt-1">Deux comptes seront créés : le pasteur et l'administrateur.</p>
         </div>
 
-        {/* Indicateur d'étapes */}
         <div className="flex items-center gap-2 mb-8">
           {steps.map((label, i) => (
             <div key={label} className="flex-1">
@@ -101,17 +105,14 @@ export default function CreateChurch() {
           {step === 1 && (
             <div className="space-y-4">
               <Field label="Nom complet du pasteur" placeholder="Ex. Past. Jean-Pierre Kibambe" value={form.pasteur.nom} onChange={(v) => setChamp('pasteur', 'nom', v)} />
-              <Field label="E-mail du pasteur" placeholder="pasteur@monteglise.cd" type="email" value={form.pasteur.email} onChange={(v) => setChamp('pasteur', 'email', v)} />
+              <Field label="E-mail du pasteur ( = mot de passe initial)" placeholder="pasteur@monteglise.cd" type="email" value={form.pasteur.email} onChange={(v) => setChamp('pasteur', 'email', v)} />
               <Field label="Téléphone" placeholder="+243 8xx xxx xxx" value={form.pasteur.telephone} onChange={(v) => setChamp('pasteur', 'telephone', v)} />
             </div>
           )}
           {step === 2 && (
             <div className="space-y-4">
               <Field label="Nom complet de l'administrateur" placeholder="Ex. Sr. Grace Nsimba" value={form.administrateur.nom} onChange={(v) => setChamp('administrateur', 'nom', v)} />
-              <Field label="E-mail de l'administrateur" placeholder="admin@monteglise.cd" type="email" value={form.administrateur.email} onChange={(v) => setChamp('administrateur', 'email', v)} />
-              <p className="text-xs text-ink-700/60 bg-parchment-100 rounded-lg p-3">
-                Les identifiants provisoires seront envoyés par e-mail aux deux comptes.
-              </p>
+              <Field label="E-mail de l'administrateur ( = mot de passe initial)" placeholder="admin@monteglise.cd" type="email" value={form.administrateur.email} onChange={(v) => setChamp('administrateur', 'email', v)} />
             </div>
           )}
 
