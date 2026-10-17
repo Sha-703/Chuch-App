@@ -5,6 +5,36 @@ import { journaliser } from '../lib/journal.js'
 import { genererOTP } from '../lib/otp.js'
 import { envoyerMail } from '../lib/mail.js'
 import { envoyerOTPSms } from '../lib/zavu.js'
+import crypto from 'crypto'
+
+const FRONTEND_URL = process.env.FRONTEND_URL || 'https://chuchapp-frontend-production.up.railway.app'
+
+// Génère un token de vérification unique (valide 24h)
+function genererTokenVerification() {
+  return crypto.randomBytes(32).toString('hex')
+}
+
+// Envoie l'email de vérification (lien à cliquer, pas de code affiché)
+async function sendVerificationEmail({ to, token, destinataireNom }) {
+  const lien = `${FRONTEND_URL}/verifier-email?token=${token}`
+  const ok = await envoyerMail({
+    to,
+    sujet: 'Vérifiez votre adresse e-mail — ChurchApp',
+    texte: `Bonjour ${destinataireNom || to},
+
+Bienvenue sur ChurchApp !
+
+Pour activer votre compte, veuillez cliquer sur le lien suivant (valide 24 heures) :
+
+${lien}
+
+Si vous n'avez pas créé ce compte, ignorez ce message.
+
+Cordialement,
+L'équipe ChurchApp`,
+  })
+  return !!ok
+}
 
 // Emails : Gmail SMTP seulement
 async function sendOtpEmail({ to, code, destinataireNom }) {
@@ -54,6 +84,15 @@ export async function login(req, res) {
 
   const valide = await bcrypt.compare(motDePasse, utilisateur.motDePasseHash)
   if (!valide) return res.status(401).json({ message: 'Identifiants invalides.' })
+
+  // Vérification e-mail obligatoire avant connexion
+  if (!utilisateur.estVerifie) {
+    return res.status(403).json({
+      message: 'Veuillez vérifier votre adresse e-mail avant de vous connecter. Consultez votre boîte mail.',
+      email: utilisateur.email,
+      doitVerifierEmail: true,
+    })
+  }
 
   // Comptes/églises bloqués par le Super Admin (voir Phase 12)
   if (!utilisateur.actif) {
@@ -138,11 +177,13 @@ export async function creerEglise(req, res) {
     communauteId: communauteId || null,
   })
 
-  // Chaque compte reçoit son propre code OTP à usage unique — à saisir comme
-  // mot de passe à la première connexion, puis remplacé obligatoirement par
-  // un mot de passe personnel sur la page Paramètres (voir motDePasseDoitEtreChange).
+  // Chaque compte reçoit un mot de passe provisoire (OTP) à usage unique ET
+  // doit vérifier son adresse e-mail avant de pouvoir se connecter.
   const otpPasteur = genererOTP()
   const otpAdmin = genererOTP()
+  const tokenPasteur = genererTokenVerification()
+  const tokenAdmin = genererTokenVerification()
+  const expires = new Date(Date.now() + 24 * 60 * 60 * 1000) // +24h
 
   const comptePasteur = await Utilisateur.create({
     nom: pasteur.nom,
@@ -152,6 +193,9 @@ export async function creerEglise(req, res) {
     motDePasseHash: await bcrypt.hash(otpPasteur, 10),
     motDePasseDoitEtreChange: true,
     egliseId: nouvelleEglise.id,
+    estVerifie: false,
+    tokenVerification: tokenPasteur,
+    tokenVerificationExpires: expires,
   })
 
   const compteAdmin = await Utilisateur.create({
@@ -161,6 +205,9 @@ export async function creerEglise(req, res) {
     motDePasseHash: await bcrypt.hash(otpAdmin, 10),
     motDePasseDoitEtreChange: true,
     egliseId: nouvelleEglise.id,
+    estVerifie: false,
+    tokenVerification: tokenAdmin,
+    tokenVerificationExpires: expires,
   })
 
   await journaliser({
@@ -171,21 +218,22 @@ export async function creerEglise(req, res) {
   })
 
   const [pasteurMailOk, adminMailOk] = await Promise.all([
-    sendOtpEmail({ to: comptePasteur.email, code: otpPasteur, destinataireNom: comptePasteur.nom }),
-    sendOtpEmail({ to: compteAdmin.email, code: otpAdmin, destinataireNom: compteAdmin.nom }),
+    sendVerificationEmail({ to: comptePasteur.email, token: tokenPasteur, destinataireNom: comptePasteur.nom }),
+    sendVerificationEmail({ to: compteAdmin.email, token: tokenAdmin, destinataireNom: compteAdmin.nom }),
   ])
 
   console.log(
-    `[OTP] Pasteur ${comptePasteur.email}: ${otpPasteur} (${pasteurMailOk ? 'email envoyé' : 'échec email'}) | ` +
-    `Admin ${compteAdmin.email}: ${otpAdmin} (${adminMailOk ? 'email envoyé' : 'échec email'})`
+    `[VERIF] Pasteur ${comptePasteur.email}: token envoyé (${pasteurMailOk ? 'email envoyé' : 'échec email'}) | ` +
+    `Admin ${compteAdmin.email}: token envoyé (${adminMailOk ? 'email envoyé' : 'échec email'})`
   )
 
   res.status(201).json({
     eglise: nouvelleEglise,
     comptes: [
-      { email: comptePasteur.email, role: 'pasteur' },
-      { email: compteAdmin.email, role: 'administrateur' },
+      { email: comptePasteur.email, role: 'pasteur', doitVerifierEmail: true },
+      { email: compteAdmin.email, role: 'administrateur', doitVerifierEmail: true },
     ],
+    message: 'Comptes créés. Vérifiez vos e-mails pour activer vos comptes avant de vous connecter.',
   })
 }
 
@@ -227,4 +275,72 @@ L'équipe ChurchApp`,
   console.log(`[OTP] ${utilisateur.email}: ${otp} (réinitialisation demandée)`)
 
   res.json({ email })
+}
+
+// Vérifier l'e-mail via le token reçu par courrier (GET public)
+export async function verifierEmail(req, res) {
+  const { token } = req.query
+  if (!token) {
+    return res.status(400).json({ message: 'Token de vérification manquant.' })
+  }
+
+  const utilisateur = await Utilisateur.findOne({
+    where: { tokenVerification: token },
+  })
+  if (!utilisateur) {
+    return res.status(400).json({ message: 'Token de vérification invalide.' })
+  }
+
+  if (utilisateur.tokenVerificationExpires && new Date() > utilisateur.tokenVerificationExpires) {
+    return res.status(400).json({ message: 'Token de vérification expiré. Demandez-en un nouveau.' })
+  }
+
+  utilisateur.estVerifie = true
+  utilisateur.tokenVerification = null
+  utilisateur.tokenVerificationExpires = null
+  await utilisateur.save()
+
+  await journaliser({
+    action: 'email.verifie',
+    details: `E-mail vérifié pour ${utilisateur.email}`,
+    utilisateurNom: utilisateur.nom,
+  })
+
+  res.json({
+    message: 'Adresse e-mail vérifiée avec succès. Vous pouvez maintenant vous connecter.',
+    email: utilisateur.email,
+  })
+}
+
+// Renvoyer l'e-mail de vérification (POST public)
+export async function demanderVerification(req, res) {
+  const { email } = req.body
+  if (!email) return res.status(400).json({ message: 'E-mail requis.' })
+
+  const utilisateur = await Utilisateur.findOne({ where: { email } })
+  if (!utilisateur) {
+    // Ne pas révéler si l'email existe
+    return res.json({ message: 'Si ce compte existe, un e-mail de vérification a été envoyé.' })
+  }
+
+  if (utilisateur.estVerifie) {
+    return res.status(400).json({ message: 'Ce compte est déjà vérifié.' })
+  }
+
+  const token = genererTokenVerification()
+  const expires = new Date(Date.now() + 24 * 60 * 60 * 1000) // +24h
+
+  utilisateur.tokenVerification = token
+  utilisateur.tokenVerificationExpires = expires
+  await utilisateur.save()
+
+  const sent = await sendVerificationEmail({
+    to: utilisateur.email,
+    token,
+    destinataireNom: utilisateur.nom,
+  })
+
+  console.log(`[VERIF] ${utilisateur.email}: token renvoyé (${sent ? 'email envoyé' : 'échec email'})`)
+
+  res.json({ message: 'Si ce compte existe et n'est pas encore vérifié, un e-mail de vérification a été renvoyé.' })
 }

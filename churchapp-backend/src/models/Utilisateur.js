@@ -15,6 +15,12 @@ const Utilisateur = sequelize.define('Utilisateur', {
   // true tant que l'utilisateur n'a pas remplacé son code provisoire (OTP) par
   // un mot de passe personnel — force le passage par la page Paramètres.
   motDePasseDoitEtreChange: { type: DataTypes.BOOLEAN, defaultValue: false },
+
+  // Vérification de l'adresse e-mail (comme Google) : le compte ne peut se
+  // connecter qu'après avoir cliqué sur le lien envoyé par e-mail.
+  estVerifie: { type: DataTypes.BOOLEAN, defaultValue: false },
+  tokenVerification: { type: DataTypes.STRING, allowNull: true },
+  tokenVerificationExpires: { type: DataTypes.DATE, allowNull: true },
 })
 
 export default Utilisateur

@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { body } from 'express-validator'
-import { login, creerEglise, changerMonMotDePasse, demanderReinitialisation } from '../controllers/auth.controller.js'
+import { login, creerEglise, changerMonMotDePasse, demanderReinitialisation, verifierEmail, demanderVerification } from '../controllers/auth.controller.js'
 import { authRequired } from '../middlewares/auth.js'
 import { validerRequete } from '../middlewares/validation.js'
 
@@ -25,5 +25,11 @@ router.put('/mon-mot-de-passe', authRequired, [
   body('nouveauMotDePasse').isLength({ min: 6 }).withMessage('Le nouveau mot de passe doit faire au moins 6 caractères.'),
   validerRequete,
 ], changerMonMotDePasse) // pasteur/administrateur/ouvrier/communaute
+
+router.get('/verifier-email', verifierEmail) // GET public : clic sur le lien e-mail
+router.post('/demander-verification', [
+  body('email').isEmail().normalizeEmail().withMessage('E-mail invalide.'),
+  validerRequete,
+], demanderVerification) // POST public : renvoyer l'e-mail de vérification
 
 export default router
