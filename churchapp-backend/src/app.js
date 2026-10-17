@@ -34,6 +34,7 @@ const globalLimiter = rateLimit({
   max: 300, // 300 requêtes par IP par fenêtre de 15 min
   standardHeaders: true,
   legacyHeaders: false,
+  trustProxy: true, // derrière Railway (proxy)
   message: { message: 'Trop de requêtes, veuillez réessayer plus tard.' },
 })
 app.use(globalLimiter)
@@ -44,6 +45,7 @@ const authLimiter = rateLimit({
   max: 10, // 10 tentatives de connexion par IP par fenêtre de 15 min
   standardHeaders: true,
   legacyHeaders: false,
+  trustProxy: true, // derrière Railway (proxy)
   message: { message: 'Trop de tentatives de connexion, veuillez réessayer plus tard.' },
 })
 app.use('/api/auth/login', authLimiter)
