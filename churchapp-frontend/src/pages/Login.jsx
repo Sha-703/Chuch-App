@@ -21,7 +21,12 @@ export default function Login() {
     setErreur('')
     setChargement(true)
     try {
-      const { utilisateur, doitChangerMotDePasse } = await login(email, motDePasse)
+      const result = await login(email, motDePasse)
+      if (!result.ok && result.doitVerifierEmail) {
+        navigate(`/verifier-email?email=${encodeURIComponent(result.email)}`)
+        return
+      }
+      const { utilisateur, doitChangerMotDePasse } = result
       if (doitChangerMotDePasse) {
         navigate('/parametres?premiere=1')
         return

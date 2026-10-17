@@ -8,11 +8,19 @@ export function AuthProvider({ children }) {
   const [doitChangerMotDePasse, setDoitChangerMotDePasse] = useState(false)
 
   async function login(email, motDePasse) {
-    const data = await api.login(email, motDePasse)
-    saveSession(data)
-    setSession({ token: data.token, utilisateur: data.utilisateur, eglise: data.eglise, communaute: data.communaute })
-    setDoitChangerMotDePasse(!!data.doitChangerMotDePasse)
-    return data
+    try {
+      const data = await api.login(email, motDePasse)
+      saveSession(data)
+      setSession({ token: data.token, utilisateur: data.utilisateur, eglise: data.eglise, communaute: data.communaute })
+      setDoitChangerMotDePasse(!!data.doitChangerMotDePasse)
+      return { ok: true, data }
+    } catch (err) {
+      // Si le compte existe mais n'est pas encore vérifié (403 + doitVerifierEmail)
+      if (err.message && err.message.includes('vérifier votre adresse e-mail')) {
+        return { ok: false, doitVerifierEmail: true, email }
+      }
+      throw err
+    }
   }
 
   function logout() {
