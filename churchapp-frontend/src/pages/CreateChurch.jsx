@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Church, ArrowRight, ArrowLeft, Loader2, CheckCircle2 } from 'lucide-react'
 import { api } from '../lib/api'
 
@@ -17,31 +17,6 @@ export default function CreateChurch() {
   const [chargement, setChargement] = useState(false)
   const [erreur, setErreur] = useState('')
   const [succes, setSucces] = useState(null)
-  const [communauteId, setCommunauteId] = useState('')
-  const [communautes, setCommunautes] = useState([])
-  const [chargementCommunes, setChargementCommunes] = useState(true)
-  const [erreurCommunes, setErreurCommunes] = useState('')
-
-  // Charger les communautés via endpoint PUBLIC sans bloquer l'UI
-  useEffect(() => {
-    let mounted = true
-    api.listerCommunautes()
-      .then((cs) => {
-        if (!mounted) return
-        setCommunautes(cs || [])
-      })
-      .catch((err) => {
-        if (!mounted) return
-        console.error('[CreateChurch] communautes:', err)
-        setCommunautes([])
-        setErreurCommunes('Impossible de charger les communautés pour le moment.')
-      })
-      .finally(() => {
-        if (!mounted) return
-        setChargementCommunes(false)
-      })
-    return () => { mounted = false }
-  }, [])
 
   function setChamp(section, champ, valeur) {
     setForm((f) => ({ ...f, [section]: { ...f[section], [champ]: valeur } }))
@@ -57,7 +32,6 @@ export default function CreateChurch() {
     try {
       const data = await api.creerEglise({
         ...form,
-        ...(communauteId ? { communauteId } : {}),
       })
       setSucces(data)
     } catch (err) {
@@ -122,30 +96,6 @@ export default function CreateChurch() {
                 <Field label="Dénomination" placeholder="Ex. Communauté des Églises de..." value={form.eglise.denomination} onChange={(v) => setChamp('eglise', 'denomination', v)} />
                 <Field label="Ville / territoire" placeholder="Ex. Mbanza-Ngungu, Kongo-Central" value={form.eglise.ville} onChange={(v) => setChamp('eglise', 'ville', v)} />
               </div>
-              {chargementCommunes ? (
-                <div className="flex items-center gap-2 text-ink-700/60 text-sm py-1">
-                  <Loader2 size={14} className="animate-spin" /> Chargement des communautés...
-                </div>
-              ) : erreurCommunes ? (
-                <div>
-                  <p className="text-sm text-clay-600 bg-clay-500/10 rounded-lg px-3 py-2">⚠️ {erreurCommunes}</p>
-                  <p className="text-xs text-ink-700/40 mt-1">Vérifie ta session Super Admin (Ctrl+Maj+R pour rafraîchir)</p>
-                </div>
-              ) : communautes.length > 0 ? (
-                <div>
-                  <label className="text-xs font-semibold uppercase tracking-wide text-ink-700/60">Communauté (optionnel)</label>
-                  <select
-                    value={communauteId}
-                    onChange={(e) => setCommunauteId(e.target.value)}
-                    className="mt-1.5 w-full rounded-lg border border-ink-950/15 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/50 bg-white"
-                  >
-                    <option value="">— Aucune (église indépendante) —</option>
-                    {communautes.map((c) => (
-                      <option key={c.id} value={c.id}>{c.nom}</option>
-                    ))}
-                  </select>
-                </div>
-              ) : null}
             </div>
           )}
           {step === 1 && (
@@ -170,19 +120,17 @@ export default function CreateChurch() {
           <div className="flex items-center justify-between mt-7">
             <button
               onClick={() => setStep(Math.max(0, step - 1))}
-              className={`flex items-center gap-1.5 text-sm font-medium text-ink-700/70 hover:text-ink-950 ${step === 0 ? 'invisible' : ''}`}
-            >
+              className={`flex items-center gap-1.5 text-sm font-medium text-ink-700/70 hover:text-ink-950 ${step === 0 ? 'invisible' : ''}`}>
               <ArrowLeft size={15} /> Retour
             </button>
             <button
               onClick={next}
               disabled={chargement}
-              className="flex items-center gap-2 bg-ink-950 text-parchment-50 rounded-lg px-5 py-2.5 text-sm font-semibold hover:bg-ink-900 transition-colors disabled:opacity-60"
-            >
+              className="flex items-center gap-2 bg-ink-950 text-parchment-50 rounded-lg px-5 py-2.5 text-sm font-semibold hover:bg-ink-900 transition-colors disabled:opacity-60">
               {chargement ? (
                 <Loader2 size={16} className="animate-spin" />
               ) : (
-                <>{step === steps.length - 1 ? 'Créer l\u2019église' : 'Continuer'} <ArrowRight size={16} /></>
+                <>{step === steps.length - 1 ? 'Créer l\'église' : 'Continuer'} <ArrowRight size={16} /></>
               )}
             </button>
           </div>
