@@ -5,8 +5,6 @@ import {
   SuperAdmin, Eglise, Utilisateur, Membre, Annonce, Correspondance, JournalActivite, Communaute,
 } from '../models/index.js'
 import { journaliser } from '../lib/journal.js'
-import { genererOTP } from '../lib/otp.js'
-import { envoyerMail } from '../lib/mail.js'
 
 export async function login(req, res) {
   const { email, motDePasse } = req.body
@@ -124,35 +122,18 @@ export async function reinitialiserMotDePasse(req, res) {
   const utilisateur = await Utilisateur.findByPk(req.params.id)
   if (!utilisateur) return res.status(404).json({ message: 'Utilisateur introuvable.' })
 
-  const otp = genererOTP()
-  utilisateur.motDePasseHash = await bcrypt.hash(otp, 10)
+  // Le nouveau mot de passe initial = l'adresse e-mail
+  utilisateur.motDePasseHash = await bcrypt.hash(utilisateur.email, 10)
   utilisateur.motDePasseDoitEtreChange = true
   await utilisateur.save()
 
   await journaliser({
     action: 'utilisateur.mdp_reinitialise',
-    details: `Mot de passe réinitialisé pour ${utilisateur.email}`,
+    details: `Mot de passe réinitialisé pour ${utilisateur.email} (mot de passe initial = e-mail)`,
     utilisateurNom: 'Super Admin',
   })
 
-  await envoyerMail({
-    to: utilisateur.email,
-    sujet: 'Réinitialisation de votre mot de passe ChurchApp',
-    texte: `Bonjour,
-
-Votre mot de passe a été réinitialisé. Voici votre code de connexion provisoire :
-
-Code OTP : ${otp}
-
-Utilisez ce code comme mot de passe à votre prochaine connexion. Vous serez ensuite invité à le remplacer par un mot de passe personnel.
-
-Cordialement,
-L'équipe ChurchApp`,
-  })
-
-  console.log(`[OTP] ${utilisateur.email}: ${otp} (réinitialisation envoyée par mail)`)
-
-  res.json({ email: utilisateur.email })
+  res.json({ email: utilisateur.email, motDePasseInitial: utilisateur.email })
 }
 
 export async function toggleBlocageUtilisateur(req, res) {
@@ -203,7 +184,8 @@ export async function listerJournal(req, res) {
   res.json(entrees)
 }
 
-// --- Création directe d'une église par le Super Admin (sans passer par l'inscription publique) ---
+// --- Création directe d'une église par le Super Admin ---
+// Le mot de passe initial de chaque compte = son adresse e-mail.
 export async function creerEgliseParSuperAdmin(req, res) {
   const { eglise, pasteur, administrateur, communauteId } = req.body
 
@@ -212,7 +194,7 @@ export async function creerEgliseParSuperAdmin(req, res) {
   }
 
   const existant = await Utilisateur.findOne({ where: { email: [pasteur.email, administrateur.email] } })
-  if (existant) return res.status(409).json({ message: 'Un compte existe déjà avec l\u2019un de ces e-mails.' })
+  if (existant) return res.status(409).json({ message: 'Un compte existe déjà avec l\'un de ces e-mails.' })
 
   const nouvelleEglise = await Eglise.create({
     nom: eglise.nom,
@@ -221,16 +203,13 @@ export async function creerEgliseParSuperAdmin(req, res) {
     communauteId: communauteId || null,
   })
 
-  const otpPasteur = genererOTP()
-  const otpAdmin = genererOTP()
-
   const comptePasteur = await Utilisateur.create({
     nom: pasteur.nom, email: pasteur.email, telephone: pasteur.telephone,
-    role: 'pasteur', motDePasseHash: await bcrypt.hash(otpPasteur, 10), motDePasseDoitEtreChange: true, egliseId: nouvelleEglise.id,
+    role: 'pasteur', motDePasseHash: await bcrypt.hash(pasteur.email, 10), motDePasseDoitEtreChange: true, egliseId: nouvelleEglise.id,
   })
   const compteAdmin = await Utilisateur.create({
     nom: administrateur.nom, email: administrateur.email,
-    role: 'administrateur', motDePasseHash: await bcrypt.hash(otpAdmin, 10), motDePasseDoitEtreChange: true, egliseId: nouvelleEglise.id,
+    role: 'administrateur', motDePasseHash: await bcrypt.hash(administrateur.email, 10), motDePasseDoitEtreChange: true, egliseId: nouvelleEglise.id,
   })
 
   await journaliser({
@@ -240,48 +219,13 @@ export async function creerEgliseParSuperAdmin(req, res) {
     utilisateurNom: 'Super Admin',
   })
 
-  const [pasteurMailOk, adminMailOk] = await Promise.all([
-    envoyerMail({
-      to: comptePasteur.email,
-      sujet: 'Votre code de connexion ChurchApp',
-      texte: `Bonjour ${comptePasteur.nom},
-
-Voici votre code de connexion provisoire pour l'église "${eglise?.nom || nouvelleEglise.nom}" :
-
-Code OTP : ${otpPasteur}
-
-Utilisez ce code comme mot de passe à votre première connexion. Vous serez ensuite invité à le remplacer par un mot de passe personnel.
-
-Cordialement,
-L'équipe ChurchApp`,
-    }),
-    envoyerMail({
-      to: compteAdmin.email,
-      sujet: 'Votre code de connexion ChurchApp',
-      texte: `Bonjour ${compteAdmin.nom},
-
-Voici votre code de connexion provisoire pour l'église "${eglise?.nom || nouvelleEglise.nom}" :
-
-Code OTP : ${otpAdmin}
-
-Utilisez ce code comme mot de passe à votre première connexion. Vous serez ensuite invité à le remplacer par un mot de passe personnel.
-
-Cordialement,
-L'équipe ChurchApp`,
-    }),
-  ])
-
-  console.log(
-    `[OTP] Pasteur ${comptePasteur.email}: ${otpPasteur} (${pasteurMailOk ? 'envoyé' : 'échec email'}) | ` +
-    `Admin ${compteAdmin.email}: ${otpAdmin} (${adminMailOk ? 'envoyé' : 'échec email'})`
-  )
-
   res.status(201).json({
     eglise: nouvelleEglise,
     comptes: [
-      { email: comptePasteur.email, role: 'pasteur' },
-      { email: compteAdmin.email, role: 'administrateur' },
+      { email: comptePasteur.email, role: 'pasteur', motDePasseInitial: pasteur.email },
+      { email: compteAdmin.email, role: 'administrateur', motDePasseInitial: administrateur.email },
     ],
+    message: 'Église créée. Le mot de passe initial de chaque compte est son adresse e-mail.',
   })
 }
 
@@ -330,7 +274,8 @@ export async function rattacherEglise(req, res) {
   res.json(eglise)
 }
 
-// Crée le compte de connexion d'une communauté (se connecte ensuite via la page normale /)
+// Crée le compte de connexion d'une communauté
+// Le mot de passe initial = l'adresse e-mail.
 export async function creerCompteCommunaute(req, res) {
   const { email, nom } = req.body
   const communaute = await Communaute.findByPk(req.params.id)
@@ -339,12 +284,10 @@ export async function creerCompteCommunaute(req, res) {
   const existant = await Utilisateur.findOne({ where: { email } })
   if (existant) return res.status(409).json({ message: 'Un compte existe déjà avec cet e-mail.' })
 
-  const otp = genererOTP()
-
   const compte = await Utilisateur.create({
     nom: nom || communaute.nom,
     email,
-    motDePasseHash: await bcrypt.hash(otp, 10),
+    motDePasseHash: await bcrypt.hash(email, 10),
     motDePasseDoitEtreChange: true,
     role: 'communaute',
     communauteId: communaute.id,
@@ -356,24 +299,7 @@ export async function creerCompteCommunaute(req, res) {
     utilisateurNom: 'Super Admin',
   })
 
-  const mailOk = await envoyerMail({
-    to: compte.email,
-    sujet: 'Votre code de connexion ChurchApp',
-    texte: `Bonjour ${compte.nom},
-
-Voici votre code de connexion provisoire pour la communauté "${communaute.nom}" :
-
-Code OTP : ${otp}
-
-Utilisez ce code comme mot de passe à votre première connexion. Vous serez ensuite invité à le remplacer par un mot de passe personnel.
-
-Cordialement,
-L'équipe ChurchApp`,
-  })
-
-  console.log(`[OTP] ${compte.email}: ${otp} (communauté, ${mailOk ? 'envoyé' : 'échec email'})`)
-
-  res.status(201).json({ email: compte.email })
+  res.status(201).json({ email: compte.email, motDePasseInitial: email })
 }
 
 // --- Le Super Admin change son propre mot de passe (page Paramètres) ---

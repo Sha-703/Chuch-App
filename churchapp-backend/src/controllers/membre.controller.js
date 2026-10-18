@@ -1,7 +1,5 @@
 import bcrypt from 'bcryptjs'
 import { Membre, Utilisateur } from '../models/index.js'
-import { genererOTP } from '../lib/otp.js'
-import { envoyerMail } from '../lib/mail.js'
 
 export async function listerMembres(req, res) {
   const membres = await Membre.findAll({
@@ -21,6 +19,7 @@ export async function creerMembre(req, res) {
 
 // Donne à un membre un accès de connexion en tant qu'"ouvrier" (droits limités :
 // il ne verra que son propre espace pour signer sa présence aux cultes).
+// Le mot de passe initial = l'adresse e-mail.
 export async function creerCompteOuvrier(req, res) {
   const { email } = req.body
   if (!email) return res.status(400).json({ message: 'email requis.' })
@@ -32,13 +31,10 @@ export async function creerCompteOuvrier(req, res) {
   const existant = await Utilisateur.findOne({ where: { email } })
   if (existant) return res.status(409).json({ message: 'Un compte existe déjà avec cet e-mail.' })
 
-  const otp = genererOTP()
-  const hash = await bcrypt.hash(otp, 10)
-
   const compte = await Utilisateur.create({
     nom: membre.nom,
     email,
-    motDePasseHash: hash,
+    motDePasseHash: await bcrypt.hash(email, 10),
     motDePasseDoitEtreChange: true,
     role: 'ouvrier',
     egliseId: req.egliseId,
@@ -47,22 +43,5 @@ export async function creerCompteOuvrier(req, res) {
   membre.utilisateurId = compte.id
   await membre.save()
 
-  await envoyerMail({
-    to: compte.email,
-    sujet: 'Votre code de connexion ChurchApp',
-    texte: `Bonjour ${compte.nom},
-
-Voici votre code de connexion provisoire :
-
-Code OTP : ${otp}
-
-Utilisez ce code comme mot de passe à votre première connexion. Vous serez ensuite invité à le remplacer par un mot de passe personnel.
-
-Cordialement,
-L'équipe ChurchApp`,
-  })
-
-  console.log(`[OTP] ${compte.email}: ${otp} (à envoyer par mail)`)
-
-  res.status(201).json({ email: compte.email })
+  res.status(201).json({ email: compte.email, motDePasseInitial: email })
 }
