@@ -7,6 +7,7 @@ export default function SuperAdminUtilisateurs() {
   const [utilisateurs, setUtilisateurs] = useState(null)
   const [erreur, setErreur] = useState('')
   const [resultat, setResultat] = useState(null) // { email, motDePasseInitial }
+  const [reinitialisant, setReinitialisant] = useState(null) // id utilisateur en cours
 
   function recharger() {
     superAdminApi.listerUtilisateurs().then(setUtilisateurs).catch((err) => setErreur(err.message))
@@ -15,11 +16,14 @@ export default function SuperAdminUtilisateurs() {
   useEffect(recharger, [])
 
   async function reinitialiser(u) {
+    setReinitialisant(u.id)
     try {
       const data = await superAdminApi.reinitialiserMotDePasse(u.id)
       setResultat(data)
     } catch (err) {
       setErreur(err.message)
+    } finally {
+      setReinitialisant(null)
     }
   }
 
@@ -67,8 +71,13 @@ export default function SuperAdminUtilisateurs() {
                   </td>
                   <td className="px-6 py-3.5 text-right">
                     <div className="flex justify-end gap-3">
-                      <button onClick={() => reinitialiser(u)} className="text-xs font-semibold text-gold-700 hover:underline inline-flex items-center gap-1">
-                        <KeyRound size={12} /> Réinitialiser
+                      <button
+                        onClick={() => reinitialiser(u)}
+                        disabled={reinitialisant === u.id}
+                        className="text-xs font-semibold text-gold-700 hover:underline inline-flex items-center gap-1 disabled:opacity-60"
+                      >
+                        {reinitialisant === u.id ? <Loader2 size={12} className="animate-spin" /> : <KeyRound size={12} />}
+                        Réinitialiser
                       </button>
                       <button onClick={() => toggleBlocage(u)} className="text-xs font-semibold text-clay-600 hover:underline inline-flex items-center gap-1">
                         <Ban size={12} /> {u.actif ? 'Bloquer' : 'Débloquer'}
