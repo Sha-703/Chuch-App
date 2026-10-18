@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
-import { ArrowRight, Loader2, Mail, X, KeyRound } from 'lucide-react'
+import { ArrowRight, Loader2, Mail } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { api } from '../lib/api'
 
@@ -11,10 +11,6 @@ export default function Login() {
   const [motDePasse, setMotDePasse] = useState('')
   const [erreur, setErreur] = useState('')
   const [chargement, setChargement] = useState(false)
-  const [modalReset, setModalReset] = useState(false)
-  const [resetEmail, setResetEmail] = useState('')
-  const [resetChargement, setResetChargement] = useState(false)
-  const [resetEnvoye, setResetEnvoye] = useState(false)
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -34,20 +30,6 @@ export default function Login() {
       setErreur(err.message)
     } finally {
       setChargement(false)
-    }
-  }
-
-  async function handleReset(e) {
-    e.preventDefault()
-    if (!resetEmail) return
-    setResetChargement(true)
-    try {
-      await api.demanderReset({ email: resetEmail })
-      setResetEnvoye(true)
-    } catch (err) {
-      setErreur(err.message)
-    } finally {
-      setResetChargement(false)
     }
   }
 
@@ -129,72 +111,11 @@ export default function Login() {
             </button>
           </form>
 
-          <p className="text-center mt-4">
-            <button
-              onClick={() => { setModalReset(true); setErreur(''); setResetEmail(''); setResetEnvoye(false) }}
-              className="text-xs font-semibold text-gold-700 hover:underline inline-flex items-center gap-1"
-            >
-              <KeyRound size={12} /> Mot de passe oublié ?
-            </button>
+          <p className="text-sm text-ink-700/70 mt-6 text-center">
+            Votre église n'est pas encore inscrite ? Votre administrateur la créera pour vous.
           </p>
-
-
         </div>
       </div>
-
-      {/* Modal Mot de passe oublié */}
-      {modalReset && (
-        <div className="fixed inset-0 bg-ink-950/40 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl shadow-card w-full max-w-sm p-6 relative">
-            <button onClick={() => setModalReset(false)} className="absolute top-4 right-4 text-ink-700/50 hover:text-ink-950"><X size={18} /></button>
-            <div className="flex items-center gap-2 mb-4">
-              <Mail size={18} className="text-gold-700" />
-              <h3 className="font-display text-lg text-ink-950">Mot de passe oublié ?</h3>
-            </div>
-            {!resetEnvoye ? (
-              <form onSubmit={handleReset} className="space-y-4">
-                <p className="text-sm text-ink-700/60">
-                  Entrez votre adresse e-mail. Un code de connexion provisoire vous sera envoyé par e-mail.
-                </p>
-                <div>
-                  <label className="text-xs font-semibold uppercase tracking-wide text-ink-700/60">Adresse e-mail</label>
-                  <input
-                    type="email"
-                    required
-                    value={resetEmail}
-                    onChange={(e) => setResetEmail(e.target.value)}
-                    placeholder="pasteur@monteglise.cd"
-                    className="mt-1.5 w-full rounded-lg border border-ink-950/15 bg-white px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500"
-                  />
-                </div>
-                {erreur && <p className="text-sm text-clay-600 bg-clay-500/10 rounded-lg px-3 py-2">{erreur}</p>}
-                <button
-                  type="submit"
-                  disabled={resetChargement}
-                  className="w-full flex items-center justify-center gap-2 bg-ink-950 text-parchment-50 rounded-lg py-2.5 text-sm font-semibold hover:bg-ink-900 disabled:opacity-60"
-                >
-                  {resetChargement ? <Loader2 size={16} className="animate-spin" /> : 'Envoyer le code'}
-                </button>
-              </form>
-            ) : (
-              <div className="text-center">
-                <Mail size={32} className="mx-auto text-leaf-600 mb-3" />
-                <h3 className="font-display text-lg text-ink-950 mb-2">Code envoyé !</h3>
-                <p className="text-sm text-ink-700/70 mb-4">
-                  Nous avons envoyé un code de connexion à <strong>{resetEmail}</strong>.
-                  Utilisez ce code comme mot de passe pour vous connecter.
-                </p>
-                <button
-                  onClick={() => setModalReset(false)}
-                  className="w-full bg-ink-950 text-parchment-50 rounded-lg py-2.5 text-sm font-semibold hover:bg-ink-900"
-                >
-                  Retour à la connexion
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
     </div>
   )
 }
