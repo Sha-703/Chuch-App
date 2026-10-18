@@ -51,7 +51,7 @@ export default function Parametres() {
         <div className="bg-gold-500/10 border border-gold-500/30 rounded-2xl p-4 mb-6 flex items-start gap-3">
           <ShieldCheck size={18} className="text-gold-700 shrink-0 mt-0.5" />
           <p className="text-sm text-ink-800">
-            Vous vous êtes connecté avec un code provisoire (OTP). Pour continuer, choisissez un mot de passe personnel.
+            Vous devez choisir un mot de passe personnel pour continuer.
           </p>
         </div>
       )}

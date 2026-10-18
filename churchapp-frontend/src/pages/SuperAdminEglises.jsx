@@ -127,7 +127,7 @@ export default function SuperAdminEglises() {
               {resultat.comptes.map((c) => (
                 <div key={c.email} className="pb-2 border-b border-ink-950/5 last:border-0 last:pb-0">
                   <p><span className="text-ink-700/60">{c.role} :</span> {c.email}</p>
-                  <p className="text-xs text-ink-700/50">{c.otp ? <>Code OTP : <strong className="text-ink-950">{c.otp}</strong></> : 'Code envoyé par e-mail ✉️'}</p>
+                  <p className="text-xs text-ink-700/50">{c.motDePasseInitial ? <>Mot de passe initial : <strong className="text-ink-950">{c.motDePasseInitial}</strong></> : 'Mot de passe initial : ' + c.email}</p>
                 </div>
               ))}
             </div>
