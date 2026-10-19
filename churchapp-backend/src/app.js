@@ -51,8 +51,23 @@ const authLimiter = rateLimit({
 app.use('/api/auth/login', authLimiter)
 app.use('/api/super-admin/auth/login', authLimiter)
 
-const corsOrigins = (process.env.CORS_ORIGIN || '*').split(',').map(o => o.trim()).filter(Boolean)
-app.use(cors({ origin: corsOrigins.length ? corsOrigins : '*', credentials: true }))
+const corsOrigins = (process.env.CORS_ORIGIN || '')
+  .split(',')
+  .map(o => o.trim())
+  .filter(Boolean)
+
+// Ajoute automatiquement l'URL du frontend Railway si présente
+const frontendUrl = process.env.FRONTEND_URL || 'https://chuchapp-frontend-production.up.railway.app'
+if (!corsOrigins.includes(frontendUrl)) {
+  corsOrigins.push(frontendUrl)
+}
+
+app.use(cors({
+  origin: corsOrigins.length ? corsOrigins : '*',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}))
 app.use(express.json())
 app.use('/uploads', express.static(process.env.UPLOAD_DIR || './uploads'))
 
