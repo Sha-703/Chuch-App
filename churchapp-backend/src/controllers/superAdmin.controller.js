@@ -219,6 +219,24 @@ export async function creerEgliseParSuperAdmin(req, res) {
     utilisateurNom: 'Super Admin',
   })
 
+  // Le pasteur et l'administrateur font déjà partie du personnel (Ressources Humaines)
+  await Promise.all([
+    Membre.create({
+      nom: pasteur.nom,
+      role: 'Pasteur',
+      contact: pasteur.telephone || null,
+      depuis: new Date().toISOString().slice(0, 4),
+      egliseId: nouvelleEglise.id,
+    }),
+    Membre.create({
+      nom: administrateur.nom,
+      role: 'Administrateur',
+      contact: null,
+      depuis: new Date().toISOString().slice(0, 4),
+      egliseId: nouvelleEglise.id,
+    }),
+  ])
+
   res.status(201).json({
     eglise: nouvelleEglise,
     comptes: [

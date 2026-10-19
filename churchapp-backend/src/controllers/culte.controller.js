@@ -9,7 +9,7 @@ export async function listerCultes(req, res) {
 }
 
 export async function creerCulte(req, res) {
-  const { type, date, predicateur, presentiel, enLigne } = req.body
+  const { type, date, predicateur } = req.body
   if (!type || !date) {
     return res.status(400).json({ message: 'type et date sont requis.' })
   }
@@ -17,8 +17,6 @@ export async function creerCulte(req, res) {
     type,
     date,
     predicateur,
-    presentiel: presentiel || 0,
-    enLigne: enLigne || 0,
     egliseId: req.egliseId,
   })
   res.status(201).json(culte)

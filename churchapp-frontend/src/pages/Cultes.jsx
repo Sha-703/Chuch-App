@@ -84,10 +84,7 @@ export default function Cultes() {
               <th className="px-6 py-3 font-semibold">Culte</th>
               <th className="px-6 py-3 font-semibold">Prédicateur</th>
               <th className="px-6 py-3 font-semibold">Date</th>
-              <th className="px-6 py-3 font-semibold text-right">Présentiel</th>
-              <th className="px-6 py-3 font-semibold text-right">En ligne</th>
-              <th className="px-6 py-3 font-semibold text-right">Total</th>
-              <th className="px-6 py-3 font-semibold text-right">Présences</th>
+              <th className="px-6 py-3 font-semibold text-right">Détail</th>
             </tr>
           </thead>
           <tbody>
@@ -96,19 +93,6 @@ export default function Cultes() {
                 <td className="px-6 py-3.5 text-sm font-medium text-ink-950">{c.type}</td>
                 <td className="px-6 py-3.5 text-sm text-ink-800">{c.predicateur || '—'}</td>
                 <td className="px-6 py-3.5 text-sm text-ink-700/60">{c.date}</td>
-                <td className="px-6 py-3.5 text-sm text-right font-tabular">
-                  <span className="inline-flex items-center gap-1.5 text-ink-800">
-                    <Users size={13} /> {c.presentiel}
-                  </span>
-                </td>
-                <td className="px-6 py-3.5 text-sm text-right font-tabular">
-                  <span className="inline-flex items-center gap-1.5 text-ink-800">
-                    <MonitorPlay size={13} /> {c.enLigne}
-                  </span>
-                </td>
-                <td className="px-6 py-3.5 text-sm text-right font-tabular font-semibold text-gold-600">
-                  {c.presentiel + c.enLigne}
-                </td>
                 <td className="px-6 py-3.5 text-right">
                   <button
                     onClick={() => setCulteSelectionne(c)}
@@ -120,7 +104,7 @@ export default function Cultes() {
               </tr>
             ))}
             {cultes.length === 0 && (
-              <tr><td colSpan={7} className="px-6 py-8 text-center text-sm text-ink-700/50">Aucun culte enregistré.</td></tr>
+              <tr><td colSpan={4} className="px-6 py-8 text-center text-sm text-ink-700/50">Aucun culte enregistré.</td></tr>
             )}
           </tbody>
         </table>
@@ -150,8 +134,6 @@ function ModalCulte({ onClose, onSaved }) {
     typeAutre: '',
     date: new Date().toISOString().slice(0, 10),
     predicateur: '',
-    presentiel: '',
-    enLigne: '',
   })
   const [departements, setDepartements] = useState([])
   const [predicateurLibre, setPredicateurLibre] = useState(false)
@@ -175,8 +157,6 @@ function ModalCulte({ onClose, onSaved }) {
         type: form.type === 'Autre' ? form.typeAutre.trim() : form.type,
         date: form.date,
         predicateur: form.predicateur,
-        presentiel: parseInt(form.presentiel) || 0,
-        enLigne: parseInt(form.enLigne) || 0,
       })
       onSaved()
     } catch (err) {
@@ -258,10 +238,6 @@ function ModalCulte({ onClose, onSaved }) {
           </div>
 
           <Field label="Date" type="date" value={form.date} onChange={(v) => setForm({ ...form, date: v })} required />
-          <div className="grid grid-cols-2 gap-3">
-            <Field label="Présentiel" type="number" value={form.presentiel} onChange={(v) => setForm({ ...form, presentiel: v })} placeholder="0" />
-            <Field label="En ligne" type="number" value={form.enLigne} onChange={(v) => setForm({ ...form, enLigne: v })} placeholder="0" />
-          </div>
 
           {erreur && <p className="text-sm text-clay-600 bg-clay-500/10 rounded-lg px-3 py-2">{erreur}</p>}
 
@@ -344,20 +320,28 @@ function ModalPresences({ culte, onClose }) {
         ) : donnees.length === 0 ? (
           <p className="text-sm text-ink-700/50 py-6 text-center">Aucun membre dans ce périmètre.</p>
         ) : (
-          <div className="space-y-1.5 max-h-96 overflow-y-auto">
-            {donnees.map((p) => {
-              const s = styleStatut[p.statut]
-              const Icon = s.icon
-              return (
-                <div key={p.membreId} className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-parchment-50">
-                  <span className="text-sm text-ink-950">{p.nom}</span>
-                  <span className={`inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full font-mono ${s.couleur}`}>
-                    <Icon size={12} /> {s.label}{p.raison ? ` — ${p.raison}` : ''}
-                  </span>
-                </div>
-              )
-            })}
-          </div>
+          <>
+            <div className="bg-parchment-100 rounded-lg p-3 mb-4 flex items-center justify-between">
+              <span className="text-xs font-semibold uppercase tracking-wide text-ink-700/60">Présences physiques</span>
+              <span className="font-display text-lg font-tabular text-leaf-600">
+                {donnees.filter((p) => p.statut === 'present').length} / {donnees.length}
+              </span>
+            </div>
+            <div className="space-y-1.5 max-h-96 overflow-y-auto">
+              {donnees.map((p) => {
+                const s = styleStatut[p.statut]
+                const Icon = s.icon
+                return (
+                  <div key={p.membreId} className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-parchment-50">
+                    <span className="text-sm text-ink-950">{p.nom}</span>
+                    <span className={`inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full font-mono ${s.couleur}`}>
+                      <Icon size={12} /> {s.label}{p.raison ? ` — ${p.raison}` : ''}
+                    </span>
+                  </div>
+                )
+              })}
+            </div>
+          </>
         )}
       </div>
     </div>

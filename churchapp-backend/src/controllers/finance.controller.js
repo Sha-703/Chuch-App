@@ -16,7 +16,11 @@ export async function creerEntree(req, res) {
   if (!type || !montant || !date) {
     return res.status(400).json({ message: 'type, montant et date sont requis.' })
   }
-  const entree = await Entree.create({ type, provenance, montant, date, egliseId: req.egliseId })
+  const m = parseFloat(montant)
+  if (!isFinite(m) || m < 0) {
+    return res.status(400).json({ message: 'Le montant doit être un nombre positif ou nul.' })
+  }
+  const entree = await Entree.create({ type, provenance, montant: m, date, egliseId: req.egliseId })
   res.status(201).json(entree)
 }
 
@@ -33,7 +37,11 @@ export async function creerCharge(req, res) {
   if (!categorie || !montant || !date) {
     return res.status(400).json({ message: 'categorie, montant et date sont requis.' })
   }
-  const charge = await Charge.create({ categorie, description, montant, date, egliseId: req.egliseId })
+  const m = parseFloat(montant)
+  if (!isFinite(m) || m < 0) {
+    return res.status(400).json({ message: 'Le montant doit être un nombre positif ou nul.' })
+  }
+  const charge = await Charge.create({ categorie, description, montant: m, date, egliseId: req.egliseId })
   res.status(201).json(charge)
 }
 

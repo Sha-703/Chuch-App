@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
-import { Eglise, Utilisateur, Communaute } from '../models/index.js'
+import { Eglise, Utilisateur, Communaute, Membre } from '../models/index.js'
 import { journaliser } from '../lib/journal.js'
 
 function signToken(utilisateur) {
@@ -126,6 +126,24 @@ export async function creerEglise(req, res) {
     egliseNom: nouvelleEglise.nom,
     utilisateurNom: pasteur.nom,
   })
+
+  // Le pasteur et l'administrateur font déjà partie du personnel (Ressources Humaines)
+  await Promise.all([
+    Membre.create({
+      nom: pasteur.nom,
+      role: 'Pasteur',
+      contact: pasteur.telephone || null,
+      depuis: new Date().toISOString().slice(0, 4),
+      egliseId: nouvelleEglise.id,
+    }),
+    Membre.create({
+      nom: administrateur.nom,
+      role: 'Administrateur',
+      contact: null,
+      depuis: new Date().toISOString().slice(0, 4),
+      egliseId: nouvelleEglise.id,
+    }),
+  ])
 
   res.status(201).json({
     eglise: nouvelleEglise,

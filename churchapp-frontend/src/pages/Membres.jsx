@@ -96,7 +96,7 @@ export default function Membres() {
 }
 
 function ModalMembre({ onClose, onSaved }) {
-  const [form, setForm] = useState({ nom: '', role: 'Membre', contact: '', depuis: String(new Date().getFullYear()) })
+  const [form, setForm] = useState({ nom: '', role: 'Membre', roleAutre: '', contact: '', depuis: String(new Date().getFullYear()) })
   const [chargement, setChargement] = useState(false)
   const [erreur, setErreur] = useState('')
 
@@ -105,7 +105,12 @@ function ModalMembre({ onClose, onSaved }) {
     setChargement(true)
     setErreur('')
     try {
-      await api.creerMembre(form)
+      const roleFinal = form.role === 'Autre' ? form.roleAutre.trim() : form.role
+      if (form.role === 'Autre' && !roleFinal) {
+        setErreur('Merci de préciser le rôle personnalisé.')
+        return
+      }
+      await api.creerMembre({ ...form, role: roleFinal })
       onSaved()
     } catch (err) {
       setErreur(err.message)
@@ -130,11 +135,14 @@ function ModalMembre({ onClose, onSaved }) {
               onChange={(e) => setForm({ ...form, role: e.target.value })}
               className="mt-1.5 w-full rounded-lg border border-ink-950/15 bg-white px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500"
             >
-              {['Membre', 'Diacre', 'Ancien', 'Administrateur'].map((r) => (
+              {['Membre', 'Diacre', 'Ancien', 'Administrateur', 'Autre'].map((r) => (
                 <option key={r} value={r}>{r}</option>
               ))}
             </select>
           </div>
+          {form.role === 'Autre' && (
+            <Field label="Précisez le rôle" required value={form.roleAutre} onChange={(v) => setForm({ ...form, roleAutre: v })} placeholder="Ex. Trésorier adjoint" />
+          )}
           <Field label="Contact" value={form.contact} onChange={(v) => setForm({ ...form, contact: v })} placeholder="+243 8xx xxx xxx" />
           <Field label="Membre depuis" value={form.depuis} onChange={(v) => setForm({ ...form, depuis: v })} placeholder="2024" />
 
