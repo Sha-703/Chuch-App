@@ -59,16 +59,29 @@ export async function listerEglisesSysteme(req, res) {
   const where = recherche ? { nom: { [Op.like]: `%${recherche}%` } } : {}
   const eglises = await Eglise.findAll({
     where,
-    include: [{ model: Communaute, attributes: ['id', 'nom'] }],
+    include: [
+      { model: Communaute, attributes: ['id', 'nom'] },
+      { model: Utilisateur, attributes: ['id', 'nom', 'email', 'role', 'telephone'] },
+    ],
     order: [['nom', 'ASC']],
   })
 
   const avecCompteurs = await Promise.all(
-    eglises.map(async (e) => ({
-      ...e.toJSON(),
-      nbMembres: await Membre.count({ where: { egliseId: e.id } }),
-      nbUtilisateurs: await Utilisateur.count({ where: { egliseId: e.id } }),
-    }))
+    eglises.map(async (e) => {
+      const json = e.toJSON()
+      // Comptes de direction (pasteur / administrateur) pour l'édition depuis la console
+      const comptes = json.Utilisateurs || json.utilisateurs || []
+      json.comptesDirection = comptes
+        .filter((u) => u.role === 'pasteur' || u.role === 'administrateur')
+        .map(({ id, nom, email, role, telephone }) => ({ id, nom, email, role, telephone }))
+      delete json.Utilisateurs
+      delete json.utilisateurs
+      return {
+        ...json,
+        nbMembres: await Membre.count({ where: { egliseId: e.id } }),
+        nbUtilisateurs: await Utilisateur.count({ where: { egliseId: e.id } }),
+      }
+    })
   )
   res.json(avecCompteurs)
 }
@@ -86,6 +99,66 @@ export async function changerStatutEglise(req, res) {
   await journaliser({
     action: statut === 'suspendu' ? 'eglise.suspendue' : 'eglise.reactivee',
     details: `Église "${eglise.nom}" ${statut === 'suspendu' ? 'suspendue' : 'réactivée'} par le Super Admin`,
+    egliseNom: eglise.nom,
+    utilisateurNom: 'Super Admin',
+  })
+
+  res.json(eglise)
+}
+
+// --- Édition complète d'une église (informations + comptes pasteur/administrateur) ---
+export async function modifierEglise(req, res) {
+  const { eglise: infos, pasteur, administrateur, communauteId } = req.body
+
+  const eglise = await Eglise.findByPk(req.params.id)
+  if (!eglise) return res.status(404).json({ message: 'Église introuvable.' })
+
+  // 1. Informations de l'église
+  if (infos) {
+    if (infos.nom !== undefined) {
+      if (!String(infos.nom).trim()) return res.status(400).json({ message: 'Le nom de l\'église ne peut pas être vide.' })
+      eglise.nom = String(infos.nom).trim()
+    }
+    if (infos.denomination !== undefined) eglise.denomination = infos.denomination || null
+    if (infos.ville !== undefined) eglise.ville = infos.ville || null
+    if (communauteId !== undefined) {
+      if (communauteId) {
+        const communaute = await Communaute.findByPk(communauteId)
+        if (!communaute) return res.status(404).json({ message: 'Communauté introuvable.' })
+      }
+      eglise.communauteId = communauteId || null
+    }
+    await eglise.save()
+  }
+
+  // 2. Comptes pasteur / administrateur de l'église
+  const comptes = await Utilisateur.findAll({ where: { egliseId: eglise.id, role: ['pasteur', 'administrateur'] } })
+  const majComptes = []
+
+  for (const [cle, roleAttendu] of [['pasteur', 'pasteur'], ['administrateur', 'administrateur']]) {
+    const donnees = req.body[cle]
+    if (!donnees) continue
+    const compte = comptes.find((c) => c.role === roleAttendu)
+    if (!compte) continue // pas de compte correspondant : on n'en crée pas ici (voir création)
+
+    if (donnees.nom !== undefined && String(donnees.nom).trim()) compte.nom = String(donnees.nom).trim()
+    if (donnees.telephone !== undefined) compte.telephone = donnees.telephone || null
+    if (donnees.email !== undefined && donnees.email && donnees.email !== compte.email) {
+      const email = String(donnees.email).toLowerCase().trim()
+      const existant = await Utilisateur.findOne({ where: { email, id: { [Op.ne]: compte.id } } })
+      if (existant) return res.status(409).json({ message: `Un compte existe déjà avec l'e-mail ${email}.` })
+      compte.email = email
+      // Le mot de passe initial reste l'e-mail : si l'utilisateur n'a pas encore
+      // changé son mot de passe, on le recalcule avec le nouvel e-mail.
+      if (compte.motDePasseDoitEtreChange) compte.motDePasseHash = await bcrypt.hash(email, 10)
+    }
+    majComptes.push(compte.save())
+  }
+  await Promise.all(majComptes)
+
+  await journaliser({
+    action: 'eglise.modifiee',
+    details: `Église "${eglise.nom}" modifiée par le Super Admin`,
     egliseNom: eglise.nom,
     utilisateurNom: 'Super Admin',
   })
@@ -150,6 +223,50 @@ export async function toggleBlocageUtilisateur(req, res) {
   })
 
   res.json({ id: utilisateur.id, actif: utilisateur.actif })
+}
+
+// --- Édition d'un compte utilisateur (nom, e-mail, rôle) ---
+const ROLES_VALIDES = ['pasteur', 'administrateur', 'tresorier', 'ouvrier', 'communaute']
+
+export async function modifierUtilisateur(req, res) {
+  const { nom, email, role } = req.body
+
+  const utilisateur = await Utilisateur.findByPk(req.params.id)
+  if (!utilisateur) return res.status(404).json({ message: 'Utilisateur introuvable.' })
+
+  if (nom !== undefined) {
+    if (!String(nom).trim()) return res.status(400).json({ message: 'Le nom ne peut pas être vide.' })
+    utilisateur.nom = String(nom).trim()
+  }
+
+  if (email !== undefined && email && email !== utilisateur.email) {
+    const nouvelEmail = String(email).toLowerCase().trim()
+    const existant = await Utilisateur.findOne({ where: { email: nouvelEmail, id: { [Op.ne]: utilisateur.id } } })
+    if (existant) return res.status(409).json({ message: `Un compte existe déjà avec l'e-mail ${nouvelEmail}.` })
+    utilisateur.email = nouvelEmail
+    // Mot de passe initial = e-mail : recalculé tant qu'il n'a pas été changé
+    if (utilisateur.motDePasseDoitEtreChange) utilisateur.motDePasseHash = await bcrypt.hash(nouvelEmail, 10)
+  }
+
+  if (role !== undefined) {
+    if (!ROLES_VALIDES.includes(role)) return res.status(400).json({ message: 'Rôle invalide.' })
+    // Un compte rattaché à une communauté ne doit pas garder d'église, et inversement
+    if (role === 'communaute' && !utilisateur.communauteId) {
+      return res.status(400).json({ message: 'Un rôle "communaute" nécessite un rattachement à une communauté — créez-le depuis la page Communautés.' })
+    }
+    if (role !== 'communaute') utilisateur.communauteId = null
+    utilisateur.role = role
+  }
+
+  await utilisateur.save()
+
+  await journaliser({
+    action: 'utilisateur.modifie',
+    details: `Compte ${utilisateur.email} modifié (rôle : ${utilisateur.role}) par le Super Admin`,
+    utilisateurNom: 'Super Admin',
+  })
+
+  res.json(utilisateur)
 }
 
 // --- Modération des annonces ---
@@ -271,6 +388,30 @@ export async function creerCommunaute(req, res) {
   })
 
   res.status(201).json(communaute)
+}
+
+// --- Édition d'une communauté ---
+export async function modifierCommunaute(req, res) {
+  const { nom, description } = req.body
+
+  const communaute = await Communaute.findByPk(req.params.id)
+  if (!communaute) return res.status(404).json({ message: 'Communauté introuvable.' })
+
+  if (nom !== undefined) {
+    if (!String(nom).trim()) return res.status(400).json({ message: 'Le nom ne peut pas être vide.' })
+    communaute.nom = String(nom).trim()
+  }
+  if (description !== undefined) communaute.description = description || null
+
+  await communaute.save()
+
+  await journaliser({
+    action: 'communaute.modifiee',
+    details: `Communauté "${communaute.nom}" modifiée par le Super Admin`,
+    utilisateurNom: 'Super Admin',
+  })
+
+  res.json(communaute)
 }
 
 // Rattache (ou détache si communauteId est vide) une église existante à une communauté

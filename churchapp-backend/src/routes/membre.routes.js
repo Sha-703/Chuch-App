@@ -14,7 +14,7 @@ router.post('/', [
   validerRequete,
 ], creerMembre)
 router.post('/:id/compte', [
-  param('id').isInt().withMessage('ID membre invalide.'),
+  param('id').isUUID().withMessage('ID membre invalide.'),
   body('email').isEmail().normalizeEmail().withMessage('E-mail invalide.'),
   validerRequete,
 ], creerCompteOuvrier)

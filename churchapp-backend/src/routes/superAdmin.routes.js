@@ -4,11 +4,11 @@ import { superAdminRequired } from '../middlewares/superAdminAuth.js'
 import { validerRequete } from '../middlewares/validation.js'
 import {
   login, dashboard,
-  listerEglisesSysteme, changerStatutEglise, supprimerEglise, creerEgliseParSuperAdmin,
-  listerUtilisateursSysteme, reinitialiserMotDePasse, toggleBlocageUtilisateur,
+  listerEglisesSysteme, changerStatutEglise, modifierEglise, supprimerEglise, creerEgliseParSuperAdmin,
+  listerUtilisateursSysteme, modifierUtilisateur, reinitialiserMotDePasse, toggleBlocageUtilisateur,
   listerAnnoncesSysteme, supprimerAnnonceSysteme,
   listerJournal,
-  listerCommunautes, creerCommunaute, rattacherEglise, creerCompteCommunaute,
+  listerCommunautes, creerCommunaute, modifierCommunaute, rattacherEglise, creerCompteCommunaute,
   changerMonMotDePasseSuperAdmin,
 } from '../controllers/superAdmin.controller.js'
 
@@ -31,24 +31,38 @@ router.post('/eglises', [
   body('administrateur.email').isEmail().normalizeEmail().withMessage('E-mail administrateur invalide.'),
   validerRequete,
 ], creerEgliseParSuperAdmin)
+router.put('/eglises/:id', [
+  param('id').isUUID().withMessage('ID église invalide.'),
+  body('eglise.nom').optional().notEmpty().withMessage('Nom de l\'église requis.'),
+  body('pasteur.email').optional().isEmail().normalizeEmail().withMessage('E-mail pasteur invalide.'),
+  body('administrateur.email').optional().isEmail().normalizeEmail().withMessage('E-mail administrateur invalide.'),
+  validerRequete,
+], modifierEglise)
 router.patch('/eglises/:id/statut', [
-  param('id').isInt().withMessage('ID église invalide.'),
+  param('id').isUUID().withMessage('ID église invalide.'),
   body('statut').isIn(['actif', 'suspendu']).withMessage('Statut invalide.'),
   validerRequete,
 ], changerStatutEglise)
 router.patch('/eglises/:id/communaute', [
-  param('id').isInt().withMessage('ID église invalide.'),
+  param('id').isUUID().withMessage('ID église invalide.'),
   validerRequete,
 ], rattacherEglise)
 router.delete('/eglises/:id', supprimerEglise)
 
 router.get('/utilisateurs', listerUtilisateursSysteme)
+router.put('/utilisateurs/:id', [
+  param('id').isUUID().withMessage('ID utilisateur invalide.'),
+  body('nom').optional().notEmpty().withMessage('Nom requis.'),
+  body('email').optional().isEmail().normalizeEmail().withMessage('E-mail invalide.'),
+  body('role').optional().isIn(['pasteur', 'administrateur', 'tresorier', 'ouvrier', 'communaute']).withMessage('Rôle invalide.'),
+  validerRequete,
+], modifierUtilisateur)
 router.post('/utilisateurs/:id/reinitialiser-mot-de-passe', [
-  param('id').isInt().withMessage('ID utilisateur invalide.'),
+  param('id').isUUID().withMessage('ID utilisateur invalide.'),
   validerRequete,
 ], reinitialiserMotDePasse)
 router.patch('/utilisateurs/:id/toggle-blocage', [
-  param('id').isInt().withMessage('ID utilisateur invalide.'),
+  param('id').isUUID().withMessage('ID utilisateur invalide.'),
   validerRequete,
 ], toggleBlocageUtilisateur)
 
@@ -57,8 +71,13 @@ router.delete('/annonces/:id', supprimerAnnonceSysteme)
 
 router.get('/communautes', listerCommunautes)
 router.post('/communautes', creerCommunaute)
+router.put('/communautes/:id', [
+  param('id').isUUID().withMessage('ID communauté invalide.'),
+  body('nom').optional().notEmpty().withMessage('Nom requis.'),
+  validerRequete,
+], modifierCommunaute)
 router.post('/communautes/:id/compte', [
-  param('id').isInt().withMessage('ID communauté invalide.'),
+  param('id').isUUID().withMessage('ID communauté invalide.'),
   body('email').isEmail().normalizeEmail().withMessage('E-mail invalide.'),
   validerRequete,
 ], creerCompteCommunaute)

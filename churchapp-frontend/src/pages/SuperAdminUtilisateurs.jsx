@@ -1,13 +1,22 @@
 import { useEffect, useState } from 'react'
-import { Loader2, KeyRound, Ban, CheckCircle2 } from 'lucide-react'
+import { Loader2, KeyRound, Ban, CheckCircle2, Pencil, X } from 'lucide-react'
 import SuperAdminLayout from '../components/SuperAdminLayout'
 import { superAdminApi } from '../lib/superAdminApi'
+
+const ROLES = [
+  { valeur: 'pasteur', label: 'Pasteur' },
+  { valeur: 'administrateur', label: 'Administrateur' },
+  { valeur: 'tresorier', label: 'Trésorier' },
+  { valeur: 'ouvrier', label: 'Ouvrier' },
+  { valeur: 'communaute', label: 'Communauté' },
+]
 
 export default function SuperAdminUtilisateurs() {
   const [utilisateurs, setUtilisateurs] = useState(null)
   const [erreur, setErreur] = useState('')
   const [resultat, setResultat] = useState(null) // { email, motDePasseInitial }
   const [reinitialisant, setReinitialisant] = useState(null) // id utilisateur en cours
+  const [utilisateurEnEdition, setUtilisateurEnEdition] = useState(null)
 
   function recharger() {
     superAdminApi.listerUtilisateurs().then(setUtilisateurs).catch((err) => setErreur(err.message))
@@ -72,6 +81,12 @@ export default function SuperAdminUtilisateurs() {
                   <td className="px-6 py-3.5 text-right">
                     <div className="flex justify-end gap-3">
                       <button
+                        onClick={() => setUtilisateurEnEdition(u)}
+                        className="text-xs font-semibold text-ink-800 hover:underline inline-flex items-center gap-1"
+                      >
+                        <Pencil size={12} /> Modifier
+                      </button>
+                      <button
                         onClick={() => reinitialiser(u)}
                         disabled={reinitialisant === u.id}
                         className="text-xs font-semibold text-gold-700 hover:underline inline-flex items-center gap-1 disabled:opacity-60"
@@ -92,6 +107,14 @@ export default function SuperAdminUtilisateurs() {
         <div className="h-4" />
       </div>
 
+      {utilisateurEnEdition && (
+        <ModalEditionUtilisateur
+          utilisateur={utilisateurEnEdition}
+          onClose={() => setUtilisateurEnEdition(null)}
+          onSaved={() => { setUtilisateurEnEdition(null); recharger() }}
+        />
+      )}
+
       {resultat && (
         <div className="fixed inset-0 bg-ink-950/40 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-2xl shadow-card w-full max-w-sm p-6">
@@ -107,5 +130,99 @@ export default function SuperAdminUtilisateurs() {
         </div>
       )}
     </SuperAdminLayout>
+  )
+}
+
+// Édition d'un compte : nom, e-mail et rôle
+function ModalEditionUtilisateur({ utilisateur, onClose, onSaved }) {
+  const [form, setForm] = useState({
+    nom: utilisateur.nom || '',
+    email: utilisateur.email || '',
+    role: utilisateur.role || 'pasteur',
+  })
+  const [chargement, setChargement] = useState(false)
+  const [erreur, setErreur] = useState('')
+
+  const rolesDisponibles = form.role === utilisateur.role
+    ? ROLES // on garde le rôle actuel même s'il est hors liste standard
+    : ROLES.filter((r) => r.valeur !== 'communaute' || utilisateur.communauteId)
+
+  async function handleSubmit(e) {
+    e.preventDefault()
+    if (!form.nom.trim()) return setErreur('Le nom est requis.')
+    setChargement(true)
+    setErreur('')
+    try {
+      await superAdminApi.modifierUtilisateur(utilisateur.id, {
+        nom: form.nom.trim(),
+        email: form.email.trim(),
+        role: form.role,
+      })
+      onSaved()
+    } catch (err) {
+      setErreur(err.message)
+    } finally {
+      setChargement(false)
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 bg-ink-950/40 flex items-center justify-center p-4 z-50">
+      <div className="bg-white rounded-2xl shadow-card w-full max-w-sm p-6">
+        <div className="flex items-center justify-between mb-5">
+          <h3 className="font-display text-lg text-ink-950">Modifier le compte</h3>
+          <button onClick={onClose} className="text-ink-700/50 hover:text-ink-950"><X size={18} /></button>
+        </div>
+        <form onSubmit={handleSubmit} className="space-y-3.5">
+          <div>
+            <label className="text-xs font-semibold uppercase tracking-wide text-ink-700/60">Nom</label>
+            <input
+              required
+              value={form.nom}
+              onChange={(e) => setForm({ ...form, nom: e.target.value })}
+              className="mt-1.5 w-full rounded-lg border border-ink-950/15 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/50"
+            />
+          </div>
+          <div>
+            <label className="text-xs font-semibold uppercase tracking-wide text-ink-700/60">E-mail</label>
+            <input
+              type="email"
+              required
+              value={form.email}
+              onChange={(e) => setForm({ ...form, email: e.target.value })}
+              className="mt-1.5 w-full rounded-lg border border-ink-950/15 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/50"
+            />
+          </div>
+          <div>
+            <label className="text-xs font-semibold uppercase tracking-wide text-ink-700/60">Rôle</label>
+            <select
+              value={form.role}
+              onChange={(e) => setForm({ ...form, role: e.target.value })}
+              className="mt-1.5 w-full rounded-lg border border-ink-950/15 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/50 bg-white"
+            >
+              {rolesDisponibles.map((r) => (
+                <option key={r.valeur} value={r.valeur}>{r.label}</option>
+              ))}
+            </select>
+            <p className="text-xs text-ink-700/50 mt-1.5">
+              Le rôle détermine les pages accessibles après connexion.
+            </p>
+          </div>
+          <p className="text-xs text-ink-700/50">
+            Si l'e-mail change et que le compte n'a pas encore changé son mot de passe, le nouveau mot de passe initial devient le nouvel e-mail.
+          </p>
+
+          {erreur && <p className="text-sm text-clay-600 bg-clay-500/10 rounded-lg px-3 py-2">{erreur}</p>}
+
+          <button
+            type="submit"
+            disabled={chargement}
+            className="w-full flex items-center justify-center gap-2 bg-ink-950 text-parchment-50 rounded-lg py-2.5 text-sm font-semibold hover:bg-ink-900 transition-colors disabled:opacity-60 mt-2"
+          >
+            {chargement ? <Loader2 size={16} className="animate-spin" /> : 'Enregistrer'}
+          </button>
+        </form>
+      </div>
+    </div>
   )
 }

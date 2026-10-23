@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Search, Loader2, PauseCircle, PlayCircle, Trash2, Plus, X } from 'lucide-react'
+import { Search, Loader2, PauseCircle, PlayCircle, Trash2, Plus, X, Pencil } from 'lucide-react'
 import SuperAdminLayout from '../components/SuperAdminLayout'
 import { superAdminApi } from '../lib/superAdminApi'
 
@@ -8,6 +8,7 @@ export default function SuperAdminEglises() {
   const [recherche, setRecherche] = useState('')
   const [erreur, setErreur] = useState('')
   const [modalCreation, setModalCreation] = useState(false)
+  const [egliseEnEdition, setEgliseEnEdition] = useState(null)
   const [resultat, setResultat] = useState(null)
   const [communautes, setCommunautes] = useState([])
 
@@ -94,6 +95,9 @@ export default function SuperAdminEglises() {
                   </td>
                   <td className="px-6 py-3.5 text-right">
                     <div className="flex justify-end gap-3">
+                      <button onClick={() => setEgliseEnEdition(e)} className="text-xs font-semibold text-ink-800 hover:underline inline-flex items-center gap-1">
+                        <Pencil size={13} /> Modifier
+                      </button>
                       <button onClick={() => toggleStatut(e)} className="text-xs font-semibold text-ink-800 hover:underline inline-flex items-center gap-1">
                         {e.statut === 'actif' ? <><PauseCircle size={13} /> Suspendre</> : <><PlayCircle size={13} /> Réactiver</>}
                       </button>
@@ -105,7 +109,7 @@ export default function SuperAdminEglises() {
                 </tr>
               ))}
               {eglises.length === 0 && (
-                <tr><td colSpan={6} className="px-6 py-8 text-center text-sm text-ink-700/50">Aucune église trouvée.</td></tr>
+                <tr><td colSpan={7} className="px-6 py-8 text-center text-sm text-ink-700/50">Aucune église trouvée.</td></tr>
               )}
             </tbody>
           </table>
@@ -117,6 +121,14 @@ export default function SuperAdminEglises() {
         <ModalCreationEglise
           onClose={() => setModalCreation(false)}
           onSaved={(data) => { setModalCreation(false); recharger(); setResultat(data) }}
+        />
+      )}
+      {egliseEnEdition && (
+        <ModalEditionEglise
+          eglise={egliseEnEdition}
+          communautes={communautes}
+          onClose={() => setEgliseEnEdition(null)}
+          onSaved={() => { setEgliseEnEdition(null); recharger() }}
         />
       )}
       {resultat && (
@@ -243,6 +255,118 @@ function Champ({ label, type = 'text', placeholder, value, onChange, required })
     <div>
       <label className="text-xs font-semibold uppercase tracking-wide text-ink-700/60">{label}</label>
       <input type={type} required={required} placeholder={placeholder} value={value} onChange={(e) => onChange(e.target.value)} className="mt-1.5 w-full rounded-lg border border-ink-950/15 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/50" />
+    </div>
+  )
+}
+
+// Modification d'une église existante : informations + comptes pasteur / administrateur
+function ModalEditionEglise({ eglise, communautes, onClose, onSaved }) {
+  const comptes = eglise.comptesDirection || []
+  const comptePasteur = comptes.find((c) => c.role === 'pasteur')
+  const compteAdmin = comptes.find((c) => c.role === 'administrateur')
+
+  const [form, setForm] = useState({
+    nom: eglise.nom || '',
+    ville: eglise.ville || '',
+    denomination: eglise.denomination || '',
+    communauteId: eglise.communauteId || '',
+    pasteurNom: comptePasteur?.nom || '',
+    pasteurEmail: comptePasteur?.email || '',
+    adminNom: compteAdmin?.nom || '',
+    adminEmail: compteAdmin?.email || '',
+  })
+  const [chargement, setChargement] = useState(false)
+  const [erreur, setErreur] = useState('')
+
+  function setChamp(c, v) { setForm((f) => ({ ...f, [c]: v })) }
+
+  async function handleSubmit(e) {
+    e.preventDefault()
+    if (!form.nom.trim()) return setErreur('Le nom de l\'église est requis.')
+    setChargement(true)
+    setErreur('')
+    try {
+      const payload = {
+        eglise: { nom: form.nom, ville: form.ville, denomination: form.denomination },
+        communauteId: form.communauteId || null,
+      }
+      if (comptePasteur && (form.pasteurNom.trim() || form.pasteurEmail.trim())) {
+        payload.pasteur = { nom: form.pasteurNom, email: form.pasteurEmail }
+      }
+      if (compteAdmin && (form.adminNom.trim() || form.adminEmail.trim())) {
+        payload.administrateur = { nom: form.adminNom, email: form.adminEmail }
+      }
+      await superAdminApi.modifierEglise(eglise.id, payload)
+      onSaved()
+    } catch (err) {
+      setErreur(err.message)
+    } finally {
+      setChargement(false)
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 bg-ink-950/40 flex items-center justify-center p-4 z-50 overflow-y-auto">
+      <div className="bg-white rounded-2xl shadow-card w-full max-w-md p-6 my-8">
+        <div className="flex items-center justify-between mb-5">
+          <h3 className="font-display text-lg text-ink-950">Modifier « {eglise.nom} »</h3>
+          <button onClick={onClose} className="text-ink-700/50 hover:text-ink-950"><X size={18} /></button>
+        </div>
+        <form onSubmit={handleSubmit} className="space-y-3.5">
+          <Champ label="Nom de l'église" required value={form.nom} onChange={(v) => setChamp('nom', v)} placeholder="Ex. CEC Bethel" />
+          <div className="grid grid-cols-2 gap-3">
+            <Champ label="Ville" value={form.ville} onChange={(v) => setChamp('ville', v)} placeholder="Kinshasa" />
+            <Champ label="Dénomination" value={form.denomination} onChange={(v) => setChamp('denomination', v)} placeholder="Optionnel" />
+          </div>
+          <div>
+            <label className="text-xs font-semibold uppercase tracking-wide text-ink-700/60">Communauté</label>
+            <select
+              value={form.communauteId}
+              onChange={(e) => setChamp('communauteId', e.target.value)}
+              className="mt-1.5 w-full rounded-lg border border-ink-950/15 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/50 bg-white"
+            >
+              <option value="">— Aucune (église indépendante) —</option>
+              {communautes.map((c) => (
+                <option key={c.id} value={c.id}>{c.nom}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="woven-rule w-16" />
+          <p className="text-xs font-semibold uppercase tracking-wide text-ink-700/60">Compte du pasteur</p>
+          {comptePasteur ? (
+            <div className="grid grid-cols-2 gap-3">
+              <Champ label="Nom" value={form.pasteurNom} onChange={(v) => setChamp('pasteurNom', v)} placeholder="Past. Jean" />
+              <Champ label="E-mail" type="email" value={form.pasteurEmail} onChange={(v) => setChamp('pasteurEmail', v)} placeholder="pasteur@exemple.cd" />
+            </div>
+          ) : (
+            <p className="text-xs text-ink-700/50">Aucun compte pasteur enregistré pour cette église.</p>
+          )}
+
+          <p className="text-xs font-semibold uppercase tracking-wide text-ink-700/60 pt-1">Compte de l'administrateur</p>
+          {compteAdmin ? (
+            <div className="grid grid-cols-2 gap-3">
+              <Champ label="Nom" value={form.adminNom} onChange={(v) => setChamp('adminNom', v)} placeholder="Sr. Grace" />
+              <Champ label="E-mail" type="email" value={form.adminEmail} onChange={(v) => setChamp('adminEmail', v)} placeholder="admin@exemple.cd" />
+            </div>
+          ) : (
+            <p className="text-xs text-ink-700/50">Aucun compte administrateur enregistré pour cette église.</p>
+          )}
+          <p className="text-xs text-ink-700/50">
+            Si le compte n'a pas encore changé son mot de passe, le nouveau mot de passe initial devient le nouvel e-mail.
+          </p>
+
+          {erreur && <p className="text-sm text-clay-600 bg-clay-500/10 rounded-lg px-3 py-2">{erreur}</p>}
+
+          <button
+            type="submit"
+            disabled={chargement}
+            className="w-full flex items-center justify-center gap-2 bg-ink-950 text-parchment-50 rounded-lg py-2.5 text-sm font-semibold hover:bg-ink-900 transition-colors disabled:opacity-60 mt-2"
+          >
+            {chargement ? <Loader2 size={16} className="animate-spin" /> : 'Enregistrer les modifications'}
+          </button>
+        </form>
+      </div>
     </div>
   )
 }

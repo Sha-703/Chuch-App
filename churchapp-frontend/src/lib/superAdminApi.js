@@ -31,15 +31,18 @@ export const superAdminApi = {
 
   listerEglises: (recherche) => request(`/eglises${recherche ? `?recherche=${encodeURIComponent(recherche)}` : ''}`),
   creerEglise: (payload) => request('/eglises', { method: 'POST', body: JSON.stringify(payload) }),
+  modifierEglise: (id, payload) => request(`/eglises/${id}`, { method: 'PUT', body: JSON.stringify(payload) }),
   changerStatutEglise: (id, statut) => request(`/eglises/${id}/statut`, { method: 'PATCH', body: JSON.stringify({ statut }) }),
   rattacherEglise: (id, communauteId) => request(`/eglises/${id}/communaute`, { method: 'PATCH', body: JSON.stringify({ communauteId }) }),
   supprimerEglise: (id) => request(`/eglises/${id}`, { method: 'DELETE' }),
 
   listerCommunautes: () => request('/communautes'),
   creerCommunaute: (payload) => request('/communautes', { method: 'POST', body: JSON.stringify(payload) }),
+  modifierCommunaute: (id, payload) => request(`/communautes/${id}`, { method: 'PUT', body: JSON.stringify(payload) }),
   creerCompteCommunaute: (id, payload) => request(`/communautes/${id}/compte`, { method: 'POST', body: JSON.stringify(payload) }),
 
   listerUtilisateurs: () => request('/utilisateurs'),
+  modifierUtilisateur: (id, payload) => request(`/utilisateurs/${id}`, { method: 'PUT', body: JSON.stringify(payload) }),
   reinitialiserMotDePasse: (id) => request(`/utilisateurs/${id}/reinitialiser-mot-de-passe`, { method: 'POST' }),
   toggleBlocageUtilisateur: (id) => request(`/utilisateurs/${id}/toggle-blocage`, { method: 'PATCH' }),
 

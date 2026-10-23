@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Plus, Loader2, X, KeyRound, Link2 } from 'lucide-react'
+import { Plus, Loader2, X, KeyRound, Link2, Pencil } from 'lucide-react'
 import SuperAdminLayout from '../components/SuperAdminLayout'
 import { superAdminApi } from '../lib/superAdminApi'
 
@@ -8,6 +8,7 @@ export default function SuperAdminCommunautes() {
   const [eglises, setEglises] = useState([])
   const [erreur, setErreur] = useState('')
   const [modalCreation, setModalCreation] = useState(false)
+  const [communauteEnEdition, setCommunauteEnEdition] = useState(null)
   const [modalCompte, setModalCompte] = useState(null)
   const [modalRattacher, setModalRattacher] = useState(null)
   const [resultat, setResultat] = useState(null)
@@ -41,11 +42,14 @@ export default function SuperAdminCommunautes() {
               {c.description && <p className="text-sm text-ink-700/60 mt-1">{c.description}</p>}
               <p className="text-xs text-ink-700/50 font-mono uppercase tracking-wide mt-3">{c.nbEglises} église(s) rattachée(s)</p>
               <div className="flex gap-3 mt-3">
+                <button onClick={() => setCommunauteEnEdition(c)} className="text-xs font-semibold text-ink-800 hover:underline inline-flex items-center gap-1">
+                  <Pencil size={12} /> Modifier
+                </button>
                 <button onClick={() => setModalCompte(c)} className="text-xs font-semibold text-gold-700 hover:underline inline-flex items-center gap-1">
                   <KeyRound size={12} /> Créer un accès
                 </button>
                 <button onClick={() => setModalRattacher(c)} className="text-xs font-semibold text-ink-800 hover:underline inline-flex items-center gap-1">
-                  <Link2 size={12} /> Rattacher une église
+                  <Link2 size={12} /> Rattacher
                 </button>
               </div>
             </div>
@@ -55,6 +59,9 @@ export default function SuperAdminCommunautes() {
 
       {modalCreation && (
         <ModalCreation onClose={() => setModalCreation(false)} onSaved={() => { setModalCreation(false); recharger() }} />
+      )}
+      {communauteEnEdition && (
+        <ModalEdition communaute={communauteEnEdition} onClose={() => setCommunauteEnEdition(null)} onSaved={() => { setCommunauteEnEdition(null); recharger() }} />
       )}
       {modalCompte && (
         <ModalCompte communaute={modalCompte} onClose={() => setModalCompte(null)} onResultat={setResultat} />
@@ -118,6 +125,54 @@ function ModalCreation({ onClose, onSaved }) {
           {erreur && <p className="text-sm text-clay-600 bg-clay-500/10 rounded-lg px-3 py-2">{erreur}</p>}
           <button type="submit" disabled={chargement} className="w-full flex items-center justify-center gap-2 bg-ink-950 text-parchment-50 rounded-lg py-2.5 text-sm font-semibold hover:bg-ink-900 disabled:opacity-60">
             {chargement ? <Loader2 size={16} className="animate-spin" /> : 'Créer'}
+          </button>
+        </form>
+      </div>
+    </div>
+  )
+}
+
+// Édition d'une communauté existante
+function ModalEdition({ communaute, onClose, onSaved }) {
+  const [nom, setNom] = useState(communaute.nom || '')
+  const [description, setDescription] = useState(communaute.description || '')
+  const [chargement, setChargement] = useState(false)
+  const [erreur, setErreur] = useState('')
+
+  async function handleSubmit(e) {
+    e.preventDefault()
+    if (!nom.trim()) return setErreur('Le nom est requis.')
+    setChargement(true)
+    setErreur('')
+    try {
+      await superAdminApi.modifierCommunaute(communaute.id, { nom: nom.trim(), description })
+      onSaved()
+    } catch (err) {
+      setErreur(err.message)
+    } finally {
+      setChargement(false)
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 bg-ink-950/40 flex items-center justify-center p-4 z-50">
+      <div className="bg-white rounded-2xl shadow-card w-full max-w-sm p-6">
+        <div className="flex items-center justify-between mb-5">
+          <h3 className="font-display text-lg text-ink-950">Modifier « {communaute.nom} »</h3>
+          <button onClick={onClose} className="text-ink-700/50 hover:text-ink-950"><X size={18} /></button>
+        </div>
+        <form onSubmit={handleSubmit} className="space-y-3.5">
+          <div>
+            <label className="text-xs font-semibold uppercase tracking-wide text-ink-700/60">Nom</label>
+            <input required value={nom} onChange={(e) => setNom(e.target.value)} placeholder="Ex. CADEC" className="mt-1.5 w-full rounded-lg border border-ink-950/15 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/50" />
+          </div>
+          <div>
+            <label className="text-xs font-semibold uppercase tracking-wide text-ink-700/60">Description</label>
+            <textarea rows={2} value={description} onChange={(e) => setDescription(e.target.value)} className="mt-1.5 w-full rounded-lg border border-ink-950/15 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/50" />
+          </div>
+          {erreur && <p className="text-sm text-clay-600 bg-clay-500/10 rounded-lg px-3 py-2">{erreur}</p>}
+          <button type="submit" disabled={chargement} className="w-full flex items-center justify-center gap-2 bg-ink-950 text-parchment-50 rounded-lg py-2.5 text-sm font-semibold hover:bg-ink-900 disabled:opacity-60">
+            {chargement ? <Loader2 size={16} className="animate-spin" /> : 'Enregistrer'}
           </button>
         </form>
       </div>
