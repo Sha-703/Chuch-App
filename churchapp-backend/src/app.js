@@ -73,16 +73,30 @@ app.use('/uploads', express.static(process.env.UPLOAD_DIR || './uploads'))
 
 // Endpoint d'état de santé : vérifie aussi la connexion à la base de données.
 // Railway l'utilise comme healthcheck ; accessible publiquement sans authentification.
+// Un timeout dur garantit une réponse même si la base pend (sinon : 499 côté Railway).
 app.get('/api/health', async (req, res) => {
   const depart = Date.now()
-  let database = 'deconnecte'
-  try {
+
+  async function testerBase() {
     const { sequelize } = await import('./models/index.js')
     await sequelize.authenticate()
-    database = 'ok'
+    return 'ok'
+  }
+
+  function avecTimeout(promise, ms) {
+    return Promise.race([
+      promise,
+      new Promise((_, rej) => setTimeout(() => rej(new Error(`timeout ${ms}ms`)), ms)),
+    ])
+  }
+
+  let database = 'deconnecte'
+  try {
+    database = await avecTimeout(testerBase(), 4000)
   } catch (err) {
     database = `erreur: ${err.message}`
   }
+
   const ok = database === 'ok'
   res.status(ok ? 200 : 503).json({
     status: ok ? 'ok' : 'degrade',
