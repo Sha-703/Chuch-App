@@ -71,7 +71,27 @@ app.use(cors({
 app.use(express.json())
 app.use('/uploads', express.static(process.env.UPLOAD_DIR || './uploads'))
 
-app.get('/api/health', (req, res) => res.json({ status: 'ok' }))
+// Endpoint d'état de santé : vérifie aussi la connexion à la base de données.
+// Railway l'utilise comme healthcheck ; accessible publiquement sans authentification.
+app.get('/api/health', async (req, res) => {
+  const depart = Date.now()
+  let database = 'deconnecte'
+  try {
+    const { sequelize } = await import('./models/index.js')
+    await sequelize.authenticate()
+    database = 'ok'
+  } catch (err) {
+    database = `erreur: ${err.message}`
+  }
+  const ok = database === 'ok'
+  res.status(ok ? 200 : 503).json({
+    status: ok ? 'ok' : 'degrade',
+    database,
+    latenceMs: Date.now() - depart,
+    uptimeS: Math.round(process.uptime()),
+    timestamp: new Date().toISOString(),
+  })
+})
 
 app.use('/api/auth', authRoutes)
 app.use('/api/finances', financeRoutes)
