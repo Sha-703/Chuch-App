@@ -6,8 +6,9 @@ import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import { useTheme } from '../context/ThemeContext'
 import { formatFC } from '../lib/mockData'
+import AnnoncesEspace from '../components/AnnoncesEspace'
 
-const onglets = ['Mon équipe', 'Mes finances']
+const onglets = ['Mon équipe', 'Mes finances', 'Annonces']
 
 export default function MonDepartement() {
   const { utilisateur, eglise, logout } = useAuth()
@@ -90,11 +91,13 @@ export default function MonDepartement() {
               ))}
             </div>
 
-            {onglet === 'Mon équipe' ? (
+            {onglet === 'Mon équipe' && (
               <OngletEquipe departement={departement} onChanged={recharger} showToast={showToast} />
-            ) : (
+            )}
+            {onglet === 'Mes finances' && (
               <OngletFinances departement={departement} showToast={showToast} />
             )}
+            {onglet === 'Annonces' && <AnnoncesEspace />}
           </>
         )}
       </main>

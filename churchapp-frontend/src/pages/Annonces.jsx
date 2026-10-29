@@ -31,15 +31,21 @@ export default function Annonces() {
 
   if (erreur) return <Layout title="Annonces"><p className="text-clay-600">{erreur}</p></Layout>
 
+  const peutPublier = ['pasteur', 'administrateur'].includes(utilisateur?.role)
+
   return (
-    <Layout title="Annonces" subtitle="Publications visibles par toutes les églises du réseau ChurchApp">
+    <Layout title="Annonces" subtitle="Mur public du réseau ChurchApp + annonces internes aux ouvriers de votre église">
       <div className="flex justify-end mb-5">
-        <button
-          onClick={() => setModalOuvert(true)}
-          className="flex items-center gap-1.5 bg-ink-950 text-parchment-50 rounded-lg px-4 py-2 text-sm font-semibold hover:bg-ink-900 transition-colors"
-        >
-          <Plus size={16} /> Publier une annonce
-        </button>
+        {peutPublier ? (
+          <button
+            onClick={() => setModalOuvert(true)}
+            className="flex items-center gap-1.5 bg-ink-950 text-parchment-50 rounded-lg px-4 py-2 text-sm font-semibold hover:bg-ink-900 transition-colors"
+          >
+            <Plus size={16} /> Publier une annonce
+          </button>
+        ) : (
+          <p className="text-xs text-ink-700/50">La publication est réservée au pasteur et à l'administrateur.</p>
+        )}
       </div>
 
       {!annonces ? (
@@ -60,7 +66,14 @@ export default function Annonces() {
                 </div>
               )}
               <div className="p-5 flex flex-col flex-1">
-                <h3 className="font-display text-lg text-ink-950 mb-1.5">{a.titre}</h3>
+                <div className="flex items-start justify-between gap-2 mb-1.5">
+                  <h3 className="font-display text-lg text-ink-950">{a.titre}</h3>
+                  {a.portee === 'ouvriers' && (
+                    <span className="shrink-0 inline-block px-2 py-0.5 rounded-full bg-gold-500/15 text-gold-700 text-[11px] font-semibold font-mono">
+                      Interne ouvriers
+                    </span>
+                  )}
+                </div>
                 <p className="text-sm text-ink-700/70 flex-1 mb-4 line-clamp-4">{a.contenu}</p>
                 <div className="woven-rule mb-3" />
                 <div className="flex items-center justify-between text-xs text-ink-700/50">
@@ -97,6 +110,7 @@ function ModalAnnonce({ onClose, onSaved }) {
   const [titre, setTitre] = useState('')
   const [contenu, setContenu] = useState('')
   const [photo, setPhoto] = useState(null)
+  const [portee, setPortee] = useState('reseau')
   const aujourdHui = new Date().toISOString().slice(0, 10)
   const dansUneSemaine = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10)
   const [dateDebut, setDateDebut] = useState(aujourdHui)
@@ -115,6 +129,7 @@ function ModalAnnonce({ onClose, onSaved }) {
       fd.append('contenu', contenu)
       fd.append('dateDebut', dateDebut)
       fd.append('dateFin', dateFin)
+      fd.append('portee', portee)
       if (photo) fd.append('photo', photo)
       await api.creerAnnonce(fd)
       onSaved()
@@ -132,9 +147,22 @@ function ModalAnnonce({ onClose, onSaved }) {
           <h3 className="font-display text-lg text-ink-950">Publier une annonce</h3>
           <button onClick={onClose} className="text-ink-700/50 hover:text-ink-950"><X size={18} /></button>
         </div>
-        <p className="text-xs text-ink-700/60 bg-parchment-100 rounded-lg p-3 mb-4">
-          Cette annonce sera visible par toutes les églises inscrites sur ChurchApp, du début à la fin de sa période — elle sera automatiquement retirée après sa date de fin.
-        </p>
+        <div className="mb-4">
+          <label className="text-xs font-semibold uppercase tracking-wide text-ink-700/60">Portée de l'annonce</label>
+          <select
+            value={portee}
+            onChange={(e) => setPortee(e.target.value)}
+            className="mt-1.5 w-full rounded-lg border border-ink-950/15 bg-white px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/50"
+          >
+            <option value="reseau">Tout le réseau ChurchApp — toutes les églises</option>
+            <option value="ouvriers">Ouvriers de mon église — interne uniquement</option>
+          </select>
+          <p className="text-[11px] text-ink-700/50 mt-1.5">
+            {portee === 'reseau'
+              ? 'Visible par toutes les églises inscrites sur ChurchApp, jusqu\'à la date de fin.'
+              : 'Restera strictement dans votre église : visible par le pasteur, l\'administrateur, les ouvriers et les chefs de département — jamais par les autres églises.'}
+          </p>
+        </div>
         <form onSubmit={handleSubmit} className="space-y-3.5">
           <div>
             <label className="text-xs font-semibold uppercase tracking-wide text-ink-700/60">Titre</label>

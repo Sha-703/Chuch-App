@@ -11,12 +11,17 @@ async function purgerAnnoncesExpirees() {
   await Annonce.destroy({ where: { dateFin: { [Op.lt]: aujourdHui } } })
 }
 
-// Exception documentée à l'isolation multi-tenant : le mur d'annonces est
-// volontairement partagé entre TOUTES les églises du système (voir cahier des charges §3.2).
+// Exception documentée à l'isolation multi-tenant : le mur PUBLIC est partagé
+// entre TOUTES les églises du système (voir cahier des charges §3.2), MAIS les
+// annonces à portée 'ouvriers' restent strictement dans l'église qui les a
+// créées : on renvoie donc le réseau + les miennes, jamais celles des autres.
 export async function listerAnnonces(req, res) {
   await purgerAnnoncesExpirees()
 
   const annonces = await Annonce.findAll({
+    where: {
+      [Op.or]: [{ portee: 'reseau' }, { egliseId: req.egliseId }],
+    },
     include: [{ model: Eglise, attributes: ['id', 'nom', 'ville'] }],
     order: [['createdAt', 'DESC']],
   })
@@ -24,16 +29,20 @@ export async function listerAnnonces(req, res) {
 }
 
 export async function creerAnnonce(req, res) {
-  const { titre, contenu, dateDebut, dateFin } = req.body
+  const { titre, contenu, dateDebut, dateFin, portee } = req.body
   if (!titre || !contenu) return res.status(400).json({ message: 'titre et contenu sont requis.' })
   if (!dateDebut || !dateFin) return res.status(400).json({ message: 'dateDebut et dateFin sont requises.' })
   if (dateFin < dateDebut) return res.status(400).json({ message: 'La date de fin doit être après la date de début.' })
+  if (portee && !['reseau', 'ouvriers'].includes(portee)) {
+    return res.status(400).json({ message: 'Portée invalide (reseau ou ouvriers).' })
+  }
 
   const annonce = await Annonce.create({
     titre,
     contenu,
     dateDebut,
     dateFin,
+    portee: portee || 'reseau',
     photoUrl: req.file ? urlFichier(req, req.file.filename) : null,
     egliseId: req.egliseId,
   })

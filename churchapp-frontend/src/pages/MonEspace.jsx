@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { CheckCircle2, XCircle, HelpCircle, LogOut, Loader2, Church, Moon, Sun, Settings } from 'lucide-react'
+import { CheckCircle2, XCircle, HelpCircle, LogOut, Loader2, Church, Moon, Sun, Settings, Megaphone } from 'lucide-react'
 import { api } from '../lib/api'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import { useTheme } from '../context/ThemeContext'
+import AnnoncesEspace from '../components/AnnoncesEspace'
 
 export default function MonEspace() {
   const { utilisateur, eglise, logout } = useAuth()
@@ -114,6 +115,15 @@ export default function MonEspace() {
             ))}
           </div>
         )}
+
+        <div className="mt-10">
+          <div className="flex items-center gap-2 mb-1">
+            <Megaphone size={16} className="text-gold-600" />
+            <h2 className="font-display text-lg text-ink-950">Annonces</h2>
+          </div>
+          <div className="woven-rule w-16 mb-4" />
+          <AnnoncesEspace />
+        </div>
       </main>
 
       {modalAbsence && (
