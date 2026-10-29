@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowRight, Loader2, ShieldCheck } from 'lucide-react'
+import { ArrowRight, Loader2, ShieldCheck, Eye, EyeOff } from 'lucide-react'
 import { useSuperAdminAuth } from '../context/SuperAdminAuthContext'
 
 export default function SuperAdminLogin() {
@@ -8,6 +8,7 @@ export default function SuperAdminLogin() {
   const { login } = useSuperAdminAuth()
   const [email, setEmail] = useState('')
   const [motDePasse, setMotDePasse] = useState('')
+  const [voirMotDePasse, setVoirMotDePasse] = useState(false)
   const [erreur, setErreur] = useState('')
   const [chargement, setChargement] = useState(false)
 
@@ -78,14 +79,24 @@ export default function SuperAdminLogin() {
             </div>
             <div>
               <label className="text-xs font-semibold uppercase tracking-wide text-ink-700/60">Mot de passe</label>
-              <input
-                type="password"
-                required
-                value={motDePasse}
-                onChange={(e) => setMotDePasse(e.target.value)}
-                placeholder="••••••••"
-                className="mt-1.5 w-full rounded-lg border border-ink-950/15 bg-white px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500"
-              />
+              <div className="relative mt-1.5">
+                <input
+                  type={voirMotDePasse ? 'text' : 'password'}
+                  required
+                  value={motDePasse}
+                  onChange={(e) => setMotDePasse(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full rounded-lg border border-ink-950/15 bg-white px-3.5 py-2.5 pr-11 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500"
+                />
+                <button
+                  type="button"
+                  onClick={() => setVoirMotDePasse((v) => !v)}
+                  className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-ink-700/40 hover:text-ink-950"
+                  aria-label={voirMotDePasse ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
+                >
+                  {voirMotDePasse ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
             </div>
             {erreur && <p className="text-sm text-clay-600 bg-clay-500/10 rounded-lg px-3 py-2">{erreur}</p>}
             <button
