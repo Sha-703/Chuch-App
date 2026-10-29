@@ -1,6 +1,7 @@
 import 'dotenv/config'
 import app from './app.js'
 import { sequelize } from './models/index.js'
+import { importerFichiersLegacy } from './middlewares/upload.js'
 
 const PORT = process.env.PORT ? Number(process.env.PORT) : (process.env.NODE_ENV === 'production' ? 8080 : 4000)
 
@@ -27,6 +28,10 @@ async function synchroniserBase() {
       await sequelize.authenticate()
       await sequelize.sync({ alter: true }) // ajoute les colonnes manquantes
       console.log(`Base de données prête (essai ${essai}).`)
+      // Récupère les fichiers encore sur le disque (photos/scans de l'ancienne
+      // version) pour qu'ils survivent au prochain redéploiement.
+      const importes = await importerFichiersLegacy()
+      if (importes > 0) console.log(`${importes} fichier(s) importé(s) en base PostgreSQL.`)
       return
     } catch (err) {
       console.error(`Échec synchronisation base (essai ${essai}/${maxEssais}) :`, err.message)

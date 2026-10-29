@@ -18,9 +18,10 @@ import Communaute from './Communaute.js'
 import CotisationConfig from './CotisationConfig.js'
 import Echeance from './Echeance.js'
 import Versement from './Versement.js'
+import Fichier from './Fichier.js'
 
 // Chaque table "métier" appartient à une Eglise (isolation multi-tenant)
-for (const Model of [Utilisateur, Membre, Culte, Entree, Charge, Annonce, Departement, Evenement, Materiel]) {
+for (const Model of [Utilisateur, Membre, Culte, Entree, Charge, Annonce, Departement, Evenement, Materiel, Fichier]) {
   Eglise.hasMany(Model, { foreignKey: 'egliseId', onDelete: 'CASCADE' })
   Model.belongsTo(Eglise, { foreignKey: 'egliseId' })
 }
@@ -89,5 +90,5 @@ Versement.belongsTo(Echeance, { foreignKey: 'echeanceId' })
 export {
   sequelize, Eglise, Utilisateur, Membre, Culte, Entree, Charge, Correspondance, Annonce,
   Departement, DepartementMembre, PresenceCulte, Evenement, SuperAdmin, JournalActivite,
-  Materiel, Communaute, CotisationConfig, Echeance, Versement,
+  Materiel, Communaute, CotisationConfig, Echeance, Versement, Fichier,
 }

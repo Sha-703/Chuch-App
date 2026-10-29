@@ -1,14 +1,19 @@
 import { Op } from 'sequelize'
 import { Annonce, Eglise } from '../models/index.js'
-import { urlFichier } from '../middlewares/upload.js'
+import { persisterFichier, supprimerFichier } from '../middlewares/upload.js'
 
 // Supprime silencieusement les annonces expirées (dateFin dépassée) avant
 // toute lecture — c'est le mécanisme de "suppression automatique après leur
 // date" : pas de tâche planifiée séparée, le nettoyage se fait à la volée à
-// chaque consultation du mur d'annonces.
+// chaque consultation du mur d'annonces. Les photos sont retirées de la base.
 async function purgerAnnoncesExpirees() {
   const aujourdHui = new Date().toISOString().slice(0, 10)
+  const avecPhoto = await Annonce.findAll({
+    where: { dateFin: { [Op.lt]: aujourdHui }, photoUrl: { [Op.ne]: null } },
+    attributes: ['photoUrl'],
+  })
   await Annonce.destroy({ where: { dateFin: { [Op.lt]: aujourdHui } } })
+  for (const annonce of avecPhoto) await supprimerFichier(annonce.photoUrl)
 }
 
 // Exception documentée à l'isolation multi-tenant : le mur PUBLIC est partagé
@@ -43,7 +48,7 @@ export async function creerAnnonce(req, res) {
     dateDebut,
     dateFin,
     portee: portee || 'reseau',
-    photoUrl: req.file ? urlFichier(req, req.file.filename) : null,
+    photoUrl: await persisterFichier(req, 'annonce'),
     egliseId: req.egliseId,
   })
 
@@ -58,6 +63,7 @@ export async function creerAnnonce(req, res) {
 export async function supprimerAnnonce(req, res) {
   const annonce = await Annonce.findOne({ where: { id: req.params.id, egliseId: req.egliseId } })
   if (!annonce) return res.status(404).json({ message: 'Annonce introuvable.' })
+  await supprimerFichier(annonce.photoUrl)
   await annonce.destroy()
   res.status(204).send()
 }

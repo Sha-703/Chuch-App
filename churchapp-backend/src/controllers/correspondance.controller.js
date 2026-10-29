@@ -1,6 +1,6 @@
 import { Op } from 'sequelize'
 import { Correspondance, Eglise } from '../models/index.js'
-import { urlFichier } from '../middlewares/upload.js'
+import { persisterFichier } from '../middlewares/upload.js'
 import { journaliser } from '../lib/journal.js'
 
 const JOURS_LIMITE_TRAITEMENT = 8
@@ -52,7 +52,7 @@ export async function creerCorrespondancePhysique(req, res) {
     etat: estSortante ? 'archive' : 'entrant',
     objet,
     correspondantExterne,
-    fichierUrl: urlFichier(req, req.file.filename),
+    fichierUrl: await persisterFichier(req, 'correspondance'),
     dateReception: dateRecep,
     dateLimiteTraitement: estSortante ? null : ajouterJours(dateRecep, JOURS_LIMITE_TRAITEMENT),
     dateArchivage: estSortante ? dateRecep : null,
@@ -72,7 +72,7 @@ export async function creerCorrespondanceNumerique(req, res) {
   }
 
   const dateRecep = new Date().toISOString().slice(0, 10)
-  const fichierUrl = req.file ? urlFichier(req, req.file.filename) : null
+  const fichierUrl = await persisterFichier(req, 'correspondance')
 
   // Copie "sortante" chez l'expéditeur — considérée traitée dès l'envoi
   const sortante = await Correspondance.create({

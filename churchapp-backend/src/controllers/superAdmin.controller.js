@@ -5,6 +5,7 @@ import {
   SuperAdmin, Eglise, Utilisateur, Membre, Annonce, Correspondance, JournalActivite, Communaute,
 } from '../models/index.js'
 import { journaliser } from '../lib/journal.js'
+import { supprimerFichier } from '../middlewares/upload.js'
 
 export async function login(req, res) {
   const { email, motDePasse } = req.body
@@ -288,6 +289,7 @@ export async function supprimerAnnonceSysteme(req, res) {
     utilisateurNom: 'Super Admin',
   })
 
+  await supprimerFichier(annonce.photoUrl)
   await annonce.destroy()
   res.status(204).send()
 }

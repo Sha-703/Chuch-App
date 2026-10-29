@@ -18,6 +18,7 @@ import superAdminRoutes from './routes/superAdmin.routes.js'
 import materielRoutes from './routes/materiel.routes.js'
 import communauteRoutes from './routes/communaute.routes.js'
 import notificationRoutes from './routes/notification.routes.js'
+import { Fichier } from './models/index.js'
 
 const app = express()
 
@@ -72,7 +73,27 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization'],
 }))
 app.use(express.json())
+// Fichiers legacy encore présents sur le disque (avant la migration en base) :
+// express.static tente le disque, puis transmet si le fichier n'y est plus.
 app.use('/uploads', express.static(process.env.UPLOAD_DIR || './uploads'))
+
+// Fichiers persistés EN BASE PostgreSQL (photos d'annonces, scans de
+// correspondance…). Le disque du conteneur est éphémère, la base ne l'est pas :
+// après un redéploiement, tout fichier est lu ici depuis Fichier.donnees.
+// Les URLs restent identiques (/uploads/<nom>), le frontend ne change pas.
+app.get('/uploads/:nom', async (req, res) => {
+  try {
+    const fichier = await Fichier.findOne({ where: { nom: req.params.nom } })
+    if (!fichier) return res.status(404).send('Fichier introuvable.')
+    res.set('Content-Type', fichier.typeMime)
+    // Nom de fichier unique : mis en cache sans jamais revalider.
+    res.set('Cache-Control', 'public, max-age=31536000, immutable')
+    res.send(fichier.donnees)
+  } catch (err) {
+    console.error('Lecture fichier impossible :', err.message)
+    res.status(500).send('Erreur de lecture du fichier.')
+  }
+})
 
 // Endpoint d'état de santé : vérifie aussi la connexion à la base de données.
 // Railway l'utilise comme healthcheck ; accessible publiquement sans authentification.
