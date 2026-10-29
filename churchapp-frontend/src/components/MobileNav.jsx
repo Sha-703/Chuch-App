@@ -33,12 +33,32 @@ export default function MobileNav() {
         <div className="fixed inset-0 z-50 flex">
           <div className="absolute inset-0 bg-ink-950/50" onClick={() => setOuvert(false)} />
           <div className="relative w-72 max-w-[85%] bg-ink-950 text-parchment-100 h-full flex flex-col">
+            {/* En-tête : logo + fermeture */}
             <div className="flex items-center justify-between px-5 pt-6 pb-4">
               <img src="/chuchapp.jpeg" alt="ChurchApp" className="h-8 w-auto object-contain" />
               <button onClick={() => setOuvert(false)} aria-label="Fermer le menu" className="p-1 text-parchment-100">
                 <X size={20} />
               </button>
             </div>
+
+            {/* Déconnexion en HAUT du menu (et non plus en bas) */}
+            <div className="px-4 pb-4">
+              <div className="rounded-xl bg-ink-900 p-3.5 flex items-center justify-between gap-2">
+                <div className="min-w-0">
+                  <p className="text-[13px] font-semibold text-parchment-50 leading-tight truncate">{eglise?.nom || 'Mon église'}</p>
+                  <p className="text-xs text-ink-600 mt-0.5 truncate">{eglise?.ville || ''}</p>
+                </div>
+                <button
+                  onClick={handleLogout}
+                  title="Se déconnecter"
+                  aria-label="Se déconnecter"
+                  className="shrink-0 flex items-center gap-1.5 text-xs font-medium text-red-400 hover:text-red-300 hover:bg-red-500/10 px-2 py-1.5 rounded-lg transition-colors"
+                >
+                  <LogOut size={14} /> Déconnexion
+                </button>
+              </div>
+            </div>
+
             <div className="woven-rule mx-5" />
             <nav className="flex-1 px-3 mt-5 space-y-1">
               {links.map(({ to, label, icon: Icon }) => (
@@ -57,15 +77,7 @@ export default function MobileNav() {
                 </NavLink>
               ))}
             </nav>
-            <div className="px-4 pb-6 pt-4">
-              <div className="rounded-xl bg-ink-900 p-3.5 mb-3">
-                <p className="text-[13px] font-semibold text-parchment-50 leading-tight">{eglise?.nom || 'Mon église'}</p>
-                <p className="text-xs text-ink-600 mt-0.5">{eglise?.ville || ''}</p>
-              </div>
-              <button onClick={handleLogout} className="flex items-center gap-2 text-sm text-ink-600 hover:text-clay-500 px-1">
-                <LogOut size={16} /> Déconnexion
-              </button>
-            </div>
+            <p className="px-6 pb-5 pt-4 text-xs text-ink-700">© 2026 ChurchApp</p>
           </div>
         </div>
       )}
