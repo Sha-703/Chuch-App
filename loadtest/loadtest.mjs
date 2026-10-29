@@ -49,12 +49,13 @@ async function scenario(nom, { vus, dureesSecondes = [], fonctions }) {
   const paliers = [10, 50, 100].slice(0, vus)
   for (const nbVU of paliers) {
     const duree = dureesSecondes[paliers.indexOf(nbVU)] ?? 3
-    const compteurs = Object.fromEntries(fonctions.map((f) => [f.nom, 0]))
     let arret = false
-    const travailleurs = Array.from({ length: nbVU }, async () => {
+    const travailleurs = Array.from({ length: nbVU }, async (_, indice) => {
+      // Chaque VU parcourt les fonctions du scénario en rotation.
+      let k = indice
       while (!arret) {
-        const f = fonctions[compteurs[f.nom] % fonctions.length] ?? fonctions[0]
-        compteurs[f.nom]++
+        const f = fonctions[k % fonctions.length]
+        k++
         await requete(f.nom, f.options)
       }
     })
@@ -109,7 +110,7 @@ async function main() {
     const email = `loadtest-${Date.now()}@eglise.cd`
     const cre = await fetch(`${BASE}/auth/eglises`, {
       method: 'POST',
-      headers: { 'Content-Type: ' + 'application/json' },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         eglise: { nom: `Église LoadTest ${new Date().toISOString().slice(11, 19)}` },
         pasteur: { nom: 'Past. Test', email },
