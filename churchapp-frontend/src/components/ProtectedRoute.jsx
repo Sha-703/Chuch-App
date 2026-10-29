@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext'
 const ACCUEIL_PAR_ROLE = {
   ouvrier: '/mon-espace',
   chef_departement: '/mon-departement',
+  tresorier: '/mon-tresorier',
   communaute: '/communaute/dashboard',
 }
 function accueilPour(role) {

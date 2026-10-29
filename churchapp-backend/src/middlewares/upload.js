@@ -27,5 +27,10 @@ export const upload = multer({
 })
 
 export function urlFichier(req, filename) {
-  return `${req.protocol}://${req.get('host')}/uploads/${filename}`
+  // PUBLIC_API_URL permet de forcer l'origine publique (utile si le Host
+  // derrière le proxy Railway n'est pas celui attendu).
+  const base = process.env.PUBLIC_API_URL
+    ? process.env.PUBLIC_API_URL.replace(/\/$/, '')
+    : `${req.protocol}://${req.get('host')}`
+  return `${base}/uploads/${filename}`
 }

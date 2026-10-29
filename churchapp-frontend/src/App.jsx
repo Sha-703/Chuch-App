@@ -17,6 +17,7 @@ import Annonces from './pages/Annonces'
 import Recherche from './pages/Recherche'
 import MonEspace from './pages/MonEspace'
 import MonDepartement from './pages/MonDepartement'
+import MonTresorier from './pages/MonTresorier'
 import Planning from './pages/Planning'
 import Logistique from './pages/Logistique'
 import CommunauteDashboard from './pages/CommunauteDashboard'
@@ -34,7 +35,8 @@ import Parametres from './pages/Parametres'
 import SuperAdminParametres from './pages/SuperAdminParametres'
 import NotFound from './pages/NotFound'
 
-const ADMIN = ['pasteur', 'administrateur', 'tresorier']
+// Direction de l'église — le trésorier a son propre espace privé (/mon-tresorier)
+const ADMIN = ['pasteur', 'administrateur']
 const TOUS_ROLES_EGLISE = ['pasteur', 'administrateur', 'tresorier', 'ouvrier', 'chef_departement', 'communaute']
 
 export default function App() {
@@ -48,6 +50,7 @@ export default function App() {
               <Route path="/creer-eglise" element={<CreateChurch />} />
               <Route path="/mon-espace" element={<ProtectedRoute allow={['ouvrier']}><MonEspace /></ProtectedRoute>} />
               <Route path="/mon-departement" element={<ProtectedRoute allow={['chef_departement']}><MonDepartement /></ProtectedRoute>} />
+              <Route path="/mon-tresorier" element={<ProtectedRoute allow={['tresorier']}><MonTresorier /></ProtectedRoute>} />
               <Route path="/dashboard" element={<ProtectedRoute allow={ADMIN}><Dashboard /></ProtectedRoute>} />
               <Route path="/finances" element={<ProtectedRoute allow={ADMIN}><Finances /></ProtectedRoute>} />
               <Route path="/cultes" element={<ProtectedRoute allow={ADMIN}><Cultes /></ProtectedRoute>} />

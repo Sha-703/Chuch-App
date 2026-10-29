@@ -249,7 +249,7 @@ function ModalCompteOuvrier({ membre, onClose, onSaved }) {
     try {
       const data = await api.creerCompteOuvrier(membre.id, {
         email,
-        roleCible: typeAcces === 'chef' ? 'chef_departement' : 'ouvrier',
+        roleCible: { chef: 'chef_departement', tresorier: 'tresorier' }[typeAcces] || 'ouvrier',
         ...(typeAcces === 'chef' ? { departementId } : {}),
       })
       setResultat(data)
@@ -268,7 +268,9 @@ function ModalCompteOuvrier({ membre, onClose, onSaved }) {
           {membre.nom} peut maintenant se connecter à ChurchApp
           {resultat.role === 'chef_departement'
             ? ` et gérer son département${resultat.departement ? ` "${resultat.departement}"` : ''}.`
-            : ' pour signer sa présence aux cultes.'}
+            : resultat.role === 'tresorier'
+              ? ' et gérer les finances de l\'église (entrées et charges) depuis son espace privé.'
+              : ' pour signer sa présence aux cultes.'}
         </p>
         <div className="bg-parchment-100 rounded-lg p-4 text-sm space-y-1">
           <p><span className="text-ink-700/60">E-mail :</span> {resultat.email}</p>
@@ -292,6 +294,7 @@ function ModalCompteOuvrier({ membre, onClose, onSaved }) {
             className={champClasses}
           >
             <option value="ouvrier">Ouvrier — signe sa présence aux cultes</option>
+            <option value="tresorier">Trésorier — enregistre les entrées et les charges de l'église</option>
             <option value="chef">Chef de département — gère ses ouvriers et ses finances</option>
           </select>
         </div>

@@ -25,7 +25,12 @@ app.set('trust proxy', 1) // Railway = 1 proxy : "true" permettait de contourner
 
 // Headers de sécurité
 app.use(helmet({
-  crossOriginEmbedderPolicy: false, // nécessaire pour les uploads / affichage de fichiers
+  crossOriginEmbedderPolicy: false,
+  // POLITIQUE CLÉ : helmet impose par défaut "same-origin", ce qui INTERDISIT
+  // au frontend (autre domaine) d'afficher les images/PDF envoyés par le
+  // backend (photos d'annonces, scans de correspondance) → le fichier est
+  // bien téléversé mais l'<img> reste vide. "cross-origin" l'autorise.
+  crossOriginResourcePolicy: { policy: 'cross-origin' },
 }))
 
 // Rate limiting global

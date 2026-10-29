@@ -5,8 +5,31 @@ function getToken() {
   return localStorage.getItem('churchapp_token')
 }
 
+// ---------------------------------------------------------------------------
+// Cache léger des réponses GET : quand on change de page, les données
+// s'affichent INSTANTANÉMENT au lieu d'être re-téléchargées à chaque fois.
+//  • validité 60 s (au-delà, on re-vérifie sur le serveur)
+//  • purgé à la moindre écriture (POST/PUT/PATCH/DELETE) → jamais de donnée
+//    périmée après une création / modification / suppression
+//  • non persisté : un rechargement complet de la page repart d'une base fraîche
+//  • la clé inclut le jeton : changer de compte ne réutilise jamais le cache
+// ---------------------------------------------------------------------------
+const cacheGET = new Map()
+const DUREE_CACHE_MS = 60 * 1000
+
 async function request(path, options = {}) {
-  const token = getToken()
+  const methode = (options.method || 'GET').toUpperCase()
+  const estLecture = methode === 'GET'
+  const tokenAvant = getToken()
+  const cle = `${tokenAvant || ''}|${methode} ${path}`
+
+  if (estLecture) {
+    const entree = cacheGET.get(cle)
+    if (entree && entree.expire > Date.now()) return entree.donnees
+    cacheGET.delete(cle)
+  }
+
+  const token = tokenAvant
   const estFormData = options.body instanceof FormData
   const res = await fetch(`${API_URL}${path}`, {
     ...options,
@@ -21,6 +44,14 @@ async function request(path, options = {}) {
   if (!res.ok) {
     throw new Error(data.message || 'Une erreur est survenue.')
   }
+
+  if (estLecture) {
+    cacheGET.set(cle, { expire: Date.now() + DUREE_CACHE_MS, donnees: data })
+  } else {
+    // Écriture : tout le cache devient potentiellement périmé.
+    cacheGET.clear()
+  }
+
   return data
 }
 
