@@ -1,4 +1,16 @@
+import { Op } from 'sequelize'
 import { Culte, Membre, PresenceCulte, Departement } from '../models/index.js'
+
+// ---------------------------------------------------------------------------
+// Délai de réponse d'un ouvrier : la présence ne se signe que dans la SEMAINE
+// suivant le culte (date du culte + 7 jours). Passé ce délai — et dès qu'il a
+// répondu — le culte disparaît de son espace.
+// ---------------------------------------------------------------------------
+const DELAI_REPONSE_JOURS = 7
+
+function limiteReponse() {
+  return new Date(Date.now() - DELAI_REPONSE_JOURS * 24 * 60 * 60 * 1000).toISOString().slice(0, 10)
+}
 
 // --- Vue administrateur : tableau des présences pour un culte donné ---
 export async function presencesDuCulte(req, res) {
@@ -82,19 +94,28 @@ export async function mesCultes(req, res) {
   const membre = await resoudreMembreConnecte(req)
   if (!membre) return res.status(404).json({ message: 'Aucun profil de membre associé à ce compte.' })
 
-  const cultes = await Culte.findAll({ where: { egliseId: req.egliseId }, order: [['date', 'DESC']], limit: 20 })
-  const presences = await PresenceCulte.findAll({ where: { membreId: membre.id } })
+  // Cultes éligibles : ceux des 7 derniers jours (+ les cultes à venir).
+  const cultes = await Culte.findAll({
+    where: { egliseId: req.egliseId, date: { [Op.gte]: limiteReponse() } },
+    order: [['date', 'DESC']],
+    limit: 20,
+  })
+  const presences = await PresenceCulte.findAll({ where: { membreId: membre.id }, attributes: ['culteId'] })
+  const dejaRepondu = new Set(presences.map((p) => p.culteId))
   const parCulteId = Object.fromEntries(presences.map((p) => [p.culteId, p]))
 
   res.json(
-    cultes.map((c) => ({
-      id: c.id,
-      type: c.type,
-      date: c.date,
-      predicateur: c.predicateur,
-      monStatut: parCulteId[c.id]?.statut || 'sans_reponse',
-      maRaison: parCulteId[c.id]?.raison || null,
-    }))
+    cultes
+      // Les cultes auxquels il a déjà répondu disparaissent de sa liste.
+      .filter((c) => !dejaRepondu.has(c.id))
+      .map((c) => ({
+        id: c.id,
+        type: c.type,
+        date: c.date,
+        predicateur: c.predicateur,
+        monStatut: parCulteId[c.id]?.statut || 'sans_reponse',
+        maRaison: parCulteId[c.id]?.raison || null,
+      }))
   )
 }
 
@@ -113,13 +134,25 @@ export async function signerPresence(req, res) {
   const culte = await Culte.findOne({ where: { id: req.params.culteId, egliseId: req.egliseId } })
   if (!culte) return res.status(404).json({ message: 'Culte introuvable.' })
 
-  const [presence] = await PresenceCulte.findOrCreate({
-    where: { culteId: culte.id, membreId: membre.id },
-    defaults: { statut, raison: statut === 'absent' ? raison : null },
+  // Règle 1 : réponse possible uniquement dans la semaine suivant le culte.
+  if (culte.date < limiteReponse()) {
+    return res.status(400).json({
+      message: `Délai dépassé : la présence ne peut être signalée que dans les ${DELAI_REPONSE_JOURS} jours suivant le culte.`,
+    })
+  }
+
+  // Règle 2 : une seule réponse par culte (ensuite, le culte disparaît de l'espace).
+  const dejaRepondu = await PresenceCulte.findOne({ where: { culteId: culte.id, membreId: membre.id } })
+  if (dejaRepondu) {
+    return res.status(409).json({ message: 'Vous avez déjà répondu pour ce culte.' })
+  }
+
+  const presence = await PresenceCulte.create({
+    culteId: culte.id,
+    membreId: membre.id,
+    statut,
+    raison: statut === 'absent' ? raison : null,
   })
-  presence.statut = statut
-  presence.raison = statut === 'absent' ? raison : null
-  await presence.save()
 
   res.json(presence)
 }

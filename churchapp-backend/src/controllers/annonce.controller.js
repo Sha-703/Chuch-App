@@ -6,7 +6,9 @@ import { persisterFichier, supprimerFichier } from '../middlewares/upload.js'
 // toute lecture — c'est le mécanisme de "suppression automatique après leur
 // date" : pas de tâche planifiée séparée, le nettoyage se fait à la volée à
 // chaque consultation du mur d'annonces. Les photos sont retirées de la base.
-async function purgerAnnoncesExpirees() {
+// Exportée : réutilisée par la liste de modération du super-admin, pour que
+// les annonces expirées ne persistent nulle part (mur, espaces privés, super-admin).
+export async function purgerAnnoncesExpirees() {
   const aujourdHui = new Date().toISOString().slice(0, 10)
   const avecPhoto = await Annonce.findAll({
     where: { dateFin: { [Op.lt]: aujourdHui }, photoUrl: { [Op.ne]: null } },

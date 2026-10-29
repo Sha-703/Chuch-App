@@ -6,6 +6,7 @@ import {
 } from '../models/index.js'
 import { journaliser } from '../lib/journal.js'
 import { supprimerFichier } from '../middlewares/upload.js'
+import { purgerAnnoncesExpirees } from './annonce.controller.js'
 
 export async function login(req, res) {
   const { email, motDePasse } = req.body
@@ -272,6 +273,8 @@ export async function modifierUtilisateur(req, res) {
 
 // --- Modération des annonces ---
 export async function listerAnnoncesSysteme(req, res) {
+  // Les annonces dont la date de fin est passée ont disparu du système entier.
+  await purgerAnnoncesExpirees()
   const annonces = await Annonce.findAll({
     include: [{ model: Eglise, attributes: ['id', 'nom'] }],
     order: [['createdAt', 'DESC']],

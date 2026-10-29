@@ -75,7 +75,7 @@ export default function MonEspace() {
         ) : cultes.length === 0 ? (
           <div className="bg-white rounded-2xl shadow-card p-8 text-center text-ink-700/50 text-sm">
             <Church className="mx-auto mb-3 text-ink-950/20" size={28} />
-            Aucun culte programmé pour l'instant.
+            Aucun culte en attente de votre réponse.
           </div>
         ) : (
           <div className="space-y-3">
