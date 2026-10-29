@@ -37,7 +37,9 @@ app.use(helmet({
 // Rate limiting global
 const globalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 300, // 300 requêtes par IP par fenêtre de 15 min
+  max: 1000, // 1000 requêtes par IP par fenêtre — l'app charge plusieurs
+             // endpoints par navigation (notifications, tableaux de bord…) :
+             // 300 coupait un admin en plein usage. 1000 reste efficace contre l'abus.
   standardHeaders: true,
   legacyHeaders: false,
   message: { message: 'Trop de requêtes, veuillez réessayer plus tard.' },

@@ -93,18 +93,11 @@ async function main() {
     fonctions: [{ nom: 'GET /health', options: { chemin: '/health', attendu: [200, 503] } }],
   })
 
-  // 1. Login sans authentification (mauvais identifiants) — doit rester stable + rate limit
-  await scenario('Login échoué (dosage)', {
-    vus: 1,
-    fonctions: [{
-      nom: 'POST /auth/login (échec)',
-      options: { methode: 'POST', chemin: '/auth/login', corps: { email: 'inexistant@exemple.cd', motDePasse: 'faux' }, attendu: [400, 401, 429] },
-    }],
-  })
-
-  // 2. On crée une église puis on charge le cœur de l'app authentifié
-  console.log('\n--- Préparation : création d\'une église de test ---')
-  const { status, data } = await login('loadtest@eglise.cd', 'loadtest@eglise.cd')
+  // 1. Préparation : connexion avec le compte fourni AVANT le dosage de login
+  //    (l'authLimiter n'autorise que 10 tentatives / 15 min / IP : le scénario
+  //    d'échec consommerait le quota et bloquerait ce login légitime).
+  console.log('\n--- Préparation : connexion au compte de test ---')
+  const { status, data } = await login('moisekelenda0@gmail.com', 'moisekelenda0@gmail.com')
   let token = data?.token
   if (!token) {
     const email = `loadtest-${Date.now()}@eglise.cd`
@@ -126,6 +119,15 @@ async function main() {
   }
   console.log(`  Token : ${token ? 'obtenu' : 'ABSENT (scénarios authentifiés sautés)'}`)
   if (!token) { afficher(); return }
+
+  // 2. Login sans authentification (mauvais identifiants) — doit rester stable + rate limit
+  await scenario('Login échoué (dosage)', {
+    vus: 1,
+    fonctions: [{
+      nom: 'POST /auth/login (échec)',
+      options: { methode: 'POST', chemin: '/auth/login', corps: { email: 'inexistant@exemple.cd', motDePasse: 'faux' }, attendu: [400, 401, 429] },
+    }],
+  })
 
   // 3. Lecture — le vrai test de charge (dashboards, listes)
   await scenario('Lecture (chargement normal)', {
@@ -156,6 +158,30 @@ async function main() {
       { nom: 'POST /membres sans nom', options: { methode: 'POST', chemin: '/membres', token, corps: { role: 'Membre' }, attendu: [400] } },
     ],
   })
+
+  // 6. Nettoyage : supprime les membres de test créés par le scénario d'écriture
+  //    pour ne pas laisser de données factices dans l'église du compte de test.
+  try {
+    const res = await fetch(`${BASE}/membres`, {
+      headers: { Authorization: `Bearer ${token}` },
+      signal: AbortSignal.timeout(15000),
+    })
+    const membres = await res.json()
+    const test = membres.filter((m) =>
+      /^Membre [a-z0-9]{6}$/.test(m.nom) &&
+      (!m.createdAt || Date.now() - new Date(m.createdAt).getTime() < 15 * 60 * 1000)
+    )
+    for (const m of test) {
+      await fetch(`${BASE}/membres/${m.id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+        signal: AbortSignal.timeout(15000),
+      })
+    }
+    console.log(`\nNettoyage : ${test.length} membre(s) de test supprimé(s).`)
+  } catch (e) {
+    console.log(`\nNettoyage impossible : ${e.message}`)
+  }
 
   afficher()
 }
