@@ -19,10 +19,17 @@ if (process.env.DATABASE_URL) {
       query_timeout: 15000,
     },
     pool: {
-      max: 10,
-      min: 0,
-      acquire: 10000, // temps max pour obtenir une connexion du pool
-      idle: 10000,
+      // Rafales : plusieurs pages ouvertes en parallèle + healthcheck →
+      // au-delà de 10 connexions simultanées, les requêtes faisaient la queue
+      // (acquisition 10 s → timeouts client à 15 s observés en test de charge).
+      max: 25,
+      // Connexions toujours chaudes : sans min, chaque rafale après inactivité
+      // paie un handshake TLS complet vers mainline.proxy (~0,5-1,5 s).
+      min: 2,
+      acquire: 15000,
+      // 60 s plutôt que 10 s : le recyclage fréquent était le principal
+      // facteur de latence (lenteur ~1,5 s même sur de petites listes).
+      idle: 60000,
     },
     logging: false,
   })

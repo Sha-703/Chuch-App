@@ -100,6 +100,7 @@ app.get('/uploads/:nom', async (req, res) => {
 // Endpoint d'état de santé : vérifie aussi la connexion à la base de données.
 // Railway l'utilise comme healthcheck ; accessible publiquement sans authentification.
 // Un timeout dur garantit une réponse même si la base pend (sinon : 499 côté Railway).
+let cacheSante = { valeur: null, expire: 0 }
 app.get('/api/health', async (req, res) => {
   const depart = Date.now()
 
@@ -117,10 +118,19 @@ app.get('/api/health', async (req, res) => {
   }
 
   let database = 'deconnecte'
-  try {
-    database = await avecTimeout(testerBase(), 4000)
-  } catch (err) {
-    database = `erreur: ${err.message}`
+  // Cache court (3 s) : /api/health est appelé par la veille (cron toutes les
+  // 10 min) et par Railway — frapper la base à chaque appel est inutile, et en
+  // test de charge cela consommait le pool à la place des vraies requêtes.
+  const maintenant = Date.now()
+  if (cacheSante.valeur && maintenant < cacheSante.expire) {
+    database = cacheSante.valeur
+  } else {
+    try {
+      database = await avecTimeout(testerBase(), 4000)
+    } catch (err) {
+      database = `erreur: ${err.message}`
+    }
+    cacheSante = { valeur: database, expire: Date.now() + 3000 }
   }
 
   const ok = database === 'ok'
