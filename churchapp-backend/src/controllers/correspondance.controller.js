@@ -169,3 +169,11 @@ export async function envoyerAccuse(req, res) {
 
   res.json(enrichir(correspondance))
 }
+
+// Suppression d'une correspondance appartenant à l'église connectée.
+export async function supprimerCorrespondance(req, res) {
+  const correspondance = await Correspondance.findOne({ where: { id: req.params.id, egliseId: req.egliseId } })
+  if (!correspondance) return res.status(404).json({ message: 'Correspondance introuvable.' })
+  await correspondance.destroy()
+  res.status(204).send()
+}

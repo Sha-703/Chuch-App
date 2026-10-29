@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Plus, MonitorPlay, Users, Loader2, X, ClipboardList, CheckCircle2, XCircle, HelpCircle } from 'lucide-react'
+import { Plus, Users, Loader2, X, CheckCircle2, XCircle, HelpCircle, Trash2, UserPlus } from 'lucide-react'
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts'
 import Layout from '../components/Layout'
 import Pagination, { paginer } from '../components/Pagination'
@@ -20,6 +20,17 @@ export default function Cultes() {
 
   useEffect(recharger, [])
 
+  async function supprimer(culte) {
+    if (!window.confirm(`Supprimer le culte "${culte.type}" du ${culte.date} ? Les présences liées seront aussi supprimées.`)) return
+    try {
+      await api.supprimerCulte(culte.id)
+      showToast('Culte supprimé.')
+      recharger()
+    } catch (err) {
+      showToast(err.message, 'error')
+    }
+  }
+
   if (erreur) return <Layout title="Cultes & présence"><p className="text-clay-600">{erreur}</p></Layout>
   if (!cultes) {
     return (
@@ -32,10 +43,10 @@ export default function Cultes() {
   const frequentation = cultes
     .slice()
     .reverse()
-    .map((c) => ({ date: c.date.slice(5), presentiel: c.presentiel, enLigne: c.enLigne }))
+    .map((c) => ({ date: c.date.slice(5), presentiel: c.presencePhysique || 0, enLigne: c.presenceEnLigne || 0 }))
 
   return (
-    <Layout title="Cultes & présence" subtitle="Suivi de fréquentation en présentiel et en ligne">
+    <Layout title="Cultes & présence" subtitle="Présence en ligne (ouvriers) + présence physique (membres)">
       <div className="bg-white rounded-2xl shadow-card p-6 mb-6">
         <div className="flex items-center justify-between mb-1">
           <h2 className="font-display text-lg text-ink-950">Évolution de la fréquentation</h2>
@@ -58,8 +69,8 @@ export default function Cultes() {
               <XAxis dataKey="date" tick={{ fontSize: 12, fill: '#284370' }} axisLine={false} tickLine={false} />
               <YAxis tick={{ fontSize: 11, fill: '#28437099' }} axisLine={false} tickLine={false} />
               <Tooltip contentStyle={{ borderRadius: 10, border: '1px solid #1B2A4A1a', fontSize: 13 }} />
-              <Area type="monotone" dataKey="presentiel" name="Présentiel" stroke="#C9A227" fill="url(#presentiel)" strokeWidth={2.5} />
-              <Area type="monotone" dataKey="enLigne" name="En ligne" stroke="#284370" fill="url(#enligne)" strokeWidth={2.5} />
+              <Area type="monotone" dataKey="presentiel" name="Présence physique" stroke="#C9A227" fill="url(#presentiel)" strokeWidth={2.5} />
+              <Area type="monotone" dataKey="enLigne" name="Présence en ligne" stroke="#284370" fill="url(#enligne)" strokeWidth={2.5} />
             </AreaChart>
           </ResponsiveContainer>
         ) : (
@@ -84,7 +95,10 @@ export default function Cultes() {
               <th className="px-6 py-3 font-semibold">Culte</th>
               <th className="px-6 py-3 font-semibold">Prédicateur</th>
               <th className="px-6 py-3 font-semibold">Date</th>
-              <th className="px-6 py-3 font-semibold text-right">Détail</th>
+              <th className="px-6 py-3 font-semibold text-right">En ligne</th>
+              <th className="px-6 py-3 font-semibold text-right">Physique</th>
+              <th className="px-6 py-3 font-semibold text-right">Total</th>
+              <th className="px-6 py-3 font-semibold text-right">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -93,18 +107,32 @@ export default function Cultes() {
                 <td className="px-6 py-3.5 text-sm font-medium text-ink-950">{c.type}</td>
                 <td className="px-6 py-3.5 text-sm text-ink-800">{c.predicateur || '—'}</td>
                 <td className="px-6 py-3.5 text-sm text-ink-700/60">{c.date}</td>
+                <td className="px-6 py-3.5 text-sm text-right font-tabular">
+                  <span className="inline-flex items-center gap-1.5 text-ink-800"><Users size={13} /> {c.presenceEnLigne}</span>
+                </td>
+                <td className="px-6 py-3.5 text-sm text-right font-tabular text-gold-700">{c.presencePhysique}</td>
+                <td className="px-6 py-3.5 text-sm text-right font-tabular font-semibold text-leaf-600">{c.total}</td>
                 <td className="px-6 py-3.5 text-right">
-                  <button
-                    onClick={() => setCulteSelectionne(c)}
-                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-ink-800 hover:text-ink-950 hover:underline whitespace-nowrap"
-                  >
-                    <ClipboardList size={13} /> Détail
-                  </button>
+                  <div className="flex justify-end gap-3">
+                    <button
+                      onClick={() => setCulteSelectionne(c)}
+                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-gold-700 hover:underline whitespace-nowrap"
+                    >
+                      <UserPlus size={13} /> Présences
+                    </button>
+                    <button
+                      onClick={() => supprimer(c)}
+                      className="text-ink-700/40 hover:text-clay-600"
+                      aria-label="Supprimer"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
             {cultes.length === 0 && (
-              <tr><td colSpan={4} className="px-6 py-8 text-center text-sm text-ink-700/50">Aucun culte enregistré.</td></tr>
+              <tr><td colSpan={7} className="px-6 py-8 text-center text-sm text-ink-700/50">Aucun culte enregistré.</td></tr>
             )}
           </tbody>
         </table>
@@ -122,7 +150,7 @@ export default function Cultes() {
         />
       )}
       {culteSelectionne && (
-        <ModalPresences culte={culteSelectionne} onClose={() => setCulteSelectionne(null)} />
+        <ModalPresences culte={culteSelectionne} onClose={() => setCulteSelectionne(null)} onSaved={recharger} />
       )}
     </Layout>
   )
@@ -276,22 +304,43 @@ const styleStatut = {
   sans_reponse: { icon: HelpCircle, couleur: 'text-ink-700/50 bg-ink-950/5', label: 'Sans réponse' },
 }
 
-function ModalPresences({ culte, onClose }) {
+function ModalPresences({ culte, onClose, onSaved }) {
   const [departements, setDepartements] = useState(null)
   const [departementId, setDepartementId] = useState('')
-  const [donnees, setDonnees] = useState(null)
+  const [donnees, setDonnees] = useState(null)   // réponse complète de l'API
   const [erreur, setErreur] = useState('')
+  const [physique, setPhysique] = useState(String(culte.presencePhysique ?? 0))
+  const [sauvegarde, setSauvegarde] = useState(false)
 
   useEffect(() => { api.listerDepartements().then(setDepartements).catch(() => setDepartements([])) }, [])
 
   function charger() {
     setDonnees(null)
     api.presencesDuCulte(culte.id, departementId || undefined)
-      .then((d) => setDonnees(d.presences))
+      .then(setDonnees)
       .catch((err) => setErreur(err.message))
   }
 
   useEffect(charger, [departementId])
+
+  async function enregistrerPhysique() {
+    const n = parseInt(physique, 10)
+    if (!Number.isFinite(n) || n < 0) {
+      setErreur('Le nombre de présences physiques doit être un entier positif ou nul.')
+      return
+    }
+    setSauvegarde(true)
+    setErreur('')
+    try {
+      const maj = await api.majPresencesPhysiques(culte.id, n)
+      setDonnees((d) => (d ? { ...d, presencePhysique: maj.presencePhysique, total: maj.total } : d))
+      onSaved?.()
+    } catch (err) {
+      setErreur(err.message)
+    } finally {
+      setSauvegarde(false)
+    }
+  }
 
   return (
     <div className="fixed inset-0 bg-ink-950/40 flex items-center justify-center p-4 z-50 overflow-y-auto">
@@ -302,46 +351,86 @@ function ModalPresences({ culte, onClose }) {
         </div>
         <p className="text-xs text-ink-700/50 mb-4">{culte.date}</p>
 
+        {/* Résumé : présence en ligne + physique = total */}
+        {donnees && (
+          <div className="grid grid-cols-3 gap-3 mb-4">
+            <div className="bg-parchment-100 rounded-lg p-3 text-center">
+              <p className="text-[11px] uppercase tracking-wide text-ink-700/60 font-semibold">En ligne</p>
+              <p className="font-display text-xl text-ink-950 font-tabular">{donnees.presenceEnLigne}</p>
+            </div>
+            <div className="bg-gold-500/10 rounded-lg p-3 text-center">
+              <p className="text-[11px] uppercase tracking-wide text-gold-700 font-semibold">Physique</p>
+              <p className="font-display text-xl text-gold-700 font-tabular">{donnees.presencePhysique}</p>
+            </div>
+            <div className="bg-leaf-500/10 rounded-lg p-3 text-center">
+              <p className="text-[11px] uppercase tracking-wide text-leaf-700 font-semibold">Total</p>
+              <p className="font-display text-xl text-leaf-700 font-tabular">{donnees.total}</p>
+            </div>
+          </div>
+        )}
+
+        {/* Saisie manuelle de la présence physique (membres présents) */}
+        <div className="border border-ink-950/10 rounded-lg p-4 mb-4">
+          <label className="text-xs font-semibold uppercase tracking-wide text-ink-700/60">
+            Ajouter la présence physique (membres présents)
+          </label>
+          <div className="flex items-center gap-2 mt-2">
+            <input
+              type="number"
+              min="0"
+              value={physique}
+              onChange={(e) => setPhysique(e.target.value)}
+              className="w-28 rounded-lg border border-ink-950/15 px-3.5 py-2 text-sm font-tabular focus:outline-none focus:ring-2 focus:ring-gold-500/50"
+            />
+            <button
+              onClick={enregistrerPhysique}
+              disabled={sauvegarde}
+              className="flex items-center gap-1.5 bg-ink-950 text-parchment-50 rounded-lg px-4 py-2 text-sm font-semibold hover:bg-ink-900 disabled:opacity-60"
+            >
+              {sauvegarde ? <Loader2 size={14} className="animate-spin" /> : <UserPlus size={14} />}
+              Enregistrer
+            </button>
+          </div>
+          <p className="text-[11px] text-ink-700/50 mt-2">
+            Ce nombre s'ajoute aux présences en ligne des ouvriers pour donner le total.
+          </p>
+        </div>
+
         {departements && departements.length > 0 && (
           <select
             value={departementId}
             onChange={(e) => setDepartementId(e.target.value)}
             className="mb-4 w-full rounded-lg border border-ink-950/15 bg-white px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/50"
           >
-            <option value="">Tous les membres</option>
+            <option value="">Tous les ouvriers</option>
             {departements.map((d) => <option key={d.id} value={d.id}>{d.nom}</option>)}
           </select>
         )}
 
-        {erreur && <p className="text-sm text-clay-600 bg-clay-500/10 rounded-lg px-3 py-2">{erreur}</p>}
+        {erreur && <p className="text-sm text-clay-600 bg-clay-500/10 rounded-lg px-3 py-2 mb-3">{erreur}</p>}
 
+        <p className="text-xs font-semibold uppercase tracking-wide text-ink-700/60 mb-2">
+          Présence en ligne des ouvriers
+        </p>
         {!donnees ? (
           <div className="flex items-center gap-2 text-ink-700/60 py-6"><Loader2 className="animate-spin" size={16} /> Chargement...</div>
-        ) : donnees.length === 0 ? (
-          <p className="text-sm text-ink-700/50 py-6 text-center">Aucun membre dans ce périmètre.</p>
+        ) : (donnees.presences || []).length === 0 ? (
+          <p className="text-sm text-ink-700/50 py-6 text-center">Aucun ouvrier dans ce périmètre.</p>
         ) : (
-          <>
-            <div className="bg-parchment-100 rounded-lg p-3 mb-4 flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wide text-ink-700/60">Présences physiques</span>
-              <span className="font-display text-lg font-tabular text-leaf-600">
-                {donnees.filter((p) => p.statut === 'present').length} / {donnees.length}
-              </span>
-            </div>
-            <div className="space-y-1.5 max-h-96 overflow-y-auto">
-              {donnees.map((p) => {
-                const s = styleStatut[p.statut]
-                const Icon = s.icon
-                return (
-                  <div key={p.membreId} className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-parchment-50">
-                    <span className="text-sm text-ink-950">{p.nom}</span>
-                    <span className={`inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full font-mono ${s.couleur}`}>
-                      <Icon size={12} /> {s.label}{p.raison ? ` — ${p.raison}` : ''}
-                    </span>
-                  </div>
-                )
-              })}
-            </div>
-          </>
+          <div className="space-y-1.5 max-h-72 overflow-y-auto">
+            {donnees.presences.map((p) => {
+              const s = styleStatut[p.statut]
+              const Icon = s.icon
+              return (
+                <div key={p.membreId} className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-parchment-50">
+                  <span className="text-sm text-ink-950">{p.nom}</span>
+                  <span className={`inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full font-mono ${s.couleur}`}>
+                    <Icon size={12} /> {s.label}{p.raison ? ` — ${p.raison}` : ''}
+                  </span>
+                </div>
+              )
+            })}
+          </div>
         )}
       </div>
     </div>

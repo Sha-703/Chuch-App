@@ -1,11 +1,17 @@
-import { Op } from 'sequelize'
 import PDFDocument from 'pdfkit'
-import { Entree, Charge, Eglise } from '../models/index.js'
+import { Op } from 'sequelize'
+import { Entree, Charge, Eglise, Departement } from '../models/index.js'
 import { formatFC } from '../lib/format.js'
+import { plageMois } from '../lib/dates.js'
+
+// ---------------------------------------------------------------------------
+// Finances GÉNÉRALES de l'église (departementId null)
+// Les finances des départements sont gérées à part (voir plus bas).
+// ---------------------------------------------------------------------------
 
 export async function listerEntrees(req, res) {
   const entrees = await Entree.findAll({
-    where: { egliseId: req.egliseId },
+    where: { egliseId: req.egliseId, departementId: { [Op.is]: null } },
     order: [['date', 'DESC']],
   })
   res.json(entrees)
@@ -26,7 +32,7 @@ export async function creerEntree(req, res) {
 
 export async function listerCharges(req, res) {
   const charges = await Charge.findAll({
-    where: { egliseId: req.egliseId },
+    where: { egliseId: req.egliseId, departementId: { [Op.is]: null } },
     order: [['date', 'DESC']],
   })
   res.json(charges)
@@ -45,10 +51,132 @@ export async function creerCharge(req, res) {
   res.status(201).json(charge)
 }
 
+// --- Suppressions (toute action d'ajout doit pouvoir être annulée) ---
+export async function supprimerEntree(req, res) {
+  const entree = await Entree.findOne({ where: { id: req.params.id, egliseId: req.egliseId } })
+  if (!entree) return res.status(404).json({ message: 'Entrée introuvable.' })
+  await entree.destroy()
+  res.status(204).send()
+}
+
+export async function supprimerCharge(req, res) {
+  const charge = await Charge.findOne({ where: { id: req.params.id, egliseId: req.egliseId } })
+  if (!charge) return res.status(404).json({ message: 'Charge introuvable.' })
+  await charge.destroy()
+  res.status(204).send()
+}
+
+// ---------------------------------------------------------------------------
+// Finances DÉDIÉES À UN DÉPARTEMENT — totalement séparées des finances d'église
+// ---------------------------------------------------------------------------
+
+async function chargerDepartement(req) {
+  return Departement.findOne({ where: { id: req.params.departementId, egliseId: req.egliseId } })
+}
+
+// Un chef de département ne voit que SON département
+function autoriseDepartement(req, departement) {
+  if (req.auth.role === 'chef_departement') {
+    return departement.chefUtilisateurId === req.auth.sub
+  }
+  return ['pasteur', 'administrateur', 'tresorier'].includes(req.auth.role)
+}
+
+export async function financesDepartement(req, res) {
+  const departement = await chargerDepartement(req)
+  if (!departement) return res.status(404).json({ message: 'Département introuvable.' })
+  if (!autoriseDepartement(req, departement)) {
+    return res.status(403).json({ message: 'Accès refusé : vous ne gérez pas ce département.' })
+  }
+
+  const [entrees, charges] = await Promise.all([
+    Entree.findAll({ where: { egliseId: req.egliseId, departementId: departement.id }, order: [['date', 'DESC']] }),
+    Charge.findAll({ where: { egliseId: req.egliseId, departementId: departement.id }, order: [['date', 'DESC']] }),
+  ])
+
+  const totalEntrees = entrees.reduce((s, e) => s + e.montant, 0)
+  const totalCharges = charges.reduce((s, c) => s + c.montant, 0)
+
+  res.json({
+    departement: { id: departement.id, nom: departement.nom },
+    entrees,
+    charges,
+    totalEntrees,
+    totalCharges,
+    solde: totalEntrees - totalCharges,
+  })
+}
+
+export async function creerEntreeDepartement(req, res) {
+  const departement = await chargerDepartement(req)
+  if (!departement) return res.status(404).json({ message: 'Département introuvable.' })
+  if (!autoriseDepartement(req, departement)) {
+    return res.status(403).json({ message: 'Accès refusé : vous ne gérez pas ce département.' })
+  }
+
+  const { type, provenance, montant, date } = req.body
+  if (!type || !montant || !date) return res.status(400).json({ message: 'type, montant et date sont requis.' })
+  const m = parseFloat(montant)
+  if (!isFinite(m) || m < 0) return res.status(400).json({ message: 'Le montant doit être un nombre positif ou nul.' })
+
+  const entree = await Entree.create({ type, provenance, montant: m, date, egliseId: req.egliseId, departementId: departement.id })
+  res.status(201).json(entree)
+}
+
+export async function creerChargeDepartement(req, res) {
+  const departement = await chargerDepartement(req)
+  if (!departement) return res.status(404).json({ message: 'Département introuvable.' })
+  if (!autoriseDepartement(req, departement)) {
+    return res.status(403).json({ message: 'Accès refusé : vous ne gérez pas ce département.' })
+  }
+
+  const { categorie, description, montant, date } = req.body
+  if (!categorie || !montant || !date) return res.status(400).json({ message: 'categorie, montant et date sont requis.' })
+  const m = parseFloat(montant)
+  if (!isFinite(m) || m < 0) return res.status(400).json({ message: 'Le montant doit être un nombre positif ou nul.' })
+
+  const charge = await Charge.create({ categorie, description, montant: m, date, egliseId: req.egliseId, departementId: departement.id })
+  res.status(201).json(charge)
+}
+
+// Vue d'ensemble pour l'administrateur : situation financière de CHAQUE département
+export async function financesTousDepartements(req, res) {
+  const departements = await Departement.findAll({ where: { egliseId: req.egliseId }, order: [['nom', 'ASC']] })
+  if (departements.length === 0) return res.json([])
+
+  const ids = departements.map((d) => d.id)
+  const [entrees, charges] = await Promise.all([
+    Entree.findAll({ where: { egliseId: req.egliseId, departementId: { [Op.in]: ids } } }),
+    Charge.findAll({ where: { egliseId: req.egliseId, departementId: { [Op.in]: ids } } }),
+  ])
+
+  const synthese = departements.map((d) => {
+    const e = entrees.filter((x) => x.departementId === d.id)
+    const c = charges.filter((x) => x.departementId === d.id)
+    const totalEntrees = e.reduce((s, x) => s + x.montant, 0)
+    const totalCharges = c.reduce((s, x) => s + x.montant, 0)
+    return {
+      id: d.id,
+      nom: d.nom,
+      nbEntrees: e.length,
+      nbCharges: c.length,
+      totalEntrees,
+      totalCharges,
+      solde: totalEntrees - totalCharges,
+    }
+  })
+
+  res.json(synthese)
+}
+
+// ---------------------------------------------------------------------------
+// Bilan mensuel + PDF (général — hors finances de département)
+// ---------------------------------------------------------------------------
+
 // Regroupe entrées et charges par mois (YYYY-MM) pour alimenter les graphiques
 export async function bilanMensuel(req, res) {
-  const entrees = await Entree.findAll({ where: { egliseId: req.egliseId } })
-  const charges = await Charge.findAll({ where: { egliseId: req.egliseId } })
+  const entrees = await Entree.findAll({ where: { egliseId: req.egliseId, departementId: { [Op.is]: null } } })
+  const charges = await Charge.findAll({ where: { egliseId: req.egliseId, departementId: { [Op.is]: null } } })
 
   const parMois = {}
   const cle = (dateStr) => dateStr.slice(0, 7) // "2026-08"
@@ -75,16 +203,20 @@ const NOMS_MOIS_FR = {
 
 // Génère un PDF téléchargeable du bilan d'un mois donné (?mois=YYYY-MM)
 export async function exporterBilanPdf(req, res) {
-  const mois = req.query.mois || new Date().toISOString().slice(0, 7)
+  const mois = String(req.query.mois || new Date().toISOString().slice(0, 7))
   const [annee, moisNum] = mois.split('-')
+
+  // Filtre par plage de dates : Op.startsWith sur DATEONLY plante en PostgreSQL
+  const plage = plageMois(mois)
+  if (!plage) return res.status(400).json({ message: 'Format de mois invalide (attendu : YYYY-MM).' })
 
   const eglise = await Eglise.findByPk(req.egliseId)
   const entrees = await Entree.findAll({
-    where: { egliseId: req.egliseId, date: { [Op.startsWith]: mois } },
+    where: { egliseId: req.egliseId, departementId: { [Op.is]: null }, date: plage },
     order: [['date', 'ASC']],
   })
   const charges = await Charge.findAll({
-    where: { egliseId: req.egliseId, date: { [Op.startsWith]: mois } },
+    where: { egliseId: req.egliseId, departementId: { [Op.is]: null }, date: plage },
     order: [['date', 'ASC']],
   })
 

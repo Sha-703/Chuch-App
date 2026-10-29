@@ -6,7 +6,7 @@ import { api } from '../lib/api'
 import { useToast } from '../context/ToastContext'
 
 const onglets = [
-  { key: 'membres', label: 'Membres' },
+  { key: 'membres', label: 'Ouvriers' },
   { key: 'departements', label: 'Départements' },
 ]
 
@@ -14,7 +14,7 @@ export default function RessourcesHumaines() {
   const [onglet, setOnglet] = useState('membres')
 
   return (
-    <Layout title="Ressources Humaines" subtitle="Membres, départements, chefs et ouvriers de l'église">
+    <Layout title="Ressources Humaines" subtitle="Ouvriers, départements et chefs de l'église">
       <div className="flex gap-1 bg-parchment-200/60 rounded-lg p-1 mb-6 w-fit">
         {onglets.map((o) => (
           <button
@@ -35,7 +35,7 @@ export default function RessourcesHumaines() {
 }
 
 // ---------------------------------------------------------------------------
-// Onglet Membres
+// Onglet Ouvriers
 // ---------------------------------------------------------------------------
 
 function OngletMembres() {
@@ -44,7 +44,7 @@ function OngletMembres() {
   const [erreur, setErreur] = useState('')
   const [recherche, setRecherche] = useState('')
   const [modalOuvert, setModalOuvert] = useState(false)
-  const [modalCompte, setModalCompte] = useState(null) // membre sélectionné pour créer un accès
+  const [modalCompte, setModalCompte] = useState(null) // ouvrier sélectionné pour créer un accès
   const [page, setPage] = useState(1)
 
   function recharger() {
@@ -52,6 +52,17 @@ function OngletMembres() {
   }
 
   useEffect(recharger, [])
+
+  async function supprimer(m) {
+    if (!window.confirm(`Supprimer l'ouvrier "${m.nom}" ? Son compte de connexion sera aussi supprimé.`)) return
+    try {
+      await api.supprimerMembre(m.id)
+      showToast('Ouvrier supprimé.')
+      recharger()
+    } catch (err) {
+      showToast(err.message, 'error')
+    }
+  }
 
   if (erreur) return <p className="text-clay-600">{erreur}</p>
   if (!membres) {
@@ -66,7 +77,7 @@ function OngletMembres() {
         <div className="relative flex-1 max-w-xs">
           <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-700/40" />
           <input
-            placeholder="Rechercher un membre..."
+            placeholder="Rechercher un ouvrier..."
             value={recherche}
             onChange={(e) => { setRecherche(e.target.value); setPage(1) }}
             className="w-full rounded-lg border border-ink-950/15 bg-parchment-50 pl-9 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/50"
@@ -76,7 +87,7 @@ function OngletMembres() {
           onClick={() => setModalOuvert(true)}
           className="flex items-center gap-1.5 bg-ink-950 text-parchment-50 rounded-lg px-4 py-2 text-sm font-semibold hover:bg-ink-900 transition-colors whitespace-nowrap"
         >
-          <Plus size={16} /> Ajouter un membre
+          <Plus size={16} /> Ajouter un ouvrier
         </button>
       </div>
       <div className="woven-rule mx-6 mt-5" />
@@ -85,9 +96,9 @@ function OngletMembres() {
           <tr className="text-left text-xs uppercase tracking-wide text-ink-700/50 font-mono">
             <th className="px-6 py-3 font-semibold">Nom</th>
             <th className="px-6 py-3 font-semibold">Rôle</th>
-            <th className="px-6 py-3 font-semibold">Membre depuis</th>
+            <th className="px-6 py-3 font-semibold">Depuis</th>
             <th className="px-6 py-3 font-semibold">Contact</th>
-            <th className="px-6 py-3 font-semibold text-right">Accès</th>
+            <th className="px-6 py-3 font-semibold text-right">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -102,21 +113,30 @@ function OngletMembres() {
               <td className="px-6 py-3.5 text-sm text-ink-700/60">{m.depuis || '—'}</td>
               <td className="px-6 py-3.5 text-sm text-ink-800 font-tabular">{m.contact || '—'}</td>
               <td className="px-6 py-3.5 text-right">
-                {m.compte ? (
-                  <span className="text-xs text-leaf-700 font-medium">{m.compte.email}</span>
-                ) : (
+                <div className="flex justify-end gap-3">
+                  {m.compte ? (
+                    <span className="text-xs text-leaf-700 font-medium">{m.compte.email}</span>
+                  ) : (
+                    <button
+                      onClick={() => setModalCompte(m)}
+                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-gold-700 hover:underline whitespace-nowrap"
+                    >
+                      <KeyRound size={12} /> Donner un accès
+                    </button>
+                  )}
                   <button
-                    onClick={() => setModalCompte(m)}
-                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-gold-700 hover:underline whitespace-nowrap"
+                    onClick={() => supprimer(m)}
+                    className="text-ink-700/40 hover:text-clay-600"
+                    aria-label="Supprimer"
                   >
-                    <KeyRound size={12} /> Donner un accès
+                    <Trash2 size={14} />
                   </button>
-                )}
+                </div>
               </td>
             </tr>
           ))}
           {filtres.length === 0 && (
-            <tr><td colSpan={5} className="px-6 py-8 text-center text-sm text-ink-700/50">Aucun membre trouvé.</td></tr>
+            <tr><td colSpan={5} className="px-6 py-8 text-center text-sm text-ink-700/50">Aucun ouvrier trouvé.</td></tr>
           )}
         </tbody>
       </table>
@@ -125,31 +145,39 @@ function OngletMembres() {
       {modalOuvert && (
         <ModalMembre
           onClose={() => setModalOuvert(false)}
-          onSaved={() => { setModalOuvert(false); recharger(); showToast('Membre ajouté avec succès.') }}
+          onSaved={() => { setModalOuvert(false); recharger(); showToast('Ouvrier ajouté avec succès.') }}
         />
       )}
       {modalCompte && (
         <ModalCompteOuvrier
           membre={modalCompte}
           onClose={() => setModalCompte(null)}
-          onSaved={() => { recharger() }}
+          onSaved={() => { recharger(); showToast('Accès créé.') }}
         />
       )}
     </div>
   )
 }
 
+// Rôles proposés à l'ajout d'un ouvrier — "Autre" ouvre un champ libre
+const ROLES_OUVRIER = ['Ouvrier', 'Chef de département', 'Diacre', 'Ancien', 'Trésorier', 'Autre']
+
 function ModalMembre({ onClose, onSaved }) {
-  const [form, setForm] = useState({ nom: '', role: 'Membre', contact: '', depuis: String(new Date().getFullYear()) })
+  const [form, setForm] = useState({ nom: '', role: 'Ouvrier', roleAutre: '', contact: '', depuis: String(new Date().getFullYear()) })
   const [chargement, setChargement] = useState(false)
   const [erreur, setErreur] = useState('')
 
   async function handleSubmit(e) {
     e.preventDefault()
+    const roleFinal = form.role === 'Autre' ? form.roleAutre.trim() : form.role
+    if (!roleFinal) {
+      setErreur('Merci de préciser le rôle personnalisé.')
+      return
+    }
     setChargement(true)
     setErreur('')
     try {
-      await api.creerMembre(form)
+      await api.creerMembre({ nom: form.nom, role: roleFinal, contact: form.contact, depuis: form.depuis })
       onSaved()
     } catch (err) {
       setErreur(err.message)
@@ -159,7 +187,7 @@ function ModalMembre({ onClose, onSaved }) {
   }
 
   return (
-    <ModalShell titre="Ajouter un membre" onClose={onClose}>
+    <ModalShell titre="Ajouter un ouvrier" onClose={onClose}>
       <form onSubmit={handleSubmit} className="space-y-3.5">
         <Champ label="Nom complet" required value={form.nom} onChange={(v) => setForm({ ...form, nom: v })} placeholder="Ex. Fam. Nsimba" />
         <div>
@@ -169,13 +197,22 @@ function ModalMembre({ onClose, onSaved }) {
             onChange={(e) => setForm({ ...form, role: e.target.value })}
             className={champClasses}
           >
-            {['Membre', 'Diacre', 'Ancien', 'Administrateur'].map((r) => (
+            {ROLES_OUVRIER.map((r) => (
               <option key={r} value={r}>{r}</option>
             ))}
           </select>
         </div>
+        {form.role === 'Autre' && (
+          <Champ
+            label="Précisez le rôle"
+            required
+            value={form.roleAutre}
+            onChange={(v) => setForm({ ...form, roleAutre: v })}
+            placeholder="Ex. Trésorier adjoint"
+          />
+        )}
         <Champ label="Contact" value={form.contact} onChange={(v) => setForm({ ...form, contact: v })} placeholder="+243 8xx xxx xxx" />
-        <Champ label="Membre depuis" value={form.depuis} onChange={(v) => setForm({ ...form, depuis: v })} placeholder="2024" />
+        <Champ label="Depuis" value={form.depuis} onChange={(v) => setForm({ ...form, depuis: v })} placeholder="2024" />
         {erreur && <p className="text-sm text-clay-600 bg-clay-500/10 rounded-lg px-3 py-2">{erreur}</p>}
         <BoutonSubmit chargement={chargement} />
       </form>
@@ -183,18 +220,38 @@ function ModalMembre({ onClose, onSaved }) {
   )
 }
 
+// Création d'un accès : soit simple ouvrier, soit chef de département
+// (auquel cas on choisit le département qu'il va diriger).
 function ModalCompteOuvrier({ membre, onClose, onSaved }) {
   const [email, setEmail] = useState('')
+  const [typeAcces, setTypeAcces] = useState('ouvrier') // 'ouvrier' | 'chef'
+  const [departementId, setDepartementId] = useState('')
+  const [departements, setDepartements] = useState([])
   const [chargement, setChargement] = useState(false)
   const [erreur, setErreur] = useState('')
   const [resultat, setResultat] = useState(null)
 
+  useEffect(() => {
+    // Seuls les départements SANS chef avec accès sont proposables
+    api.listerDepartements()
+      .then((ds) => setDepartements(ds.filter((d) => !d.chefUtilisateurId)))
+      .catch(() => setDepartements([]))
+  }, [])
+
   async function handleSubmit(e) {
     e.preventDefault()
+    if (typeAcces === 'chef' && !departementId) {
+      setErreur('Merci de choisir le département à diriger.')
+      return
+    }
     setChargement(true)
     setErreur('')
     try {
-      const data = await api.creerCompteOuvrier(membre.id, email)
+      const data = await api.creerCompteOuvrier(membre.id, {
+        email,
+        roleCible: typeAcces === 'chef' ? 'chef_departement' : 'ouvrier',
+        ...(typeAcces === 'chef' ? { departementId } : {}),
+      })
       setResultat(data)
       onSaved()
     } catch (err) {
@@ -208,7 +265,10 @@ function ModalCompteOuvrier({ membre, onClose, onSaved }) {
     return (
       <ModalShell titre="Accès créé" onClose={onClose}>
         <p className="text-sm text-ink-700/70 mb-4">
-          {membre.nom} peut maintenant se connecter à ChurchApp pour signer sa présence aux cultes.
+          {membre.nom} peut maintenant se connecter à ChurchApp
+          {resultat.role === 'chef_departement'
+            ? ` et gérer son département${resultat.departement ? ` "${resultat.departement}"` : ''}.`
+            : ' pour signer sa présence aux cultes.'}
         </p>
         <div className="bg-parchment-100 rounded-lg p-4 text-sm space-y-1">
           <p><span className="text-ink-700/60">E-mail :</span> {resultat.email}</p>
@@ -224,10 +284,37 @@ function ModalCompteOuvrier({ membre, onClose, onSaved }) {
   return (
     <ModalShell titre={`Donner un accès à ${membre.nom}`} onClose={onClose}>
       <form onSubmit={handleSubmit} className="space-y-3.5">
-        <p className="text-xs text-ink-700/60 bg-parchment-100 rounded-lg p-3">
-          Ce membre pourra se connecter avec des droits limités : il verra uniquement ses cultes pour signer sa présence.
-        </p>
+        <div>
+          <label className="text-xs font-semibold uppercase tracking-wide text-ink-700/60">Type d'accès</label>
+          <select
+            value={typeAcces}
+            onChange={(e) => { setTypeAcces(e.target.value); setErreur('') }}
+            className={champClasses}
+          >
+            <option value="ouvrier">Ouvrier — signe sa présence aux cultes</option>
+            <option value="chef">Chef de département — gère ses ouvriers et ses finances</option>
+          </select>
+        </div>
+
+        {typeAcces === 'chef' && (
+          <div>
+            <label className="text-xs font-semibold uppercase tracking-wide text-ink-700/60">Département à diriger</label>
+            <select value={departementId} onChange={(e) => setDepartementId(e.target.value)} className={champClasses}>
+              <option value="">— Choisir un département —</option>
+              {departements.map((d) => <option key={d.id} value={d.id}>{d.nom}</option>)}
+            </select>
+            {departements.length === 0 && (
+              <p className="text-xs text-ink-700/50 mt-1.5">
+                Aucun département sans chef disponible — créez-en un dans l'onglet Départements.
+              </p>
+            )}
+          </div>
+        )}
+
         <Champ label="E-mail de connexion" type="email" required value={email} onChange={setEmail} placeholder="ouvrier@exemple.cd" />
+        <p className="text-xs text-ink-700/60 bg-parchment-100 rounded-lg p-3">
+          Le mot de passe initial est l'adresse e-mail ; il devra le changer à la première connexion.
+        </p>
         {erreur && <p className="text-sm text-clay-600 bg-clay-500/10 rounded-lg px-3 py-2">{erreur}</p>}
         <BoutonSubmit chargement={chargement} label="Créer l'accès" />
       </form>

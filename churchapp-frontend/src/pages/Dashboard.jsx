@@ -69,8 +69,8 @@ export default function Dashboard() {
         <StatCard label="Solde du mois" value={formatFC(solde)} delta={solde >= 0 ? 'Excédent' : 'Déficit'} deltaPositive={solde >= 0} icon={Wallet} accent="gold" />
         <StatCard
           label="Dernier culte"
-          value={dernierCulte ? `${dernierCulte.presentiel + dernierCulte.enLigne} participants` : '—'}
-          delta={dernierCulte ? `${dernierCulte.presentiel} présentiel · ${dernierCulte.enLigne} en ligne` : ''}
+          value={dernierCulte ? `${(dernierCulte.presencePhysique || 0) + (dernierCulte.presenceEnLigne || 0)} participants` : '—'}
+          delta={dernierCulte ? `${dernierCulte.presencePhysique || 0} physique · ${dernierCulte.presenceEnLigne || 0} en ligne` : ''}
           icon={Users}
           accent="ink"
         />
@@ -110,8 +110,8 @@ export default function Dashboard() {
                   <p className="text-ink-600 text-xs mt-0.5">{c.date}</p>
                 </div>
                 <div className="text-right font-tabular">
-                  <p className="text-gold-400 font-semibold">{c.presentiel + c.enLigne}</p>
-                  <p className="text-ink-600 text-xs">{c.presentiel} + {c.enLigne} en ligne</p>
+                  <p className="text-gold-400 font-semibold">{(c.presencePhysique || 0) + (c.presenceEnLigne || 0)}</p>
+                  <p className="text-ink-600 text-xs">{c.presencePhysique || 0} physique · {c.presenceEnLigne || 0} en ligne</p>
                 </div>
               </div>
             ))}

@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
-import { Plus, Megaphone, Church, X, Loader2, Image as ImageIcon } from 'lucide-react'
+import { Plus, Megaphone, Church, X, Loader2, Image as ImageIcon, Trash2 } from 'lucide-react'
 import Layout from '../components/Layout'
 import { api } from '../lib/api'
 import { useToast } from '../context/ToastContext'
+import { useAuth } from '../context/AuthContext'
 
 export default function Annonces() {
   const { showToast } = useToast()
+  const { utilisateur, eglise } = useAuth()
   const [annonces, setAnnonces] = useState(null)
   const [erreur, setErreur] = useState('')
   const [modalOuvert, setModalOuvert] = useState(false)
@@ -15,6 +17,17 @@ export default function Annonces() {
   }
 
   useEffect(recharger, [])
+
+  async function supprimer(a) {
+    if (!window.confirm(`Supprimer l'annonce "${a.titre}" ?`)) return
+    try {
+      await api.supprimerAnnonce(a.id)
+      showToast('Annonce supprimée.')
+      recharger()
+    } catch (err) {
+      showToast(err.message, 'error')
+    }
+  }
 
   if (erreur) return <Layout title="Annonces"><p className="text-clay-600">{erreur}</p></Layout>
 
@@ -56,6 +69,14 @@ export default function Annonces() {
                   </span>
                   <span>Jusqu'au {a.dateFin}</span>
                 </div>
+                {(a.egliseId === (utilisateur?.egliseId || eglise?.id)) && (
+                  <button
+                    onClick={() => supprimer(a)}
+                    className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-ink-700/50 hover:text-clay-600 self-start"
+                  >
+                    <Trash2 size={13} /> Supprimer
+                  </button>
+                )}
               </div>
             </article>
           ))}

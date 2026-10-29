@@ -1,8 +1,8 @@
-import { Departement, Membre } from '../models/index.js'
+import { Departement, Membre, Utilisateur } from '../models/index.js'
 
 const INCLUDE_COMPLET = [
-  { model: Membre, as: 'chef', attributes: ['id', 'nom'] },
-  { model: Membre, as: 'ouvriers', attributes: ['id', 'nom', 'contact'], through: { attributes: [] } },
+  { model: Membre, as: 'chef', attributes: ['id', 'nom', 'utilisateurId'] },
+  { model: Membre, as: 'ouvriers', attributes: ['id', 'nom', 'contact', 'role', 'utilisateurId'], through: { attributes: [] } },
 ]
 
 export async function listerDepartements(req, res) {
@@ -12,6 +12,37 @@ export async function listerDepartements(req, res) {
     order: [['nom', 'ASC']],
   })
   res.json(departements)
+}
+
+// --- Espace du chef de département : SON département uniquement ---
+export async function monDepartement(req, res) {
+  const departement = await Departement.findOne({
+    where: { egliseId: req.egliseId, chefUtilisateurId: req.auth.sub },
+    include: INCLUDE_COMPLET,
+  })
+  if (!departement) {
+    return res.status(404).json({ message: 'Aucun département ne vous est associé. Contactez votre administrateur.' })
+  }
+  res.json(departement)
+}
+
+// --- Ajout / retrait d'ouvriers dans MON département (par le chef lui-même) ---
+export async function majMesOuvriers(req, res) {
+  const { ouvrierIds } = req.body
+  if (!Array.isArray(ouvrierIds)) {
+    return res.status(400).json({ message: 'ouvrierIds doit être une liste.' })
+  }
+
+  const departement = await Departement.findOne({
+    where: { egliseId: req.egliseId, chefUtilisateurId: req.auth.sub },
+  })
+  if (!departement) return res.status(404).json({ message: 'Aucun département ne vous est associé.' })
+
+  const membres = await Membre.findAll({ where: { id: ouvrierIds, egliseId: req.egliseId } })
+  await departement.setOuvriers(membres)
+
+  const avecDetails = await Departement.findByPk(departement.id, { include: INCLUDE_COMPLET })
+  res.json(avecDetails)
 }
 
 export async function creerDepartement(req, res) {
@@ -36,7 +67,17 @@ export async function modifierDepartement(req, res) {
 
   if (nom !== undefined) departement.nom = nom
   if (description !== undefined) departement.description = description
-  if (chefMembreId !== undefined) departement.chefMembreId = chefMembreId || null
+  if (chefMembreId !== undefined) {
+    const ancienChef = departement.chefMembreId
+    const ancienChefUtilisateurId = departement.chefUtilisateurId
+    departement.chefMembreId = chefMembreId || null
+    // Le chef change : le compte lié est rétrogradé "ouvrier" (pas d'orphan)
+    if (departement.chefMembreId !== ancienChef && ancienChefUtilisateurId) {
+      await Utilisateur.update({ role: 'ouvrier' }, { where: { id: ancienChefUtilisateurId } })
+      await Membre.update({ role: 'Ouvrier' }, { where: { id: ancienChef, egliseId: req.egliseId } })
+      departement.chefUtilisateurId = null
+    }
+  }
   await departement.save()
 
   if (Array.isArray(ouvrierIds)) {

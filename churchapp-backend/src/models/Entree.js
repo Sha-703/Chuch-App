@@ -10,6 +10,10 @@ const Entree = sequelize.define('Entree', {
   provenance: { type: DataTypes.STRING },
   montant: { type: DataTypes.FLOAT, allowNull: false },
   date: { type: DataTypes.DATEONLY, allowNull: false },
+  // Si renseigné : c'est une entrée APPARTENANT À UN DÉPARTEMENT (finances
+  // dédiées, séparées des finances générales de l'église).
+  // Si null : entrée générale de l'église.
+  departementId: { type: DataTypes.UUID, allowNull: true },
 })
 
 export default Entree

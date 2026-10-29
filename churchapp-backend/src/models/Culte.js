@@ -6,6 +6,10 @@ const Culte = sequelize.define('Culte', {
   type: { type: DataTypes.STRING, allowNull: false },
   date: { type: DataTypes.DATEONLY, allowNull: false },
   predicateur: { type: DataTypes.STRING },
+  // Présence physique des membres (simple nombre) saisie MANUELLEMENT par
+  // l'administrateur depuis la liste des cultes. Elle s'ajoute aux présences
+  // en ligne des ouvriers (table PresenceCulte) pour donner le total.
+  presentiel: { type: DataTypes.INTEGER, defaultValue: 0 },
 })
 
 export default Culte

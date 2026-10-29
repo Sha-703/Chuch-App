@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import {
-  Plus, FileText, Upload, Send, CheckCircle2, Archive, AlertTriangle, Loader2, X, Paperclip, Camera, FileUp,
+  Plus, FileText, Upload, Send, CheckCircle2, Archive, AlertTriangle, Loader2, X, Paperclip, Camera, FileUp, Trash2,
 } from 'lucide-react'
 import Layout from '../components/Layout'
 import Pagination, { paginer } from '../components/Pagination'
@@ -60,6 +60,17 @@ export default function Correspondance() {
         await api.changerEtatCorrespondance(id, action)
         showToast(action === 'archive' ? 'Correspondance archivée.' : 'Marquée en traitement.')
       }
+      recharger()
+    } catch (err) {
+      showToast(err.message, 'error')
+    }
+  }
+
+  async function supprimer(c) {
+    if (!window.confirm(`Supprimer la correspondance "${c.objet}" ?`)) return
+    try {
+      await api.supprimerCorrespondance(c.id)
+      showToast('Correspondance supprimée.')
       recharger()
     } catch (err) {
       showToast(err.message, 'error')
@@ -172,6 +183,7 @@ export default function Correspondance() {
                     </td>
                     <td className="px-6 py-3.5 text-sm text-ink-700/60">{c.dateReception}</td>
                     <td className="px-6 py-3.5 text-right">
+                      <div className="flex justify-end items-center gap-2">
                       {onglet === 'sortie' ? (
                         c.accuseEnvoye ? (
                           <span className="inline-flex items-center gap-1 text-xs font-semibold text-leaf-700 whitespace-nowrap">
@@ -208,6 +220,15 @@ export default function Correspondance() {
                           )}
                         </div>
                       )}
+                      <button
+                        onClick={() => supprimer(c)}
+                        className="text-ink-700/40 hover:text-clay-600 shrink-0"
+                        aria-label="Supprimer"
+                        title="Supprimer"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                      </div>
                     </td>
                   </tr>
                 ))}

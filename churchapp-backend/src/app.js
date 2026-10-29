@@ -21,7 +21,7 @@ import notificationRoutes from './routes/notification.routes.js'
 
 const app = express()
 
-app.set('trust proxy', true) // nécessaire derrière Railway pour express-rate-limit
+app.set('trust proxy', 1) // Railway = 1 proxy : "true" permettait de contourner le rate limit
 
 // Headers de sécurité
 app.use(helmet({
@@ -34,7 +34,6 @@ const globalLimiter = rateLimit({
   max: 300, // 300 requêtes par IP par fenêtre de 15 min
   standardHeaders: true,
   legacyHeaders: false,
-  trustProxy: true, // derrière Railway (proxy)
   message: { message: 'Trop de requêtes, veuillez réessayer plus tard.' },
 })
 app.use(globalLimiter)
@@ -45,7 +44,6 @@ const authLimiter = rateLimit({
   max: 10, // 10 tentatives de connexion par IP par fenêtre de 15 min
   standardHeaders: true,
   legacyHeaders: false,
-  trustProxy: true, // derrière Railway (proxy)
   message: { message: 'Trop de tentatives de connexion, veuillez réessayer plus tard.' },
 })
 app.use('/api/auth/login', authLimiter)

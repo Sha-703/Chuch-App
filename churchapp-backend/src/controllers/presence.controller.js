@@ -34,7 +34,42 @@ export async function presencesDuCulte(req, res) {
     }
   })
 
-  res.json({ culte: { id: culte.id, type: culte.type, date: culte.date }, presences: tableau })
+  const presentsEnLigne = tableau.filter((t) => t.statut === 'present').length
+
+  res.json({
+    culte: { id: culte.id, type: culte.type, date: culte.date },
+    presences: tableau,
+    // Présence en ligne = ouvriers qui ont signé via leur espace
+    presenceEnLigne: presentsEnLigne,
+    // Présence physique = membres présents, saisis manuellement par l'admin
+    presencePhysique: culte.presentiel || 0,
+    total: presentsEnLigne + (culte.presentiel || 0),
+  })
+}
+
+// --- Saisie manuelle de la présence PHYSIQUE d'un culte (par l'administrateur) ---
+// Elle s'ajoute aux présences en ligne des ouvriers pour former le total.
+export async function majPresencesPhysiques(req, res) {
+  const culte = await Culte.findOne({ where: { id: req.params.culteId, egliseId: req.egliseId } })
+  if (!culte) return res.status(404).json({ message: 'Culte introuvable.' })
+
+  const presentiel = parseInt(req.body.presentiel, 10)
+  if (!Number.isFinite(presentiel) || presentiel < 0) {
+    return res.status(400).json({ message: 'Le nombre de présences physiques doit être un entier positif ou nul.' })
+  }
+
+  culte.presentiel = presentiel
+  await culte.save()
+
+  const presences = await PresenceCulte.findAll({ where: { culteId: culte.id }, attributes: ['statut'] })
+  const presenceEnLigne = presences.filter((p) => p.statut === 'present').length
+
+  res.json({
+    id: culte.id,
+    presencePhysique: culte.presentiel,
+    presenceEnLigne,
+    total: culte.presentiel + presenceEnLigne,
+  })
 }
 
 // --- Espace ouvrier : ses propres cultes + son propre statut ---

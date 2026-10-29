@@ -57,21 +57,40 @@ export const api = {
   },
   listerEntrees: () => request('/finances/entrees'),
   creerEntree: (payload) => request('/finances/entrees', { method: 'POST', body: JSON.stringify(payload) }),
+  supprimerEntree: (id) => request(`/finances/entrees/${id}`, { method: 'DELETE' }),
   listerCharges: () => request('/finances/charges'),
   creerCharge: (payload) => request('/finances/charges', { method: 'POST', body: JSON.stringify(payload) }),
+  supprimerCharge: (id) => request(`/finances/charges/${id}`, { method: 'DELETE' }),
+
+  // --- Finances par département (séparées des finances d'église) ---
+  financesDepartements: () => request('/finances/departements'),
+  financesDepartement: (departementId) => request(`/finances/departements/${departementId}`),
+  creerEntreeDepartement: (departementId, payload) =>
+    request(`/finances/departements/${departementId}/entrees`, { method: 'POST', body: JSON.stringify(payload) }),
+  creerChargeDepartement: (departementId, payload) =>
+    request(`/finances/departements/${departementId}/charges`, { method: 'POST', body: JSON.stringify(payload) }),
 
   listerCultes: () => request('/cultes'),
   creerCulte: (payload) => request('/cultes', { method: 'POST', body: JSON.stringify(payload) }),
+  supprimerCulte: (id) => request(`/cultes/${id}`, { method: 'DELETE' }),
+  majPresencesPhysiques: (culteId, presentiel) =>
+    request(`/cultes/${culteId}/presences-physiques`, { method: 'PUT', body: JSON.stringify({ presentiel }) }),
 
   listerMembres: () => request('/membres'),
   creerMembre: (payload) => request('/membres', { method: 'POST', body: JSON.stringify(payload) }),
-  creerCompteOuvrier: (membreId, email) =>
-    request(`/membres/${membreId}/compte`, { method: 'POST', body: JSON.stringify({ email }) }),
+  supprimerMembre: (id) => request(`/membres/${id}`, { method: 'DELETE' }),
+  creerCompteOuvrier: (membreId, payload) =>
+    request(`/membres/${membreId}/compte`, { method: 'POST', body: JSON.stringify(payload) }),
 
   listerDepartements: () => request('/departements'),
   creerDepartement: (payload) => request('/departements', { method: 'POST', body: JSON.stringify(payload) }),
   modifierDepartement: (id, payload) => request(`/departements/${id}`, { method: 'PUT', body: JSON.stringify(payload) }),
   supprimerDepartement: (id) => request(`/departements/${id}`, { method: 'DELETE' }),
+
+  // --- Espace chef de département ---
+  monDepartement: () => request('/departements/mon'),
+  majMesOuvriers: (ouvrierIds) =>
+    request('/departements/mon/ouvriers', { method: 'PUT', body: JSON.stringify({ ouvrierIds }) }),
 
   presencesDuCulte: (culteId, departementId) =>
     request(`/cultes/${culteId}/presences${departementId ? `?departementId=${departementId}` : ''}`),
@@ -100,9 +119,11 @@ export const api = {
   changerEtatCorrespondance: (id, etat) =>
     request(`/correspondances/${id}/etat`, { method: 'PATCH', body: JSON.stringify({ etat }) }),
   envoyerAccuse: (id) => request(`/correspondances/${id}/accuse`, { method: 'POST' }),
+  supprimerCorrespondance: (id) => request(`/correspondances/${id}`, { method: 'DELETE' }),
 
   listerAnnonces: () => request('/annonces'),
   creerAnnonce: (formData) => request('/annonces', { method: 'POST', body: formData }),
+  supprimerAnnonce: (id) => request(`/annonces/${id}`, { method: 'DELETE' }),
 
   listerMateriel: () => request('/materiel'),
   creerMateriel: (payload) => request('/materiel', { method: 'POST', body: JSON.stringify(payload) }),

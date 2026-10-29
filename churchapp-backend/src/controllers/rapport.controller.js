@@ -2,6 +2,7 @@ import { Op } from 'sequelize'
 import PDFDocument from 'pdfkit'
 import { Entree, Charge, Culte, Correspondance, Annonce, Eglise } from '../models/index.js'
 import { formatFC } from '../lib/format.js'
+import { plageAnnee } from '../lib/dates.js'
 
 const NOMS_MOIS_FR = {
   '01': 'Janvier', '02': 'Février', '03': 'Mars', '04': 'Avril', '05': 'Mai', '06': 'Juin',
@@ -18,15 +19,19 @@ function ligneTitre(doc, texte) {
 // l'église sur l'année choisie — finances mois par mois, présence aux cultes,
 // courrier, et annonces publiées. Voir cahier des charges §2.2.
 export async function exporterRapportAnnuelPdf(req, res) {
-  const annee = req.query.annee || new Date().getFullYear().toString()
+  const annee = String(req.query.annee || new Date().getFullYear())
+
+  // Filtre par plage de dates : Op.startsWith sur DATEONLY plante en PostgreSQL
+  const plage = plageAnnee(annee)
+  if (!plage) return res.status(400).json({ message: 'Année invalide (attendu : YYYY).' })
 
   const eglise = await Eglise.findByPk(req.egliseId)
 
   const [entrees, charges, cultes, correspondances, annonces] = await Promise.all([
-    Entree.findAll({ where: { egliseId: req.egliseId, date: { [Op.startsWith]: annee } }, order: [['date', 'ASC']] }),
-    Charge.findAll({ where: { egliseId: req.egliseId, date: { [Op.startsWith]: annee } }, order: [['date', 'ASC']] }),
-    Culte.findAll({ where: { egliseId: req.egliseId, date: { [Op.startsWith]: annee } }, order: [['date', 'ASC']] }),
-    Correspondance.findAll({ where: { egliseId: req.egliseId, dateReception: { [Op.startsWith]: annee } } }),
+    Entree.findAll({ where: { egliseId: req.egliseId, date: plage }, order: [['date', 'ASC']] }),
+    Charge.findAll({ where: { egliseId: req.egliseId, date: plage }, order: [['date', 'ASC']] }),
+    Culte.findAll({ where: { egliseId: req.egliseId, date: plage }, order: [['date', 'ASC']] }),
+    Correspondance.findAll({ where: { egliseId: req.egliseId, dateReception: plage } }),
     Annonce.findAll({ where: { egliseId: req.egliseId, createdAt: { [Op.gte]: new Date(`${annee}-01-01`), [Op.lt]: new Date(`${Number(annee) + 1}-01-01`) } } }),
   ])
 

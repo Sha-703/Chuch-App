@@ -23,6 +23,7 @@ export default function Login() {
         return
       }
       const accueil = utilisateur.role === 'ouvrier' ? '/mon-espace'
+        : utilisateur.role === 'chef_departement' ? '/mon-departement'
         : utilisateur.role === 'communaute' ? '/communaute/dashboard'
         : '/dashboard'
       navigate(accueil)

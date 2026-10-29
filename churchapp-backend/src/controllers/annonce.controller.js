@@ -43,3 +43,12 @@ export async function creerAnnonce(req, res) {
   })
   res.status(201).json(avecEglise)
 }
+
+// Suppression d'une annonce — seules les églises peuvent retirer leurs propres
+// annonces (le super-admin a sa propre route de suppression).
+export async function supprimerAnnonce(req, res) {
+  const annonce = await Annonce.findOne({ where: { id: req.params.id, egliseId: req.egliseId } })
+  if (!annonce) return res.status(404).json({ message: 'Annonce introuvable.' })
+  await annonce.destroy()
+  res.status(204).send()
+}

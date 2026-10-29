@@ -4,7 +4,7 @@ import { tenantScope } from '../middlewares/tenantScope.js'
 import { upload } from '../middlewares/upload.js'
 import {
   listerCorrespondances, creerCorrespondancePhysique, creerCorrespondanceNumerique,
-  changerEtat, envoyerAccuse,
+  changerEtat, envoyerAccuse, supprimerCorrespondance,
 } from '../controllers/correspondance.controller.js'
 
 const router = Router()
@@ -15,5 +15,6 @@ router.post('/physique', upload.single('document'), creerCorrespondancePhysique)
 router.post('/numerique', upload.single('piece_jointe'), creerCorrespondanceNumerique)
 router.patch('/:id/etat', changerEtat)
 router.post('/:id/accuse', envoyerAccuse)
+router.delete('/:id', supprimerCorrespondance)
 
 export default router

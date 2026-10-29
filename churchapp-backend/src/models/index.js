@@ -46,6 +46,12 @@ Membre.belongsTo(Utilisateur, { foreignKey: 'utilisateurId', as: 'compte' })
 // Un département a un chef (un membre)
 Departement.belongsTo(Membre, { foreignKey: 'chefMembreId', as: 'chef' })
 
+// Finances dédiées à un département (null = finances générales de l'église)
+Departement.hasMany(Entree, { foreignKey: 'departementId', onDelete: 'CASCADE', as: 'entrees' })
+Entree.belongsTo(Departement, { foreignKey: 'departementId', as: 'departement' })
+Departement.hasMany(Charge, { foreignKey: 'departementId', onDelete: 'CASCADE', as: 'charges' })
+Charge.belongsTo(Departement, { foreignKey: 'departementId', as: 'departement' })
+
 // Un département a plusieurs ouvriers (membres), et un membre peut appartenir à plusieurs départements
 Departement.belongsToMany(Membre, { through: DepartementMembre, as: 'ouvriers', foreignKey: 'departementId' })
 Membre.belongsToMany(Departement, { through: DepartementMembre, as: 'departements', foreignKey: 'membreId' })

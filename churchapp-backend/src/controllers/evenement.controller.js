@@ -1,6 +1,7 @@
 import { Op } from 'sequelize'
 import { randomUUID } from 'crypto'
 import { Evenement, Membre } from '../models/index.js'
+import { plageAnnee } from '../lib/dates.js'
 
 const INCLUDE = [{ model: Membre, as: 'responsable', attributes: ['id', 'nom'] }]
 
@@ -18,7 +19,12 @@ function ajouterMois(dateStr, mois) {
 export async function listerEvenements(req, res) {
   const { annee, trimestre } = req.query
   const where = { egliseId: req.egliseId }
-  if (annee) where.date = { [Op.startsWith]: annee }
+  if (annee) {
+    // Filtre par plage de dates : Op.startsWith sur DATEONLY plante en PostgreSQL
+    const plage = plageAnnee(annee)
+    if (!plage) return res.status(400).json({ message: 'Année invalide (attendu : YYYY).' })
+    where.date = plage
+  }
 
   const evenements = await Evenement.findAll({ where, include: INCLUDE, order: [['date', 'ASC']] })
 

@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext'
 // Où renvoyer chaque rôle s'il tente d'accéder à un espace qui n'est pas le sien.
 const ACCUEIL_PAR_ROLE = {
   ouvrier: '/mon-espace',
+  chef_departement: '/mon-departement',
   communaute: '/communaute/dashboard',
 }
 function accueilPour(role) {
