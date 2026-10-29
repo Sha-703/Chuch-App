@@ -1,25 +1,15 @@
 import { useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
-import { LayoutGrid, Landmark, CalendarDays, FileBarChart, Users2, LogOut, Menu, X, Mail, Megaphone, CalendarClock, Boxes, Settings } from 'lucide-react'
+import { LogOut, Menu, X } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
-
-const links = [
-  { to: '/dashboard', label: 'Vue d\u2019ensemble', icon: LayoutGrid },
-  { to: '/finances', label: 'Finances', icon: Landmark },
-  { to: '/cultes', label: 'Cultes & présence', icon: CalendarDays },
-  { to: '/ressources-humaines', label: 'Ressources Humaines', icon: Users2 },
-  { to: '/planning', label: 'Planning', icon: CalendarClock },
-  { to: '/logistique', label: 'Logistique', icon: Boxes },
-  { to: '/parametres', label: 'Paramètres', icon: Settings },
-  { to: '/correspondance', label: 'Correspondance', icon: Mail },
-  { to: '/annonces', label: 'Annonces', icon: Megaphone },
-  { to: '/rapports', label: 'Rapports', icon: FileBarChart },
-]
+import { liensPourRole } from '../lib/navLinks'
 
 export default function MobileNav() {
   const [ouvert, setOuvert] = useState(false)
-  const { eglise, logout } = useAuth()
+  const { eglise, logout, utilisateur } = useAuth()
   const navigate = useNavigate()
+  // Navbar mobile filtrée selon le rôle (même règle que la Sidebar).
+  const links = liensPourRole(utilisateur?.role)
 
   function handleLogout() {
     logout()

@@ -20,6 +20,15 @@ export default function Parametres() {
   const [chargement, setChargement] = useState(false)
   const [erreur, setErreur] = useState('')
 
+  // Après le changement obligatoire, chaque rôle rejoint son propre espace
+  // (et non plus /dashboard, réservé pasteur/administrateur).
+  const ACCUEIL_PAR_ROLE = {
+    ouvrier: '/mon-espace',
+    chef_departement: '/mon-departement',
+    tresorier: '/mon-tresorier',
+    communaute: '/communaute/dashboard',
+  }
+
   async function handleSubmit(e) {
     e.preventDefault()
     if (nouveauMotDePasse.length < 6) return setErreur('Le nouveau mot de passe doit contenir au moins 6 caractères.')
@@ -34,7 +43,7 @@ export default function Parametres() {
       })
       majDoitChangerMotDePasse(false)
       showToast('Mot de passe mis à jour avec succès.')
-      if (obligatoire) navigate('/dashboard')
+      if (obligatoire) navigate(ACCUEIL_PAR_ROLE[utilisateur?.role] || '/dashboard')
       else {
         setMotDePasseActuel(''); setNouveauMotDePasse(''); setConfirmation('')
       }
@@ -117,14 +126,6 @@ export default function Parametres() {
     </div>
   )
 
-  if (utilisateur?.role === 'ouvrier') {
-    return (
-      <div className="min-h-screen bg-parchment-100 px-5 py-8">
-        {contenu}
-      </div>
-    )
-  }
-
   if (utilisateur?.role === 'communaute') {
     return (
       <CommunauteLayout title="Paramètres" subtitle="Gérer votre accès à ChurchApp">
@@ -133,6 +134,8 @@ export default function Parametres() {
     )
   }
 
+  // Tous les rôles de l'église passent par le Layout : la navbar y est
+  // filtrée selon le rôle (chaque rôle ne voit que son espace + Paramètres).
   return (
     <Layout title="Paramètres" subtitle="Gérer votre accès à ChurchApp">
       {contenu}

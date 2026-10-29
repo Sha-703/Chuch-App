@@ -13,7 +13,17 @@ export default function TopBar({ title, subtitle }) {
   const [notifications, setNotifications] = useState({ count: 0, items: [] })
   const [notifOuvertes, setNotifOuvertes] = useState(false)
   const nom = utilisateur?.nom || 'Utilisateur'
-  const role = utilisateur?.role === 'pasteur' ? 'Pasteur' : utilisateur?.role === 'administrateur' ? 'Administrateur' : ''
+  const LIBELLES_ROLES = {
+    pasteur: 'Pasteur',
+    administrateur: 'Administrateur',
+    tresorier: 'Trésorier',
+    chef_departement: 'Chef de département',
+    ouvrier: 'Ouvrier',
+    communaute: 'Communauté',
+  }
+  const role = LIBELLES_ROLES[utilisateur?.role] || ''
+  // La recherche ouvre /recherche, réservée pasteur/administrateur.
+  const estAdmin = utilisateur?.role === 'pasteur' || utilisateur?.role === 'administrateur'
 
   useEffect(() => {
     api.listerNotifications().then(setNotifications).catch(() => {})
@@ -28,15 +38,17 @@ export default function TopBar({ title, subtitle }) {
     <div>
       {/* Barre utilitaire sticky : recherche, thème, notifications */}
       <div className="hidden md:flex items-center gap-3 px-6 md:px-10 pt-6 sticky top-0 z-30 bg-parchment-100/80 backdrop-blur-md">
-        <form onSubmit={lancerRecherche} className="relative flex-1 max-w-sm">
-          <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-700/40" />
-          <input
-            value={recherche}
-            onChange={(e) => setRecherche(e.target.value)}
-            placeholder="Rechercher un membre, un courrier, une annonce..."
-            className="w-full rounded-lg border border-ink-950/10 bg-white pl-9 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/50"
-          />
-        </form>
+        {estAdmin && (
+          <form onSubmit={lancerRecherche} className="relative flex-1 max-w-sm">
+            <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-700/40" />
+            <input
+              value={recherche}
+              onChange={(e) => setRecherche(e.target.value)}
+              placeholder="Rechercher un membre, un courrier, une annonce..."
+              className="w-full rounded-lg border border-ink-950/10 bg-white pl-9 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/50"
+            />
+          </form>
+        )}
         <div className="flex-1" />
         <button
           onClick={toggle}
