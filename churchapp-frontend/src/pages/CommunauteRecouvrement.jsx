@@ -46,7 +46,7 @@ export default function CommunauteRecouvrement() {
         <div className="flex items-center gap-2 text-ink-700/60"><Loader2 className="animate-spin" size={18} /> Chargement...</div>
       ) : (
         <div className="bg-white rounded-2xl shadow-card overflow-hidden">
-          <table className="w-full">
+          <div className="overflow-x-auto"><table className="w-full min-w-[600px]">
             <thead>
               <tr className="text-left text-xs uppercase tracking-wide text-ink-700/50 font-mono">
                 <th className="px-6 py-3 font-semibold">Église</th>
@@ -78,7 +78,7 @@ export default function CommunauteRecouvrement() {
                 <tr><td colSpan={5} className="px-6 py-8 text-center text-sm text-ink-700/50">Aucune église rattachée.</td></tr>
               )}
             </tbody>
-          </table>
+          </table></div>
           <div className="h-4" />
         </div>
       )}
@@ -118,8 +118,8 @@ function ModalVersement({ eglises, onClose, onSaved }) {
   }
 
   return (
-    <div className="fixed inset-0 bg-ink-950/40 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-2xl shadow-card w-full max-w-sm p-6">
+    <div className="fixed inset-0 bg-ink-950/40 flex items-center justify-center p-4 z-50 overflow-y-auto">
+      <div className="bg-white rounded-2xl shadow-card w-full max-w-sm p-6 my-8">
         <div className="flex items-center justify-between mb-5">
           <h3 className="font-display text-lg text-ink-950">Enregistrer un versement</h3>
           <button onClick={onClose} className="text-ink-700/50 hover:text-ink-950"><X size={18} /></button>

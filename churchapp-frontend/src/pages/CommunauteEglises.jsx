@@ -89,7 +89,7 @@ function ModalFinances({ eglise, onClose }) {
               </div>
             </div>
 
-            <table className="w-full">
+            <div className="overflow-x-auto"><table className="w-full min-w-[600px]">
               <thead>
                 <tr className="text-left text-xs uppercase tracking-wide text-ink-700/50 font-mono">
                   <th className="py-2 font-semibold">Mois</th>
@@ -113,7 +113,7 @@ function ModalFinances({ eglise, onClose }) {
                   )
                 })}
               </tbody>
-            </table>
+            </table></div>
           </>
         )}
       </div>

@@ -75,11 +75,11 @@ export default function Rapports() {
   return (
     <Layout title="Rapports" subtitle="Bilans mensuels exportables pour la transparence financière">
       <div className="bg-white rounded-2xl shadow-card overflow-hidden">
-        <div className="flex items-center justify-between px-6 pt-5">
+        <div className="flex items-center justify-between px-6 pt-5 flex-wrap gap-3">
           <h2 className="font-display text-lg text-ink-950">Bilans mensuels</h2>
         </div>
         <div className="woven-rule mx-6 mt-5" />
-        <table className="w-full mt-2">
+        <div className="overflow-x-auto"><table className="w-full min-w-[600px] mt-2">
           <thead>
             <tr className="text-left text-xs uppercase tracking-wide text-ink-700/50 font-mono">
               <th className="px-6 py-3 font-semibold">Mois</th>
@@ -115,7 +115,7 @@ export default function Rapports() {
               <tr><td colSpan={5} className="px-6 py-8 text-center text-sm text-ink-700/50">Aucune donnée pour le moment.</td></tr>
             )}
           </tbody>
-        </table>
+        </table></div>
         <div className="h-4" />
       </div>
 

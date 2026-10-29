@@ -66,7 +66,7 @@ export default function SuperAdminEglises() {
         {!eglises ? (
           <div className="flex items-center gap-2 text-ink-700/60 px-6 py-10"><Loader2 className="animate-spin" size={18} /> Chargement...</div>
         ) : (
-          <table className="w-full mt-2">
+          <div className="overflow-x-auto"><table className="w-full min-w-[600px] mt-2">
             <thead>
               <tr className="text-left text-xs uppercase tracking-wide text-ink-700/50 font-mono">
                 <th className="px-6 py-3 font-semibold">Église</th>
@@ -112,7 +112,7 @@ export default function SuperAdminEglises() {
                 <tr><td colSpan={7} className="px-6 py-8 text-center text-sm text-ink-700/50">Aucune église trouvée.</td></tr>
               )}
             </tbody>
-          </table>
+          </table></div>
         )}
         <div className="h-4" />
       </div>
@@ -132,8 +132,8 @@ export default function SuperAdminEglises() {
         />
       )}
       {resultat && (
-        <div className="fixed inset-0 bg-ink-950/40 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl shadow-card w-full max-w-sm p-6">
+        <div className="fixed inset-0 bg-ink-950/40 flex items-center justify-center p-4 z-50 overflow-y-auto">
+          <div className="bg-white rounded-2xl shadow-card w-full max-w-sm p-6 my-8">
             <h3 className="font-display text-lg text-ink-950 mb-3">Église créée</h3>
             <div className="bg-parchment-100 rounded-lg p-4 text-sm space-y-2">
               {resultat.comptes.map((c) => (

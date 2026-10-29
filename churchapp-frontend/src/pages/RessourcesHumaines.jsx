@@ -73,7 +73,7 @@ function OngletMembres() {
 
   return (
     <div className="bg-white rounded-2xl shadow-card overflow-hidden">
-      <div className="flex items-center justify-between px-6 pt-5 gap-4">
+      <div className="flex items-center justify-between px-6 pt-5 gap-4 flex-wrap">
         <div className="relative flex-1 max-w-xs">
           <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-700/40" />
           <input
@@ -91,7 +91,7 @@ function OngletMembres() {
         </button>
       </div>
       <div className="woven-rule mx-6 mt-5" />
-      <table className="w-full mt-2">
+      <div className="overflow-x-auto"><table className="w-full min-w-[600px] mt-2">
         <thead>
           <tr className="text-left text-xs uppercase tracking-wide text-ink-700/50 font-mono">
             <th className="px-6 py-3 font-semibold">Nom</th>
@@ -139,7 +139,7 @@ function OngletMembres() {
             <tr><td colSpan={5} className="px-6 py-8 text-center text-sm text-ink-700/50">Aucun ouvrier trouvé.</td></tr>
           )}
         </tbody>
-      </table>
+      </table></div>
       <Pagination page={page} setPage={setPage} total={filtres.length} />
 
       {modalOuvert && (

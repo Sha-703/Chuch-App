@@ -124,7 +124,7 @@ export default function Planning() {
 
 function CarteEvenement({ evenement: e, onSupprimer }) {
   return (
-    <div className="bg-white rounded-2xl shadow-card p-4 flex items-start justify-between gap-4">
+    <div className="bg-white rounded-2xl shadow-card p-4 flex flex-wrap items-start justify-between gap-4">
       <div className="min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
           <p className="font-semibold text-ink-950 text-sm">{e.titre}</p>

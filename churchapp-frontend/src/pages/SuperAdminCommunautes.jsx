@@ -70,8 +70,8 @@ export default function SuperAdminCommunautes() {
         <ModalRattacher communaute={modalRattacher} eglises={eglises} onClose={() => setModalRattacher(null)} onSaved={() => { setModalRattacher(null); recharger() }} />
       )}
       {resultat && (
-        <div className="fixed inset-0 bg-ink-950/40 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl shadow-card w-full max-w-sm p-6">
+        <div className="fixed inset-0 bg-ink-950/40 flex items-center justify-center p-4 z-50 overflow-y-auto">
+          <div className="bg-white rounded-2xl shadow-card w-full max-w-sm p-6 my-8">
             <h3 className="font-display text-lg text-ink-950 mb-3">Accès créé</h3>
             <div className="bg-parchment-100 rounded-lg p-4 text-sm space-y-1">
               <p><span className="text-ink-700/60">E-mail :</span> {resultat.email}</p>
@@ -107,8 +107,8 @@ function ModalCreation({ onClose, onSaved }) {
   }
 
   return (
-    <div className="fixed inset-0 bg-ink-950/40 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-2xl shadow-card w-full max-w-sm p-6">
+    <div className="fixed inset-0 bg-ink-950/40 flex items-center justify-center p-4 z-50 overflow-y-auto">
+      <div className="bg-white rounded-2xl shadow-card w-full max-w-sm p-6 my-8">
         <div className="flex items-center justify-between mb-5">
           <h3 className="font-display text-lg text-ink-950">Nouvelle communauté</h3>
           <button onClick={onClose} className="text-ink-700/50 hover:text-ink-950"><X size={18} /></button>
@@ -155,8 +155,8 @@ function ModalEdition({ communaute, onClose, onSaved }) {
   }
 
   return (
-    <div className="fixed inset-0 bg-ink-950/40 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-2xl shadow-card w-full max-w-sm p-6">
+    <div className="fixed inset-0 bg-ink-950/40 flex items-center justify-center p-4 z-50 overflow-y-auto">
+      <div className="bg-white rounded-2xl shadow-card w-full max-w-sm p-6 my-8">
         <div className="flex items-center justify-between mb-5">
           <h3 className="font-display text-lg text-ink-950">Modifier « {communaute.nom} »</h3>
           <button onClick={onClose} className="text-ink-700/50 hover:text-ink-950"><X size={18} /></button>
@@ -202,8 +202,8 @@ function ModalCompte({ communaute, onClose, onResultat }) {
   }
 
   return (
-    <div className="fixed inset-0 bg-ink-950/40 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-2xl shadow-card w-full max-w-sm p-6">
+    <div className="fixed inset-0 bg-ink-950/40 flex items-center justify-center p-4 z-50 overflow-y-auto">
+      <div className="bg-white rounded-2xl shadow-card w-full max-w-sm p-6 my-8">
         <div className="flex items-center justify-between mb-5">
           <h3 className="font-display text-lg text-ink-950">Accès pour {communaute.nom}</h3>
           <button onClick={onClose} className="text-ink-700/50 hover:text-ink-950"><X size={18} /></button>
@@ -248,8 +248,8 @@ function ModalRattacher({ communaute, eglises, onClose, onSaved }) {
   }
 
   return (
-    <div className="fixed inset-0 bg-ink-950/40 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-2xl shadow-card w-full max-w-sm p-6">
+    <div className="fixed inset-0 bg-ink-950/40 flex items-center justify-center p-4 z-50 overflow-y-auto">
+      <div className="bg-white rounded-2xl shadow-card w-full max-w-sm p-6 my-8">
         <div className="flex items-center justify-between mb-5">
           <h3 className="font-display text-lg text-ink-950">Rattacher une église à {communaute.nom}</h3>
           <button onClick={onClose} className="text-ink-700/50 hover:text-ink-950"><X size={18} /></button>

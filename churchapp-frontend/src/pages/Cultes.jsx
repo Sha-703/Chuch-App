@@ -79,7 +79,7 @@ export default function Cultes() {
       </div>
 
       <div className="bg-white rounded-2xl shadow-card overflow-hidden">
-        <div className="flex items-center justify-between px-6 pt-5">
+        <div className="flex items-center justify-between px-6 pt-5 flex-wrap gap-3">
           <h2 className="font-display text-lg text-ink-950">Historique des cultes</h2>
           <button
             onClick={() => setModalOuvert(true)}
@@ -89,7 +89,7 @@ export default function Cultes() {
           </button>
         </div>
         <div className="woven-rule mx-6 mt-5" />
-        <table className="w-full mt-2">
+        <div className="overflow-x-auto"><table className="w-full min-w-[600px] mt-2">
           <thead>
             <tr className="text-left text-xs uppercase tracking-wide text-ink-700/50 font-mono">
               <th className="px-6 py-3 font-semibold">Culte</th>
@@ -135,7 +135,7 @@ export default function Cultes() {
               <tr><td colSpan={7} className="px-6 py-8 text-center text-sm text-ink-700/50">Aucun culte enregistré.</td></tr>
             )}
           </tbody>
-        </table>
+        </table></div>
         <Pagination page={page} setPage={setPage} total={cultes.length} />
       </div>
 

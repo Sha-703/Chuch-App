@@ -136,7 +136,7 @@ export default function Correspondance() {
           </div>
         ) : (
           <>
-            <table className="w-full mt-2">
+            <div className="overflow-x-auto"><table className="w-full min-w-[600px] mt-2">
 
               <thead>
                 <tr className="text-left text-xs uppercase tracking-wide text-ink-700/50 font-mono">
@@ -236,7 +236,7 @@ export default function Correspondance() {
                   <tr><td colSpan={6} className="px-6 py-8 text-center text-sm text-ink-700/50">Aucune correspondance pour ce filtre.</td></tr>
                 )}
               </tbody>
-            </table>
+            </table></div>
             <Pagination page={page} setPage={setPage} total={correspondances.length} />
           </>
         )}

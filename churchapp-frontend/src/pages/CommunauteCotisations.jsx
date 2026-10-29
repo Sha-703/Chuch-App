@@ -63,7 +63,7 @@ export default function CommunauteCotisations() {
         <div className="flex items-center gap-2 text-ink-700/60"><Loader2 className="animate-spin" size={18} /> Chargement...</div>
       ) : (
         <div className="bg-white rounded-2xl shadow-card overflow-hidden">
-          <table className="w-full">
+          <div className="overflow-x-auto"><table className="w-full min-w-[600px]">
             <thead>
               <tr className="text-left text-xs uppercase tracking-wide text-ink-700/50 font-mono">
                 <th className="px-6 py-3 font-semibold">Église</th>
@@ -112,7 +112,7 @@ export default function CommunauteCotisations() {
                 )
               })}
             </tbody>
-          </table>
+          </table></div>
           <p className="px-6 py-4 text-xs text-ink-700/50 border-t border-ink-950/5">
             "Générer les échéances" crée le calendrier de paiement de l'année en cours pour cette église, selon le montant et la fréquence enregistrés.
           </p>
@@ -137,7 +137,7 @@ function ListeEcheances({ eglises }) {
 
   return (
     <div className="bg-white rounded-2xl shadow-card overflow-hidden mt-6">
-      <div className="flex items-center justify-between px-6 pt-5">
+      <div className="flex items-center justify-between px-6 pt-5 flex-wrap gap-3">
         <h2 className="font-display text-lg text-ink-950">Liste des cotisations (échéances)</h2>
         <select
           value={egliseFiltre}
@@ -154,7 +154,7 @@ function ListeEcheances({ eglises }) {
       {!echeances ? (
         <div className="flex items-center gap-2 text-ink-700/60 px-6 py-8"><Loader2 className="animate-spin" size={16} /> Chargement...</div>
       ) : (
-        <table className="w-full mt-2">
+        <div className="overflow-x-auto"><table className="w-full min-w-[600px] mt-2">
           <thead>
             <tr className="text-left text-xs uppercase tracking-wide text-ink-700/50 font-mono">
               <th className="px-6 py-3 font-semibold">Église</th>
@@ -188,7 +188,7 @@ function ListeEcheances({ eglises }) {
               <tr><td colSpan={5} className="px-6 py-8 text-center text-sm text-ink-700/50">Aucune échéance générée pour l'instant.</td></tr>
             )}
           </tbody>
-        </table>
+        </table></div>
       )}
       <div className="h-4" />
     </div>

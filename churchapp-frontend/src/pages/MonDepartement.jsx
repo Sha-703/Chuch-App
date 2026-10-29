@@ -199,8 +199,8 @@ function ModalAjoutMembres({ membres, onClose, onConfirm }) {
   const filtres = membres.filter((m) => m.nom.toLowerCase().includes(recherche.toLowerCase()))
 
   return (
-    <div className="fixed inset-0 bg-ink-950/40 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-2xl shadow-card w-full max-w-sm p-6">
+    <div className="fixed inset-0 bg-ink-950/40 flex items-center justify-center p-4 z-50 overflow-y-auto">
+      <div className="bg-white rounded-2xl shadow-card w-full max-w-sm p-6 my-8">
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-display text-lg text-ink-950">Ajouter des ouvriers</h3>
           <button onClick={onClose} className="text-ink-700/50 hover:text-ink-950"><X size={18} /></button>
@@ -389,8 +389,8 @@ function FormulaireFinance({ type, departementId, onClose, onSaved }) {
   }
 
   return (
-    <div className="fixed inset-0 bg-ink-950/40 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-2xl shadow-card w-full max-w-sm p-6">
+    <div className="fixed inset-0 bg-ink-950/40 flex items-center justify-center p-4 z-50 overflow-y-auto">
+      <div className="bg-white rounded-2xl shadow-card w-full max-w-sm p-6 my-8">
         <div className="flex items-center justify-between mb-5">
           <h3 className="font-display text-lg text-ink-950">{estEntree ? 'Nouvelle entrée' : 'Nouvelle charge'}</h3>
           <button onClick={onClose} className="text-ink-700/50 hover:text-ink-950"><X size={18} /></button>

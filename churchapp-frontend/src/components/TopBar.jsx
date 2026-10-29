@@ -49,7 +49,7 @@ export default function TopBar({ title, subtitle }) {
 
       <header className="flex items-center justify-between px-6 md:px-10 pt-4 md:pt-4 pb-6">
         <div>
-          <h1 className="font-display text-3xl text-ink-950 tracking-tight">{title}</h1>
+          <h1 className="font-display text-2xl sm:text-3xl text-ink-950 tracking-tight">{title}</h1>
           {subtitle && <p className="text-ink-700/70 text-sm mt-1">{subtitle}</p>}
         </div>
         <div className="flex items-center gap-4">
