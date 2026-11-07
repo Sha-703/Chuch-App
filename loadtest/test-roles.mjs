@@ -5,16 +5,18 @@
 //   4. Création du rôle via ENUM PostgreSQL (le point risqué de la migration)
 // Chaque donnée créée est supprimée à la fin (nettoyage total).
 //
-// Usage : node test-roles.mjs [baseUrl]
+// Usage : node test-roles.mjs <baseUrl> <emailAdminPasteur>
+// (le mot de passe = l'e-mail, convention du système)
 
 const BASE = (process.argv[2] || 'https://chuchapp-backend-production.up.railway.app/api').replace(/\/$/, '')
+const EMAIL_ADMIN = process.argv[3] || 'patrickluvedo@gmail.com'
 const ts = Date.now()
 const EMAIL_CHEF_PROTO = `chef-proto-${ts}@exemple.com`
 const EMAIL_CHEF_LOUANGE = `chef-louange-${ts}@exemple.com`
 const EMAIL_LOG = `logisticien-${ts}@exemple.com`
 
 let tokenAdmin = null
-const aSupprimer = { membres: [], departements: [], materiel: [] }
+const aSupprimer = { membres: [], departements: [], materiel: [], culte: null }
 
 async function appel(nom, { methode = 'GET', chemin = '/', corps = null, token = null, attendu = [] }) {
   try {
@@ -49,15 +51,21 @@ async function main() {
   console.log(`Cible : ${BASE}\n`)
 
   // --- 0. Compte admin de test ---
-  console.log('--- 0. Connexion pasteur (compte de test) ---')
-  tokenAdmin = await login('moisekelenda0@gmail.com', 'moisekelenda0@gmail.com')
+  console.log(`--- 0. Connexion pasteur (${EMAIL_ADMIN}) ---`)
+  tokenAdmin = await login(EMAIL_ADMIN, EMAIL_ADMIN)
   if (!tokenAdmin) { console.log('  ✗ login admin impossible'); process.exit(1) }
   console.log('  ✓ connecté')
 
-  const cultes = (await appel('GET /cultes', { chemin: '/cultes', token: tokenAdmin, attendu: [200] })).data
-  if (!Array.isArray(cultes) || cultes.length === 0) { console.log('Aucun culte — abandon.'); process.exit(1) }
-  const culte = cultes[0]
-  const presentielInitial = culte.presencePhysique
+  // Culte TEMPORAIRE dédié au test : les vrais cultes de l'église ne sont
+  // jamais modifiés (supprimé au nettoyage).
+  const culte = (await appel('POST /cultes (temporaire)', {
+    methode: 'POST', chemin: '/cultes',
+    corps: { type: 'Culte Test Auto', date: '2026-11-07', predicateur: 'test' },
+    token: tokenAdmin, attendu: [201],
+  })).data
+  if (!culte?.id) { console.log('Impossible de créer le culte de test — abandon.'); process.exit(1) }
+  aSupprimer.culte = culte.id
+  const presentielInitial = culte.presentiel || 0
 
   // --- 1. Chemin admin : la saisie fonctionne toujours (valeur identique = sans mutation) ---
   console.log('\n--- 1. Pasteur : saisie présence (doit rester autorisée) ---')
@@ -148,12 +156,15 @@ async function main() {
   for (const id of aSupprimer.departements) {
     await appel(`DELETE /departements/${id.slice(0, 8)}…`, { methode: 'DELETE', chemin: `/departements/${id}`, token: tokenAdmin, attendu: [204] })
   }
+  if (aSupprimer.culte) {
+    await appel('DELETE /cultes/:id (temporaire)', { methode: 'DELETE', chemin: `/cultes/${aSupprimer.culte}`, token: tokenAdmin, attendu: [204] })
+  }
 
-  // Vérification finale : la valeur du culte est revenue à l'initial et rien ne traîne
-  const apres = (await appel('GET /cultes (vérification)', { chemin: '/cultes', token: tokenAdmin, attendu: [200] })).data
-  const culteApres = apres.find((c) => c.id === culte.id)
-  const etat = culteApres?.presencePhysique === presentielInitial ? 'inchangée ✓' : `MODIFIÉE (${presentielInitial} → ${culteApres?.presencePhysique}) ✗`
-  console.log(`\nPrésence physique du culte de test : ${etat}`)
+  // Vérification finale : plus rien de ce qui a été créé pour le test
+  const restes = (await appel('GET /cultes (vérification)', { chemin: '/cultes', token: tokenAdmin, attendu: [200] })).data
+  const culteReste = Array.isArray(restes) && restes.some((c) => c.id === aSupprimer.culte)
+  console.log(`\nCulte de test supprimé : ${culteReste ? 'NON (✗)' : 'oui ✓'}`)
+  console.log('Test terminé — données de test nettoyées.')
 }
 
 main().catch((e) => { console.error('Échec du test :', e); process.exit(1) })
