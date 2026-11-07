@@ -24,6 +24,7 @@ const ESPACES_PRIVES = {
   ouvrier: { to: '/mon-espace', label: 'Mon espace', icon: User },
   chef_departement: { to: '/mon-departement', label: 'Mon département', icon: Building2 },
   tresorier: { to: '/mon-tresorier', label: 'Mes finances', icon: Wallet },
+  logisticien: { to: '/mon-logistique', label: 'Ma logistique', icon: Boxes },
 }
 
 const ROLES_ADMIN = ['pasteur', 'administrateur']

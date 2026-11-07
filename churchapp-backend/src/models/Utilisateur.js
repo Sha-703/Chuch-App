@@ -6,7 +6,9 @@ const Utilisateur = sequelize.define('Utilisateur', {
   nom: { type: DataTypes.STRING, allowNull: false },
   email: { type: DataTypes.STRING, allowNull: false, unique: true },
   motDePasseHash: { type: DataTypes.STRING, allowNull: false },
-  role: { type: DataTypes.ENUM('pasteur', 'administrateur', 'tresorier', 'ouvrier', 'chef_departement', 'communaute'), allowNull: false },
+  // logisticien : espace privé /mon-logistique (inventaire du matériel) —
+  // créé via RH → « Donner un accès », comme le trésorier et le chef.
+  role: { type: DataTypes.ENUM('pasteur', 'administrateur', 'tresorier', 'ouvrier', 'chef_departement', 'logisticien', 'communaute'), allowNull: false },
   telephone: { type: DataTypes.STRING },
   actif: { type: DataTypes.BOOLEAN, defaultValue: true }, // false = compte bloqué par le Super Admin
   // Un compte "communaute" n'appartient à aucune église (egliseId reste vide) —

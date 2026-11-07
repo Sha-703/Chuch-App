@@ -26,6 +26,7 @@ export default function Parametres() {
     ouvrier: '/mon-espace',
     chef_departement: '/mon-departement',
     tresorier: '/mon-tresorier',
+    logisticien: '/mon-logistique',
     communaute: '/communaute/dashboard',
   }
 

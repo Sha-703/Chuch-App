@@ -26,6 +26,7 @@ export default function Login() {
       const accueil = utilisateur.role === 'ouvrier' ? '/mon-espace'
         : utilisateur.role === 'chef_departement' ? '/mon-departement'
         : utilisateur.role === 'tresorier' ? '/mon-tresorier'
+        : utilisateur.role === 'logisticien' ? '/mon-logistique'
         : utilisateur.role === 'communaute' ? '/communaute/dashboard'
         : '/dashboard'
       navigate(accueil)

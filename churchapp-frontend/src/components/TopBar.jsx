@@ -18,6 +18,7 @@ export default function TopBar({ title, subtitle }) {
     administrateur: 'Administrateur',
     tresorier: 'Trésorier',
     chef_departement: 'Chef de département',
+    logisticien: 'Logisticien',
     ouvrier: 'Ouvrier',
     communaute: 'Communauté',
   }

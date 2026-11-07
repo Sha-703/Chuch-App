@@ -54,7 +54,7 @@ router.put('/utilisateurs/:id', [
   param('id').isUUID().withMessage('ID utilisateur invalide.'),
   body('nom').optional().notEmpty().withMessage('Nom requis.'),
   body('email').optional().isEmail().normalizeEmail().withMessage('E-mail invalide.'),
-  body('role').optional().isIn(['pasteur', 'administrateur', 'tresorier', 'ouvrier', 'communaute']).withMessage('Rôle invalide.'),
+  body('role').optional().isIn(['pasteur', 'administrateur', 'tresorier', 'chef_departement', 'logisticien', 'ouvrier', 'communaute']).withMessage('Rôle invalide.'),
   validerRequete,
 ], modifierUtilisateur)
 router.post('/utilisateurs/:id/reinitialiser-mot-de-passe', [

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { LogOut, Loader2, Moon, Sun, Settings, Users2, Plus, Trash2, X } from 'lucide-react'
+import { LogOut, Loader2, Moon, Sun, Settings, Users2, Plus, Trash2, X, CalendarDays } from 'lucide-react'
 import { api } from '../lib/api'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
@@ -9,6 +9,10 @@ import { formatFC } from '../lib/mockData'
 import AnnoncesEspace from '../components/AnnoncesEspace'
 
 const onglets = ['Mon équipe', 'Mes finances', 'Annonces']
+// Onglet supplémentaire réservé au chef du département « Protocole » :
+// il y saisit le nombre de membres présents au culte (décentralisation
+// de cette tâche, jusque-là réservée à l'administrateur).
+const ONGLET_PRESENCE = 'Présence au culte'
 
 export default function MonDepartement() {
   const { utilisateur, eglise, logout } = useAuth()
@@ -17,6 +21,11 @@ export default function MonDepartement() {
   const [onglet, setOnglet] = useState('Mon équipe')
   const [departement, setDepartement] = useState(null)
   const [erreur, setErreur] = useState('')
+
+  // Seul le chef du département « Protocole » voit l'onglet de saisie de la
+  // présence physique au culte (le serveur revérifie de son côté).
+  const estProtocole = /protocole/i.test(departement?.nom || '')
+  const ongletsVisibles = estProtocole ? [...onglets, ONGLET_PRESENCE] : onglets
 
   function recharger() {
     api.monDepartement().then(setDepartement).catch((err) => setErreur(err.message))
@@ -77,8 +86,8 @@ export default function MonDepartement() {
               {departement.description && <p className="text-sm text-ink-700/60">{departement.description}</p>}
             </div>
 
-            <div className="flex gap-1 bg-parchment-200/60 rounded-lg p-1 mb-5 w-fit">
-              {onglets.map((o) => (
+            <div className="flex gap-1 bg-parchment-200/60 rounded-lg p-1 mb-5 w-fit flex-wrap">
+              {ongletsVisibles.map((o) => (
                 <button
                   key={o}
                   onClick={() => setOnglet(o)}
@@ -98,6 +107,7 @@ export default function MonDepartement() {
               <OngletFinances departement={departement} showToast={showToast} />
             )}
             {onglet === 'Annonces' && <AnnoncesEspace />}
+            {onglet === ONGLET_PRESENCE && <OngletPresence showToast={showToast} />}
           </>
         )}
       </main>
@@ -442,6 +452,112 @@ function Champ({ label, children }) {
     <div>
       <label className="text-xs font-semibold uppercase tracking-wide text-ink-700/60">{label}</label>
       {children}
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Onglet présence (chef du département Protocole) : saisie du nombre de
+// membres PRÉSENTS PHYSIQUEMENT à chaque culte — même saisie que celle de
+// l'administrateur, pour décentraliser la tâche.
+// ---------------------------------------------------------------------------
+
+function OngletPresence({ showToast }) {
+  const [cultes, setCultes] = useState(null)
+  const [valeurs, setValeurs] = useState({}) // brouillon saisi par l'utilisateur
+  const [erreur, setErreur] = useState('')
+  const [enCours, setEnCours] = useState(null) // id du culte en cours d'enregistrement
+
+  useEffect(() => {
+    api.listerCultes()
+      .then((liste) => {
+        setCultes(liste)
+        setValeurs(Object.fromEntries(liste.map((c) => [c.id, String(c.presencePhysique ?? 0)])))
+      })
+      .catch((err) => setErreur(err.message))
+  }, [])
+
+  async function enregistrer(culte) {
+    const n = parseInt(valeurs[culte.id], 10)
+    if (!Number.isFinite(n) || n < 0) {
+      setErreur('Le nombre de présences physiques doit être un entier positif ou nul.')
+      return
+    }
+    setEnCours(culte.id)
+    setErreur('')
+    try {
+      const maj = await api.majPresencesPhysiques(culte.id, n)
+      setCultes((liste) => liste.map((c) =>
+        c.id === culte.id ? { ...c, presencePhysique: maj.presencePhysique, total: maj.total } : c
+      ))
+      showToast('Présence physique enregistrée.')
+    } catch (err) {
+      setErreur(err.message)
+    } finally {
+      setEnCours(null)
+    }
+  }
+
+  if (!cultes) {
+    return (
+      <div className="flex items-center gap-2 text-ink-700/60">
+        <Loader2 className="animate-spin" size={18} /> Chargement des cultes...
+      </div>
+    )
+  }
+
+  return (
+    <div className="bg-white rounded-2xl shadow-card divide-y divide-ink-950/5">
+      <div className="p-4 text-xs text-ink-700/60 leading-relaxed">
+        Saisissez le nombre de membres <strong className="text-ink-950">présents physiquement</strong> à chaque
+        culte. Ce nombre s'ajoute aux présences signées en ligne par les ouvriers pour former le total.
+      </div>
+
+      {erreur && (
+        <p className="text-sm text-clay-600 bg-clay-500/10 px-4 py-2.5">{erreur}</p>
+      )}
+
+      {cultes.length === 0 ? (
+        <p className="text-sm text-ink-700/60 p-4">Aucun culte enregistré pour le moment.</p>
+      ) : (
+        cultes.map((culte) => (
+          <div key={culte.id} className="flex flex-wrap items-center gap-3 p-4">
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-semibold text-ink-950 flex items-center gap-1.5">
+                <CalendarDays size={14} className="text-gold-600" />
+                {culte.type}
+              </p>
+              <p className="text-xs text-ink-700/60 mt-0.5">
+                {culte.date?.split('-').reverse().join('/')}
+                {culte.predicateur ? ` — ${culte.predicateur}` : ''}
+              </p>
+            </div>
+
+            <div className="text-xs text-ink-700/60 text-right font-tabular">
+              <p>En ligne : {culte.presenceEnLigne}</p>
+              <p className="font-semibold text-ink-950">Total : {culte.total}</p>
+            </div>
+
+            <input
+              type="number"
+              min="0"
+              inputMode="numeric"
+              value={valeurs[culte.id] ?? ''}
+              onChange={(e) => setValeurs({ ...valeurs, [culte.id]: e.target.value })}
+              placeholder="Présents"
+              aria-label={`Nombre de membres présents au culte du ${culte.date}`}
+              className="w-24 border border-ink-950/15 rounded-lg px-3 py-2 text-sm text-ink-950 font-tabular focus:outline-none focus:ring-2 focus:ring-gold-500/50"
+            />
+            <button
+              onClick={() => enregistrer(culte)}
+              disabled={enCours === culte.id}
+              className="bg-ink-950 text-parchment-50 rounded-lg px-4 py-2 text-sm font-semibold hover:bg-ink-900 disabled:opacity-50"
+            >
+              {enCours === culte.id ? '...' : 'Enregistrer'}
+            </button>
+          </div>
+        ))
+      )}
     </div>
   )
 }

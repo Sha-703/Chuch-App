@@ -228,7 +228,7 @@ export async function toggleBlocageUtilisateur(req, res) {
 }
 
 // --- Édition d'un compte utilisateur (nom, e-mail, rôle) ---
-const ROLES_VALIDES = ['pasteur', 'administrateur', 'tresorier', 'ouvrier', 'communaute']
+const ROLES_VALIDES = ['pasteur', 'administrateur', 'tresorier', 'chef_departement', 'logisticien', 'ouvrier', 'communaute']
 
 export async function modifierUtilisateur(req, res) {
   const { nom, email, role } = req.body

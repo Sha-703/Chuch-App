@@ -75,11 +75,12 @@ export async function creerCompteOuvrier(req, res) {
   const existant = await Utilisateur.findOne({ where: { email } })
   if (existant) return res.status(409).json({ message: 'Un compte existe déjà avec cet e-mail.' })
 
-  // Trois types d'accès possibles : ouvrier (défaut), trésorier (espace
-  // finances dédié de l'église) et chef de département (espace dédié).
-  const ROLES_COMPTE = ['ouvrier', 'tresorier', 'chef_departement']
+  // Quatre types d'accès possibles : ouvrier (défaut), trésorier (espace
+  // finances dédié de l'église), chef de département (espace dédié) et
+  // logisticien (inventaire du matériel, espace dédié).
+  const ROLES_COMPTE = ['ouvrier', 'tresorier', 'chef_departement', 'logisticien']
   if (roleCible && !ROLES_COMPTE.includes(roleCible)) {
-    return res.status(400).json({ message: 'Type d\'accès invalide (ouvrier, tresorier ou chef_departement).' })
+    return res.status(400).json({ message: 'Type d\'accès invalide (ouvrier, tresorier, chef_departement ou logisticien).' })
   }
   const roleCompte = roleCible || 'ouvrier'
   const estChef = roleCompte === 'chef_departement'
@@ -109,6 +110,7 @@ export async function creerCompteOuvrier(req, res) {
   // Le rôle affiché du membre reflète son accès pour rester cohérent
   if (roleCompte === 'chef_departement') membre.role = 'Chef de département'
   else if (roleCompte === 'tresorier') membre.role = 'Trésorier'
+  else if (roleCompte === 'logisticien') membre.role = 'Logisticien'
   await membre.save()
 
   if (departement) {

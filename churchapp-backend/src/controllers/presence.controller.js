@@ -59,9 +59,26 @@ export async function presencesDuCulte(req, res) {
   })
 }
 
-// --- Saisie manuelle de la présence PHYSIQUE d'un culte (par l'administrateur) ---
+// --- Saisie manuelle de la présence PHYSIQUE d'un culte ---
 // Elle s'ajoute aux présences en ligne des ouvriers pour former le total.
+// Décentralisation : en plus du pasteur et de l'administrateur, le chef du
+// département « Protocole » peut saisir — lui seul parmi les chefs.
+async function peutSaisirPresence(req) {
+  if (['pasteur', 'administrateur'].includes(req.auth.role)) return true
+  if (req.auth.role !== 'chef_departement') return false
+  const departement = await Departement.findOne({
+    where: { chefUtilisateurId: req.auth.sub, egliseId: req.egliseId },
+  })
+  return !!departement && /protocole/i.test(departement.nom || '')
+}
+
 export async function majPresencesPhysiques(req, res) {
+  if (!(await peutSaisirPresence(req))) {
+    return res.status(403).json({
+      message: 'Saisie réservée au pasteur, à l\'administrateur et au chef du département Protocole.',
+    })
+  }
+
   const culte = await Culte.findOne({ where: { id: req.params.culteId, egliseId: req.egliseId } })
   if (!culte) return res.status(404).json({ message: 'Culte introuvable.' })
 

@@ -220,11 +220,11 @@ function ModalMembre({ onClose, onSaved }) {
   )
 }
 
-// Création d'un accès : soit simple ouvrier, soit chef de département
+// Création d'un accès : ouvrier, trésorier, logisticien ou chef de département
 // (auquel cas on choisit le département qu'il va diriger).
 function ModalCompteOuvrier({ membre, onClose, onSaved }) {
   const [email, setEmail] = useState('')
-  const [typeAcces, setTypeAcces] = useState('ouvrier') // 'ouvrier' | 'chef'
+  const [typeAcces, setTypeAcces] = useState('ouvrier') // 'ouvrier' | 'tresorier' | 'logisticien' | 'chef'
   const [departementId, setDepartementId] = useState('')
   const [departements, setDepartements] = useState([])
   const [chargement, setChargement] = useState(false)
@@ -249,7 +249,7 @@ function ModalCompteOuvrier({ membre, onClose, onSaved }) {
     try {
       const data = await api.creerCompteOuvrier(membre.id, {
         email,
-        roleCible: { chef: 'chef_departement', tresorier: 'tresorier' }[typeAcces] || 'ouvrier',
+        roleCible: { chef: 'chef_departement', tresorier: 'tresorier', logisticien: 'logisticien' }[typeAcces] || 'ouvrier',
         ...(typeAcces === 'chef' ? { departementId } : {}),
       })
       setResultat(data)
@@ -270,7 +270,9 @@ function ModalCompteOuvrier({ membre, onClose, onSaved }) {
             ? ` et gérer son département${resultat.departement ? ` "${resultat.departement}"` : ''}.`
             : resultat.role === 'tresorier'
               ? ' et gérer les finances de l\'église (entrées et charges) depuis son espace privé.'
-              : ' pour signer sa présence aux cultes.'}
+              : resultat.role === 'logisticien'
+                ? ' et gérer l\'inventaire du matériel de l\'église depuis son espace privé.'
+                : ' pour signer sa présence aux cultes.'}
         </p>
         <div className="bg-parchment-100 rounded-lg p-4 text-sm space-y-1">
           <p><span className="text-ink-700/60">E-mail :</span> {resultat.email}</p>
@@ -295,6 +297,7 @@ function ModalCompteOuvrier({ membre, onClose, onSaved }) {
           >
             <option value="ouvrier">Ouvrier — signe sa présence aux cultes</option>
             <option value="tresorier">Trésorier — enregistre les entrées et les charges de l'église</option>
+            <option value="logisticien">Logisticien — gère l'inventaire du matériel</option>
             <option value="chef">Chef de département — gère ses ouvriers et ses finances</option>
           </select>
         </div>

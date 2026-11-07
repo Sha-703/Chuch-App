@@ -37,7 +37,7 @@ import NotFound from './pages/NotFound'
 
 // Direction de l'église — le trésorier a son propre espace privé (/mon-tresorier)
 const ADMIN = ['pasteur', 'administrateur']
-const TOUS_ROLES_EGLISE = ['pasteur', 'administrateur', 'tresorier', 'ouvrier', 'chef_departement', 'communaute']
+const TOUS_ROLES_EGLISE = ['pasteur', 'administrateur', 'tresorier', 'ouvrier', 'chef_departement', 'logisticien', 'communaute']
 
 export default function App() {
   return (
@@ -51,6 +51,7 @@ export default function App() {
               <Route path="/mon-espace" element={<ProtectedRoute allow={['ouvrier']}><MonEspace /></ProtectedRoute>} />
               <Route path="/mon-departement" element={<ProtectedRoute allow={['chef_departement']}><MonDepartement /></ProtectedRoute>} />
               <Route path="/mon-tresorier" element={<ProtectedRoute allow={['tresorier']}><MonTresorier /></ProtectedRoute>} />
+              <Route path="/mon-logistique" element={<ProtectedRoute allow={['logisticien']}><Logistique /></ProtectedRoute>} />
               <Route path="/dashboard" element={<ProtectedRoute allow={ADMIN}><Dashboard /></ProtectedRoute>} />
               <Route path="/finances" element={<ProtectedRoute allow={ADMIN}><Finances /></ProtectedRoute>} />
               <Route path="/cultes" element={<ProtectedRoute allow={ADMIN}><Cultes /></ProtectedRoute>} />

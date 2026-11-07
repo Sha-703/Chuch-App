@@ -7,6 +7,8 @@ const ROLES = [
   { valeur: 'pasteur', label: 'Pasteur' },
   { valeur: 'administrateur', label: 'Administrateur' },
   { valeur: 'tresorier', label: 'Trésorier' },
+  { valeur: 'chef_departement', label: 'Chef de département' },
+  { valeur: 'logisticien', label: 'Logisticien' },
   { valeur: 'ouvrier', label: 'Ouvrier' },
   { valeur: 'communaute', label: 'Communauté' },
 ]

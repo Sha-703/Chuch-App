@@ -26,6 +26,23 @@ async function synchroniserBase() {
   for (let essai = 1; essai <= maxEssais; essai++) {
     try {
       await sequelize.authenticate()
+      // PostgreSQL : ajoute la valeur 'logisticien' au type ENUM des rôles.
+      // sync({ alter }) ne gère pas toujours l'ajout de valeurs ENUM — on le fait
+      // explicitement AVANT la synchronisation, de façon idempotente.
+      await sequelize.query(`
+        DO $$ DECLARE t text;
+        BEGIN
+          SELECT pt.typname INTO t
+          FROM pg_type pt
+          JOIN pg_attribute pa ON pa.atttypid = pt.oid
+          JOIN pg_class pc ON pc.oid = pa.attrelid
+          WHERE pt.typtype = 'e' AND pa.attname = 'role'
+            AND pc.relname LIKE 'Utilisateur%';
+          IF t IS NOT NULL THEN
+            EXECUTE format('ALTER TYPE %I ADD VALUE IF NOT EXISTS ''logisticien''', t);
+          END IF;
+        END $$;
+      `)
       await sequelize.sync({ alter: true }) // ajoute les colonnes manquantes
       console.log(`Base de données prête (essai ${essai}).`)
       // Récupère les fichiers encore sur le disque (photos/scans de l'ancienne
