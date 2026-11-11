@@ -8,7 +8,7 @@
 // Usage : node test-roles.mjs <baseUrl> <emailAdminPasteur>
 // (le mot de passe = l'e-mail, convention du système)
 
-const BASE = (process.argv[2] || 'https://churchapp-backend.onrender.com/api').replace(/\/$/, '')
+const BASE = (process.argv[2] || 'https://chuch-app.onrender.com/api').replace(/\/$/, '')
 const EMAIL_ADMIN = process.argv[3] || 'patrickluvedo@gmail.com'
 const ts = Date.now()
 const EMAIL_CHEF_PROTO = `chef-proto-${ts}@exemple.com`

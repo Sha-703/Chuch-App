@@ -1,5 +1,5 @@
 const isDev = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-const API_URL = import.meta.env.VITE_API_URL || (isDev ? 'http://localhost:4000/api' : 'https://churchapp-backend.onrender.com/api')
+const API_URL = import.meta.env.VITE_API_URL || (isDev ? 'http://localhost:4000/api' : 'https://chuch-app.onrender.com/api')
 
 // Clés de stockage volontairement différentes de la session église —
 // un pasteur connecté et un Super Admin connecté ne doivent jamais se mélanger

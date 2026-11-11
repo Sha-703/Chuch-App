@@ -4,7 +4,11 @@ import 'dotenv/config'
 let sequelize
 
 if (process.env.DATABASE_URL) {
-  // Production : PostgreSQL (Supabase, Railway, etc.)
+  // Production : PostgreSQL (Neon, Supabase, Railway, etc.)
+  try {
+    const h = new URL(process.env.DATABASE_URL).host
+    console.log(`[db] PostgreSQL → ${h}`)
+  } catch { console.log('[db] PostgreSQL → (URL non analysable)') }
   sequelize = new Sequelize(process.env.DATABASE_URL, {
     dialect: 'postgres',
     dialectOptions: {
@@ -33,6 +37,13 @@ if (process.env.DATABASE_URL) {
     },
     logging: false,
   })
+} else if (process.env.NODE_ENV === 'production' || process.env.RENDER) {
+  // Production SANS DATABASE_URL = erreur CLAIRE. Sinon l'app tomberait sur un
+  // SQLite fantôme dans un conteneur éphémère : plantage + données invisibles.
+  throw new Error(
+    "DATABASE_URL manquante : définir la variable d'environnement sur Render " +
+    '(Dashboard du service → Environment → Add Environment Variable).'
+  )
 } else {
   // Développement : SQLite local
   sequelize = new Sequelize({

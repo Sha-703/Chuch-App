@@ -1,7 +1,7 @@
 const isDev = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
 // Production : VITE_API_URL définie dans Vercel (Settings → Environment Variables).
 // Repli sur le backend Render si la variable manque ; en dev, localhost.
-const API_URL = import.meta.env.VITE_API_URL || (isDev ? 'http://localhost:4000/api' : 'https://churchapp-backend.onrender.com/api')
+const API_URL = import.meta.env.VITE_API_URL || (isDev ? 'http://localhost:4000/api' : 'https://chuch-app.onrender.com/api')
 
 function getToken() {
   return localStorage.getItem('churchapp_token')

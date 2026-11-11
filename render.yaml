@@ -1,10 +1,9 @@
 # Render Blueprint — backend ChurchApp (migration depuis Railway, nov. 2026)
 # Déploiement : Render → New → Blueprint → choisir ce dépôt GitHub.
-# Le service s'appelle "churchapp-backend" → URL prévisible :
-#   https://churchapp-backend.onrender.com  (à vérifier après création)
+# Le service s'appelle "chuch-app" → URL : https://chuch-app.onrender.com
 services:
   - type: web
-    name: churchapp-backend
+    name: chuch-app
     runtime: node
     plan: free # 0.1 CPU / 512 Mo — gratuit
     rootDir: churchapp-backend
