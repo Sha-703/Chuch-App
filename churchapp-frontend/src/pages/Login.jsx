@@ -41,16 +41,26 @@ export default function Login() {
     <div className="min-h-screen grid md:grid-cols-2 bg-parchment-100">
       {/* Panneau gauche — identité, avec photo d'église en fond */}
       <div className="hidden md:flex flex-col justify-between text-parchment-100 p-12 relative overflow-hidden">
-        <img
-          src="/chuchapp.jpeg"
-          alt="ChurchApp"
-          className="absolute inset-0 w-full h-full object-cover blur-[3px]"
-        />
-        {/* Voile BLEU : dégradé navy profond → bleu plus clair en direction du formulaire */}
-        <div className="absolute inset-0 bg-gradient-to-r from-ink-950/90 via-ink-800/80 to-ink-600/55" />
-        {/* Lisibilité du texte (haut/bas) sans casser le bleu */}
-        <div className="absolute inset-0 bg-gradient-to-t from-ink-950/70 via-transparent to-ink-950/40" />
-        <div className="absolute inset-0 bg-weave opacity-20 pointer-events-none" />
+        {/* Photo + voile bleu MASQUÉS vers la droite : l'image se fond dans le
+            crème du formulaire → effet dégradé continu, sans coupure nette */}
+        <div
+          className="absolute inset-0"
+          style={{
+            WebkitMaskImage: 'linear-gradient(to right, black 55%, transparent 100%)',
+            maskImage: 'linear-gradient(to right, black 55%, transparent 100%)',
+          }}
+        >
+          <img
+            src="/chuchapp.jpeg"
+            alt="ChurchApp"
+            className="absolute inset-0 w-full h-full object-cover blur-[3px]"
+          />
+          {/* Voile BLEU : dégradé navy profond → bleu plus clair en direction du formulaire */}
+          <div className="absolute inset-0 bg-gradient-to-r from-ink-950/90 via-ink-800/80 to-ink-600/55" />
+          {/* Lisibilité du texte (haut/bas) sans casser le bleu */}
+          <div className="absolute inset-0 bg-gradient-to-t from-ink-950/70 via-transparent to-ink-950/40" />
+          <div className="absolute inset-0 bg-weave opacity-20 pointer-events-none" />
+        </div>
         <div className="relative">
           <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-gold-500/40 shadow-lg mx-auto md:mx-0">
             <img src="/chuchapp.jpeg" alt="ChurchApp" className="w-full h-full object-cover" />
