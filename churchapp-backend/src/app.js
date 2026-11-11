@@ -62,9 +62,10 @@ const corsOrigins = (process.env.CORS_ORIGIN || '')
   .map(o => o.trim())
   .filter(Boolean)
 
-// Ajoute automatiquement l'URL du frontend Railway si présente
-const frontendUrl = process.env.FRONTEND_URL || 'https://chuchapp-frontend-production.up.railway.app'
-if (!corsOrigins.includes(frontendUrl)) {
+// Ajoute automatiquement l'URL du frontend si définie (FRONTEND_URL sur Render).
+// Sans default codé en dur : l'URL Vercel passe par CORS_ORIGIN (render.yaml).
+const frontendUrl = process.env.FRONTEND_URL
+if (frontendUrl && !corsOrigins.includes(frontendUrl)) {
   corsOrigins.push(frontendUrl)
 }
 

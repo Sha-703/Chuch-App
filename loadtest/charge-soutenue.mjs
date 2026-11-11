@@ -4,7 +4,7 @@
 // redescend, pour observer si la latence dégrade avec le nombre d'utilisateurs.
 //
 // Usage : node charge-soutenue.mjs [baseUrl]
-// Exemple : node charge-soutenue.mjs https://chuchapp-backend-production.up.railway.app/api
+// Exemple : node charge-soutenue.mjs https://churchapp-backend.onrender.com/api
 
 const BASE = (process.argv[2] || 'http://localhost:4100/api').replace(/\/$/, '')
 const DUREE_VU = 15 // secondes par palier

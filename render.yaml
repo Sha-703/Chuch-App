@@ -1,0 +1,24 @@
+# Render Blueprint — backend ChurchApp (migration depuis Railway, nov. 2026)
+# Déploiement : Render → New → Blueprint → choisir ce dépôt GitHub.
+# Le service s'appelle "churchapp-backend" → URL prévisible :
+#   https://churchapp-backend.onrender.com  (à vérifier après création)
+services:
+  - type: web
+    name: churchapp-backend
+    runtime: node
+    plan: free # 0.1 CPU / 512 Mo — gratuit
+    rootDir: churchapp-backend
+    buildCommand: npm ci
+    startCommand: node src/server.js
+    healthCheckPath: /api/health # healthcheck + veille GitHub Actions
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: JWT_SECRET
+        generateValue: true # secret aléatoire généré une fois par Render
+      - key: DATABASE_URL
+        sync: false # → à coller depuis Neon (prompt au déploiement)
+      - key: CORS_ORIGIN
+        sync: false # → URL(s) Vercel du frontend, séparées par virgule

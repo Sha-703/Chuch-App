@@ -36,3 +36,7 @@ coverage/
 tmp/
 temp/
 *.tmp
+
+# Sauvegardes de base de données (données réelles — jamais dans le repo public)
+backup-*.json
+*.backup.json
