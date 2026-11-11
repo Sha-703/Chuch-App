@@ -46,8 +46,10 @@ export default function Login() {
           alt="ChurchApp"
           className="absolute inset-0 w-full h-full object-cover blur-[3px]"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-ink-950/85 via-ink-950/75 to-ink-950/90" />
-        <div className="absolute inset-0 bg-ink-950/20 backdrop-blur-[2px]" />
+        {/* Voile BLEU : dégradé navy profond → bleu plus clair en direction du formulaire */}
+        <div className="absolute inset-0 bg-gradient-to-r from-ink-950/90 via-ink-800/80 to-ink-600/55" />
+        {/* Lisibilité du texte (haut/bas) sans casser le bleu */}
+        <div className="absolute inset-0 bg-gradient-to-t from-ink-950/70 via-transparent to-ink-950/40" />
         <div className="absolute inset-0 bg-weave opacity-20 pointer-events-none" />
         <div className="relative">
           <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-gold-500/40 shadow-lg mx-auto md:mx-0">
@@ -70,10 +72,11 @@ export default function Login() {
       {/* Panneau droit — formulaire */}
       <div className="flex items-center justify-center p-8">
         <div className="w-full max-w-sm">
-          <div className="md:hidden mb-8 text-center">
+          <div className="mb-8 text-center">
             <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-gold-500/40 shadow-lg mx-auto">
               <img src="/chuchapp.jpeg" alt="ChurchApp" className="w-full h-full object-cover" />
             </div>
+            <p className="mt-2 text-xs font-semibold uppercase tracking-widest text-ink-700/60">ChurchApp</p>
           </div>
           <h1 className="font-display text-2xl text-ink-950">Connexion</h1>
           <p className="text-sm text-ink-700/70 mt-1 mb-8">Accédez à l'espace de votre église.</p>
