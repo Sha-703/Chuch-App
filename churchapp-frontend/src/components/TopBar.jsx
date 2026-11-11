@@ -60,7 +60,7 @@ export default function TopBar({ title, subtitle }) {
         </button>
       </div>
 
-      <header className="flex items-center justify-between px-6 md:px-10 pt-4 md:pt-4 pb-6">
+      <header className="sticky top-0 z-20 flex items-center justify-between px-6 md:px-10 pt-4 md:pt-4 pb-6 bg-parchment-100">
         <div>
           <h1 className="font-display text-2xl sm:text-3xl text-ink-950 tracking-tight">{title}</h1>
           {subtitle && <p className="text-ink-700/70 text-sm mt-1">{subtitle}</p>}
